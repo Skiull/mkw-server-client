@@ -10,6 +10,8 @@
 #include <bit>
 #include <utility>
 
+#include <string.h>
+
 extern "C" {
 #include <revolution.h>
 }
@@ -47,6 +49,44 @@ RaceFramePacket::RaceFramePacket(RaceFrame frame) : frame(frame) {}
 
 RaceManager *RaceManager::s_instance = nullptr;
 
+void RaceManager::update(u16 time) {
+    updateCurrentFrame(time);
+    resendOldFrames(time);
+}
+
+bool RaceManager::removeRaceFrame(u16 time) {
+    s32 idx = findFrame(time);
+
+    if (idx < 0) {
+        return false;
+    }
+
+    m_raceFrames.remove(idx);
+    return true;
+}
+
+bool RaceManager::isRaceFramePacket(const u8 *message, s32 len) {
+    return len == static_cast<s32>(sizeof(RaceFrameMagic)) + sizeof(u16) &&
+            memcmp(message, RaceFrameMagic, sizeof(RaceFrameMagic)) == 0;
+}
+
+void RaceManager::CreateInstance() {
+    if (s_instance) {
+        return;
+    }
+
+    s_instance = new RaceManager;
+}
+
+void RaceManager::DestroyInstance() {
+    if (!s_instance) {
+        return;
+    }
+
+    delete s_instance;
+    s_instance = nullptr;
+}
+
 bool RaceManager::sendFrame(const RaceFramePacket *frame) const {
     return MKWServer::sendRaceFrame(frame);
 }
@@ -74,26 +114,14 @@ void RaceManager::resendOldFrames(u16 time) {
     }
 }
 
-void RaceManager::update(u16 time) {
-    updateCurrentFrame(time);
-    resendOldFrames(time);
-}
-
-void RaceManager::CreateInstance() {
-    if (s_instance) {
-        return;
+s32 RaceManager::findFrame(u16 time) {
+    for (u32 i = 0; i < m_raceFrames.count(); i++) {
+        auto raceFrame = m_raceFrames[i];
+        if (raceFrame->time() == time) {
+            return i;
+        }
     }
-
-    s_instance = new RaceManager;
-}
-
-void RaceManager::DestroyInstance() {
-    if (!s_instance) {
-        return;
-    }
-
-    delete s_instance;
-    s_instance = nullptr;
+    return -1;
 }
 
 } // namespace MKWServer

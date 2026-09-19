@@ -7,7 +7,9 @@
 
 namespace MKWServer {
 
-static constexpr size_t frameBufferSize = 1200;
+static constexpr u8 RaceFrameMagic[2] = {'R', 'F'};
+
+static constexpr size_t FrameBufferSize = 1200;
 
 class __attribute__((packed)) RaceFrame {
 public:
@@ -34,15 +36,11 @@ static_assert(sizeof(RaceFramePacket) == 0x10);
 
 class RaceManager {
 public:
-    bool sendFrame(const RaceFramePacket *frame) const;
-
-    // Creates and sends RaceFramePackets to mkw-server.
-    void updateCurrentFrame(u16 time);
-
-    // Resends old frames that haven't been ack-ed yet by mkw-server.
-    void resendOldFrames(u16 time);
-
     void update(u16 time);
+
+    bool removeRaceFrame(u16 time);
+
+    static bool isRaceFramePacket(const u8 *message, s32 len);
 
     static void CreateInstance();
 
@@ -53,7 +51,17 @@ public:
     }
 
 private:
-    SP::CircularBuffer<RaceFrame, frameBufferSize> m_raceFrames;
+    bool sendFrame(const RaceFramePacket *frame) const;
+
+    // Creates and sends RaceFramePackets to mkw-server.
+    void updateCurrentFrame(u16 time);
+
+    // Resends old frames that haven't been ack-ed yet by mkw-server.
+    void resendOldFrames(u16 time);
+
+    s32 findFrame(u16 time);
+
+    SP::CircularBuffer<RaceFrame, FrameBufferSize> m_raceFrames;
 
     static RaceManager *s_instance;
 };

@@ -73,6 +73,19 @@ BOOL DWCi_GT2UnrecognizedMessageCallback(GT2Socket socket, u32 ip, u16 port, con
         return TRUE;
     }
 
+    if (MKWServer::RaceManager::isRaceFramePacket(message, len)) {
+        auto *raceManager = MKWServer::RaceManager::Instance();
+        if (!raceManager) {
+            SP_LOG("RaceFrame packet sent but MKWServer::RaceManager is nullptr!");
+        }
+
+        u16 recvTime = (static_cast<u16>(message[2]) << 8) | message[3];
+        if (!raceManager->removeRaceFrame(recvTime)) {
+            return FALSE;
+        }
+        return TRUE;
+    }
+
     MKWServer::PacketType messageType = static_cast<MKWServer::PacketType>(message[0]);
     switch (messageType) {
     case MKWServer::PacketType::RacePacket: {
