@@ -70,7 +70,7 @@ public:
     virtual void dt(s32 type);
 
 protected:
-    virtual void process(RaceInputState &raceInputState, UIInputState &uiInputState) = 0;
+    virtual void process(RaceInputState &raceInputState, UIInputState &uiInputState);
 
 public:
     virtual Registry::Controller getControllerId() const;
@@ -88,9 +88,6 @@ public:
     virtual void vf_40();
     virtual void vf_44();
 
-protected:
-    void processSimplified(RaceInputState &raceInputState, bool isPressed);
-
 public:
     void calc();
 
@@ -100,6 +97,16 @@ private:
     u8 _50[0x90 - 0x50];
 };
 static_assert(sizeof(Pad) == 0x90);
+
+class PlayerPad : public Pad {
+public:
+    PlayerPad();
+    ~PlayerPad() override;
+
+private:
+    u8 _90[0xa8 - 0x90];
+};
+static_assert(sizeof(PlayerPad) == 0xa8);
 
 class PadProxy {
 public:
@@ -125,5 +132,38 @@ private:
     u8 _58[0xd8 - 0x58];
 };
 static_assert(sizeof(PadProxy) == 0xd8);
+
+class PlayerPadProxy : public PadProxy {
+public:
+    PlayerPadProxy();
+    ~PlayerPadProxy() override;
+    void dt(s32 type) override;
+    void calc(bool isPaused) override;
+    void reset() override;
+    void vf_18() override;
+    void vf_1c() override;
+
+private:
+    u8 _d8[0xe4 - 0xd8];
+    bool m_isLocked;
+    u8 _e5[0xec - 0xe5];
+};
+
+class InputManager {
+public:
+    PlayerPadProxy *playerProxy(u32 i);
+
+    static InputManager *Instance();
+
+private:
+    InputManager();
+
+    u8 _0000[0x0004 - 0x0000];
+    PlayerPadProxy m_playerProxies[4];
+    u8 _03b4[0x415c - 0x03b4];
+
+    static InputManager *s_instance;
+};
+static_assert(sizeof(InputManager) == 0x415c);
 
 } // namespace System
