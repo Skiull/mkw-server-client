@@ -133,11 +133,11 @@ void OnPayloadReceived(NHTTPError result, NHTTPResponseHandle response, void * /
     setAuthError(-1);
 }
 
-EXTERN_C bool wwfcPayloadReady() {
+bool wwfcPayloadReady() {
     return s_payloadReady;
 }
 
-EXTERN_C NHTTPRequestHandle createWFCAuthRequest() {
+NHTTPRequestHandle createWFCAuthRequest() {
     s_payload = (WWFCPayload *)s_payloadBlock;
     memset(s_payload, 0, PAYLOAD_BLOCK_SIZE);
 

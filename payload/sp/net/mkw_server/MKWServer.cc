@@ -43,7 +43,7 @@ void resetMKWServerInfo() {
 bool applyMKWServerHeader(void *packet, u8 myAid) {
     if (hasMKWServerAddress()) {
         u8 *data = (u8 *)packet;
-        data[0] = MKW_SERVER_RACE_PACKET; // magic
+        data[0] = static_cast<u8>(MKWServer::PacketType::RacePacket); // magic
         data[1] = myAid;
         return true;
     }

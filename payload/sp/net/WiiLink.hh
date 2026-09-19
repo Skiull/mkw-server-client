@@ -39,6 +39,10 @@ s32 HandleResponse();
 
 void OnPayloadReceived(NHTTPError result, NHTTPResponseHandle response, void *userdata);
 
+bool wwfcPayloadReady();
+
+NHTTPRequestHandle createWFCAuthRequest();
+
 struct WWFCHeader {
     char magic[0xC]; // Always "WWFC/Payload"
     u32 total_size;

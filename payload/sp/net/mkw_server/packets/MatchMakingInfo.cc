@@ -67,7 +67,7 @@ void resetMatchMakingInfoPacket() {
     memset(&g_recvMatchPacket, 0, sizeof(MatchMakingInfoPacket));
 }
 
-EXTERN_C MatchMakingInfoPacket *mmInfo() {
+MatchMakingInfoPacket *mmInfo() {
     return &g_recvMatchPacket;
 }
 

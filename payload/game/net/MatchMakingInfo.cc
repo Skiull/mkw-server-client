@@ -15,7 +15,7 @@ void MatchMakingInfo::reset() {
     memset(localPlayerCounts, 0, sizeof(localPlayerCounts));
 }
 
-void MatchMakingInfo::importMKWServerMMInfo(MatchMakingInfoPacket *incomingPacket) {
+void MatchMakingInfo::importMKWServerMMInfo(MKWServer::MatchMakingInfoPacket *incomingPacket) {
     availableAids = incomingPacket->aidBitmap;
     numAids = incomingPacket->numAids;
     connectedToAids = incomingPacket->directConnectedAidBitmap;

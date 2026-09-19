@@ -85,8 +85,3 @@ private:
 static_assert(sizeof(RaceManager) == 0x4c);
 
 } // namespace System
-
-// Exposed to C b/c UDP packets are handled in a C function (DWCi_GT2UnrecognizedMessageCallback).
-// And we need to be able to start the countdown from UDP packet handling.
-// TODO: Rewrite in C++.
-extern "C" void RaceManager_startCountdown();

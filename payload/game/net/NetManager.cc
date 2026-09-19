@@ -40,20 +40,20 @@ RecordHolder<Header> *NetManager::outgoingBuffer(u8 aid) {
     return m_outgoingRacePacket[aid];
 }
 
-SearchRegion NetManager::getSearchRegion() {
+MKWServer::SearchRegion NetManager::getSearchRegion() {
     // This would need to be modified for custom regions
     switch (REGION) {
     case REGION_P:
-        return SEARCH_REGION_EU;
+        return MKWServer::SearchRegion::EU;
     case REGION_E:
-        return SEARCH_REGION_NA;
+        return MKWServer::SearchRegion::NA;
     case REGION_J:
-        return SEARCH_REGION_JP;
+        return MKWServer::SearchRegion::JP;
     case REGION_K:
-        return SEARCH_REGION_KOR;
+        return MKWServer::SearchRegion::KOR;
     default:
         assert("Invalid region!");
-        return SEARCH_REGION_NONE;
+        return MKWServer::SearchRegion::None;
     }
 }
 
@@ -215,7 +215,7 @@ void NetManager::updateMatchMakingInfoAndRating() {
     // packet from MKW-Server is sufficient to get match making working in-game.
     for (u8 i = 0; i < 2; i++) {
         auto &mmInfo = m_matchMakingInfos[i];
-        MatchMakingInfoPacket *matchMakingInfo = &MKWServer::g_recvMatchPacket;
+        MKWServer::MatchMakingInfoPacket *matchMakingInfo = &MKWServer::g_recvMatchPacket;
 
         mmInfo.availableAids = matchMakingInfo->aidBitmap;
         if (mmInfo.availableAids.none()) {
@@ -238,14 +238,14 @@ void NetManager::connectToAnybodyAsync() {
         // room
         bool isWW =
                 m_roomType == RoomType::VersusWorldWide || m_roomType == RoomType::BattleWorldWide;
-        SearchRegion region = isWW ? SEARCH_REGION_WW : getSearchRegion();
+        MKWServer::SearchRegion region = isWW ? MKWServer::SearchRegion::WW : getSearchRegion();
 
         bool isVS =
                 m_roomType == RoomType::VersusWorldWide || m_roomType == RoomType::VersusRegional;
         MKWServer::GameMode mode = isVS ? MKWServer::GameMode::VS : MKWServer::GameMode::Battle;
 
         if (!MKWServer::sendSearchRoomRequest(region, mode)) {
-            SP_LOG("Search room request failed! Region: %d, Mode: %d", region,
+            SP_LOG("Search room request failed! Region: %d, Mode: %d", static_cast<s32>(region),
                     static_cast<u32>(mode));
         }
     }
@@ -254,12 +254,12 @@ void NetManager::connectToAnybodyAsync() {
 void NetManager::connectToGameServerFromGroupId() {
     u32 friendId = currentMMInfo().hostFriendId;
     FriendJoinableStatus status = getFriendJoinableStatus(friendId);
-    SearchRegion searchRegion = SEARCH_REGION_NONE;
+    MKWServer::SearchRegion searchRegion = MKWServer::SearchRegion::None;
 
     switch (status) {
     case FriendJoinableStatus::WorldWideVersus:
     case FriendJoinableStatus::WorldWideBattle:
-        searchRegion = SEARCH_REGION_WW;
+        searchRegion = MKWServer::SearchRegion::WW;
         break;
     case FriendJoinableStatus::JoinableRegionalVS:
     case FriendJoinableStatus::JoinableRegionalBattle:

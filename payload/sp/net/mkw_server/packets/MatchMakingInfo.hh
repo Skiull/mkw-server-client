@@ -3,11 +3,24 @@
 #include <Common.hh>
 
 extern "C" {
-#include <sp/net/mkw_server/MKWServerTypes.h>
+#include "revolution/dwc/DWCNode.h"
 }
 
 namespace MKWServer {
 #define MATCH_MAKING_INFO 0x77846772
+
+struct MatchMakingInfoPacket {
+    u32 aidBitmap;
+    u32 numAids;
+    u32 directConnectedAidBitmap;
+    u32 roomId;
+    u8 myAid;
+    u8 hostAid;
+    bool suspended;
+    bool canceled;
+    DWCConnectionUserData localPlayerCount[12];
+};
+static_assert(sizeof(MatchMakingInfoPacket) == 0x44);
 
 extern MatchMakingInfoPacket g_recvMatchPacket;
 
@@ -16,4 +29,7 @@ bool matchMakingInfoValid(MatchMakingInfoPacket *mmInfo);
 bool processMatchMakingInfoPacket(u8 *data);
 
 void resetMatchMakingInfoPacket();
+
+MatchMakingInfoPacket *mmInfo();
+
 } // namespace MKWServer

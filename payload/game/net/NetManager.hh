@@ -78,7 +78,7 @@ private:
     RecordHolder<Header> *outgoingBuffer(u8 aid);
 
     // 'converts' the REGION to associated SearchRegion
-    SearchRegion getSearchRegion();
+    MKWServer::SearchRegion getSearchRegion();
 
     // 0x80655c10
     // Hooked to initialize m_outgoingUniquePackets

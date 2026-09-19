@@ -115,7 +115,3 @@ private:
 static_assert(sizeof(RaceHandler) == 0x1c8);
 
 } // namespace Net
-
-// Exposed to C b/c UDP packets are handled in a C function (DWCi_GT2UnrecognizedMessageCallback).
-// TODO: Rewrite in C++.
-extern "C" void RaceHandler_setAckReady();

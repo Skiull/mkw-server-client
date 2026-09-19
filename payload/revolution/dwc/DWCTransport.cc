@@ -1,9 +1,9 @@
-#include "DWCTransport.h"
+#include "DWCTransport.hh"
 
-#include <game/net/RaceHandler.h>
-#include <game/system/RaceManager.h>
+#include <game/net/RaceHandler.hh>
+#include <game/system/RaceManager.hh>
 
-#include <sp/net/mkw_server/MKWServer.h>
+#include <sp/net/mkw_server/MKWServer.hh>
 
 #include <string.h>
 
@@ -35,39 +35,47 @@ BOOL DWCi_GT2UnrecognizedMessageCallback(GT2Socket socket, u32 ip, u16 port, con
         s32 len) {
     if (message == NULL || len == 0) {
         SP_LOG("GT2 Unrecognized : Null message or zero length.");
-        return GT2False;
+        return FALSE;
     }
 
-    if (verifySearchIdMagic(message, len)) {
-        handleSearchIdPacket(message, len);
-        return GT2True;
+    if (MKWServer::verifySearchIdMagic(message, len)) {
+        MKWServer::handleSearchIdPacket(message, len);
+        return TRUE;
     }
 
     if (isReadyAckPacket(message, len)) {
         SP_LOG("Received ready ACK packet from mkw-server!");
-        RaceHandler_setAckReady();
-        return GT2True;
+        if (auto *raceHandler = Net::RaceHandler::Instance()) {
+            raceHandler->setAckReady();
+        } else {
+            SP_LOG("Can't call RaceHandler::setAckReady(). RaceHandler is nullptr!");
+        }
+        return TRUE;
     }
 
     if (isStartPacket(message, len)) {
         SP_LOG("Received Start packet from mkw-server!");
-        RaceManager_startCountdown();
-        return GT2True;
+        if (auto *raceManager = System::RaceManager::Instance()) {
+            raceManager->startCountdown();
+        } else {
+            SP_LOG("Can't call RaceManager::setAckReady(). RaceManager is nullptr!");
+        }
+        return TRUE;
     }
 
     if (isPingPacket(message, len)) {
-        sendPong();
-        return GT2True;
+        MKWServer::sendPong();
+        return TRUE;
     }
 
     if (isPingTimePacket(message, len)) {
-        setPingTime(message);
-        return GT2True;
+        MKWServer::setPingTime(message);
+        return TRUE;
     }
 
-    MKWServerPacketType messageType = message[0];
+    MKWServer::PacketType messageType = static_cast<MKWServer::PacketType>(message[0]);
     switch (messageType) {
-    case MKW_SERVER_RACE_PACKET:
+    case MKWServer::PacketType::RacePacket: {
         if (s_dwcTransport == NULL || s_dwcTransport->userRecvCallback == NULL) {
             return FALSE;
         }
@@ -77,7 +85,7 @@ BOOL DWCi_GT2UnrecognizedMessageCallback(GT2Socket socket, u32 ip, u16 port, con
 
         s_dwcTransport->userRecvCallback(aid, message, len);
         return TRUE;
-
+    }
     default:
         return REPLACED(DWCi_GT2UnrecognizedMessageCallback)(socket, ip, port, message, len);
     }

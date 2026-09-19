@@ -57,7 +57,7 @@ struct MatchMakingInfo {
 
     void reset();
 
-    void importMKWServerMMInfo(MatchMakingInfoPacket *incomingPacket);
+    void importMKWServerMMInfo(MKWServer::MatchMakingInfoPacket *incomingPacket);
 };
 static_assert(sizeof(MatchMakingInfo) == 0x58);
 

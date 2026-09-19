@@ -1,7 +1,5 @@
 #include "RoomManager.hh"
 
-#include <string.h>
-
 #include <sp/net/WiiLink.hh>
 #include <sp/net/mkw_server/MKWServer.hh>
 #include <sp/net/mkw_server/packets/JoinFriendRequest.hh>
@@ -10,6 +8,13 @@
 #include <sp/net/mkw_server/packets/MatchRequestHeader.hh>
 #include <sp/net/mkw_server/packets/SearchRoomRequest.hh>
 #include <sp/net/mkw_server/packets/SuspendRequest.hh>
+
+extern "C" {
+#include <revolution/so/so.h>
+}
+
+#include <string.h>
+
 namespace MKWServer {
 static SOSockAddrIn s_serverAddr;
 static SOCKET g_matchMakingSocket = -1;
@@ -189,7 +194,7 @@ bool sendJoinFriendRequest(s32 friendProfileId, SearchRegion searchRegion) {
     joinRequest.searchRegion = searchRegion;
 
     SP_LOG("Sending JoinFriendRequest where friendProfileId is %d and searchRegion is %d",
-            friendProfileId, searchRegion);
+            friendProfileId, static_cast<s8>(searchRegion));
     return sendToRoomManager(&joinRequest, sizeof(joinRequest));
 }
 
@@ -216,7 +221,7 @@ bool sendSearchRoomRequest(SearchRegion region, GameMode gameMode) {
     searchRoomRequest.region = region;
     searchRoomRequest.gameMode = gameMode;
 
-    SP_LOG("Sending SearchRoomRequest where region: %d and gameMode: %d", region,
+    SP_LOG("Sending SearchRoomRequest where region: %d and gameMode: %d", static_cast<s8>(region),
             static_cast<u32>(gameMode));
     return sendToRoomManager(&searchRoomRequest, sizeof(searchRoomRequest));
 }

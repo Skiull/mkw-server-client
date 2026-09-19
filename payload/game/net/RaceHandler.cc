@@ -46,12 +46,3 @@ void RaceHandler::updateAsRacer() {
 }
 
 } // namespace Net
-
-void RaceHandler_setAckReady() {
-    // Need to check for nullptr in case if an ack is unexpectedly sent outside of race scene.
-    if (auto *miscPacketHandler = Net::RaceHandler::Instance()) {
-        miscPacketHandler->setAckReady();
-    } else {
-        SP_LOG("RaceHandler_setAckReady() called outside of RaceScene!");
-    }
-}

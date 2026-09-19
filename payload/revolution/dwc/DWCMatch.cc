@@ -1,13 +1,11 @@
-#include "DWCMatch.h"
+#include "DWCMatch.hh"
 
-#include "DWCMain.h"
-
-#include <sp/net/mkw_server/RoomManager.h>
+#include <sp/net/mkw_server/RoomManager.hh>
 
 bool DWC_SetupGameServer(void * /* r3 */, void * /* r4 */, void * /* r5 */, void * /* r6 */,
         void * /* r7 */, void * /* r8 */, void * /* r9 */, void * /* r10 */) {
-    if (connectToRoomManager()) {
-        return sendOpenRoomRequest();
+    if (MKWServer::connectToRoomManager()) {
+        return MKWServer::sendOpenRoomRequest();
     }
     return false;
 }
@@ -21,8 +19,8 @@ bool DWC_ConnectToGameServerAsync(s32 friendId, void * /* r4 */, void * /* r5 */
         return false;
     }
 
-    if (connectToRoomManager()) {
-        return sendJoinFriendRequest(friendProfileId, SEARCH_REGION_PRIVATE);
+    if (MKWServer::connectToRoomManager()) {
+        return sendJoinFriendRequest(friendProfileId, MKWServer::SearchRegion::Private);
     }
 
     return false;
