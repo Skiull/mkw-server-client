@@ -50,12 +50,15 @@ public:
         m_canCountdownStart = true;
     }
 
+    bool isRaceOngoing() const;
+
     static RaceManager *Instance() {
         return s_instance;
     }
 
 private:
-    void calc();
+    REPLACE void update();
+    void REPLACED(update)();
 
     u8 _00[0x0c - 0x00];
     Player **m_players;

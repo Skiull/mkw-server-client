@@ -2,6 +2,9 @@
 
 namespace System {
 
+bool RaceConfig::Scenario::isOnline() const {
+    return gameMode >= GameMode::OnlinePrivateVS && gameMode <= GameMode::OnlinePrivateBT;
+}
 RaceConfig::Scenario &RaceConfig::raceScenario() {
     return m_raceScenario;
 }

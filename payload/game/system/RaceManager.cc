@@ -59,6 +59,19 @@ void RaceManager::Player::calc() {
     }
 }
 
+bool RaceManager::isRaceOngoing() const {
+    return m_state >= RaceState::Countdown && m_state <= RaceState::Finished;
+}
+
+void RaceManager::update() {
+    REPLACED(update)();
+    auto raceScenario = System::RaceConfig::Instance()->raceScenario();
+
+    if (raceScenario.isOnline() && isRaceOngoing()) {
+        // TODO: Call RaceVerificationManager::update()
+    }
+}
+
 } // namespace System
 
 void RaceManager_startCountdown() {
