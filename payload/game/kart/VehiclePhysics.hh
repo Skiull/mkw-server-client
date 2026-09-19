@@ -11,6 +11,7 @@ class VehiclePhysics {
     friend class KartSaveState;
 
 public:
+    const Vec3 *pos() const;
     const Vec3 *externalVel() const;
     const Vec3 *internalVel() const;
     const Vec3 *movingRoadVel() const;

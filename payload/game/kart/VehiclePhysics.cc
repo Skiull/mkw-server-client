@@ -2,6 +2,10 @@
 
 namespace Kart {
 
+const Vec3 *VehiclePhysics::pos() const {
+    return &m_pos;
+}
+
 const Vec3 *VehiclePhysics::externalVel() const {
     return &m_externalVel;
 }

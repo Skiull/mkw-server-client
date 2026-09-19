@@ -770,7 +770,7 @@
 # REL .bss start (0x809BD6E0)
 
 0x809bd6f8 _ZN6System10HBMManager10s_instanceE
-0x809bd70c _ZN6System12InputManager10s_instanceE
+0x809bd70c _ZN6System12InputManager8InstanceEv
 0x809bd728 _ZN6System10RaceConfig10s_instanceE
 0x809bd730 _ZN6System11RaceManager10s_instanceE
 0x809bd738 _ZN6System15ResourceManager10s_instanceE

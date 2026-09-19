@@ -6,6 +6,7 @@ extern "C" {
 #include <sp/net/mkw_server/MKWServerTypes.h>
 }
 
+#include <sp/net/mkw_server/RaceManager.hh>
 #include <sp/net/mkw_server/packets/PingTime.hh>
 #include <sp/net/mkw_server/packets/SearchId.hh>
 
@@ -20,6 +21,8 @@ bool applyMKWServerHeader(void *packet, u8 myAid);
 u64 getSearchId();
 
 bool hasMKWServerAddress();
+
+bool sendRaceFrame(const RaceFramePacket *raceFrame);
 
 void sendReadyPacket();
 

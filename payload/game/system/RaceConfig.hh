@@ -31,7 +31,9 @@ public:
         bool isOnline() const;
         u8 _000[0xb50 - 0x000];
         GameMode gameMode;
-        u8 _b54[0xbf0 - 0xb54];
+        u8 _b54[0xb64 - 0xb54];
+        s8 localPlayerIds[4];
+        u8 _b68[0xbf0 - 0xb68];
     };
     static_assert(sizeof(Scenario) == 0xbf0);
 

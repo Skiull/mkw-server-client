@@ -4,6 +4,7 @@
 #include "game/system/RaceConfig.hh"
 
 #include <sp/SaveStateManager.hh>
+#include <sp/net/mkw_server/RaceManager.hh>
 
 extern "C" {
 #include <revolution.h>
@@ -60,7 +61,13 @@ void RaceManager::Player::calc() {
 }
 
 bool RaceManager::isRaceOngoing() const {
-    return m_state >= RaceState::Countdown && m_state <= RaceState::Finished;
+    switch (m_state) {
+    case RaceState::Countdown:
+    case RaceState::Racing:
+        return true;
+    default:
+        return false;
+    }
 }
 
 void RaceManager::update() {
@@ -68,7 +75,7 @@ void RaceManager::update() {
     auto raceScenario = System::RaceConfig::Instance()->raceScenario();
 
     if (raceScenario.isOnline() && isRaceOngoing()) {
-        // TODO: Call RaceVerificationManager::update()
+        MKWServer::RaceManager::Instance()->update(m_countdownTimer);
     }
 }
 

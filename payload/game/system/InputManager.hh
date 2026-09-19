@@ -35,10 +35,27 @@ enum {
 
 } // namespace Trick
 
+namespace RaceInput {
+
+enum {
+    Up = 1 << 0,
+    Down = 1 << 1,
+    Left = 1 << 2,
+    Right = 1 << 3,
+    Accel = 1 << 4,
+    DriftBrake = 1 << 5,
+    Item = 1 << 6,
+};
+
+} // namespace RaceInput
 struct RaceInputState {
     RaceInputState();
     virtual ~RaceInputState();
     virtual void dt(s32 type);
+
+    bool isInputValid() const;
+
+    s16 inputBitfield() const;
 
     u16 _04 : 10;
     bool lookBackwards : 1;
