@@ -20,12 +20,27 @@ namespace MKWServer {
 
 RaceFrame::RaceFrame() {
     s8 playerId = System::RaceConfig::Instance()->raceScenario().localPlayerIds[0];
-    m_inputs = System::RaceManager::Instance()
-                       ->player(playerId)
-                       ->padProxy()
-                       ->currentRaceInputState()
-                       .inputBitfield();
-    m_pos = *Kart::KartObjectManager::Instance()->object(0)->getVehiclePhysics()->pos();
+    if (auto *raceManager = System::RaceManager::Instance()) {
+        m_inputs =
+                raceManager->player(playerId)->padProxy()->currentRaceInputState().inputBitfield();
+    }
+
+    auto *kartObjectManager = Kart::KartObjectManager::Instance();
+    if (!kartObjectManager) {
+        return;
+    }
+
+    auto *obj = kartObjectManager->object(0);
+    if (!obj) {
+        return;
+    }
+
+    auto *physics = obj->getVehiclePhysics();
+    if (!physics) {
+        return;
+    }
+
+    m_pos = *physics->pos();
 }
 
 void RaceFrame::setRecvData(u8 aid, u32 crc) {
