@@ -72,10 +72,9 @@ bool RaceManager::isRaceOngoing() const {
 
 void RaceManager::update() {
     REPLACED(update)();
-    auto raceScenario = System::RaceConfig::Instance()->raceScenario();
 
-    if (raceScenario.isOnline() && isRaceOngoing()) {
-        MKWServer::RaceManager::Instance()->update(m_countdownTimer);
+    if (auto *raceManager = MKWServer::RaceManager::Instance()) {
+        raceManager->update();
     }
 }
 

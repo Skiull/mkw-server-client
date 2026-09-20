@@ -5,6 +5,7 @@
 #include "game/ui/SectionManager.hh"
 
 #include <sp/net/mkw_server/MKWServer.hh>
+#include <sp/net/mkw_server/RaceManager.hh>
 
 extern "C" {
 #include <revolution.h>
@@ -284,6 +285,10 @@ void NetManager::processRacePacket(u8 aid, u8 *packet, u32 size) {
 
     // make sure the packet isn't corrupted
     if (origCrc32 == calcCrc32) {
+        if (auto *mkwServerRaceManager = MKWServer::RaceManager::Instance()) {
+            mkwServerRaceManager->pushReceivedPacket(aid, calcCrc32);
+        }
+
         // data for other packet is right after the header, so add the
         // packet[i] size to this to get a specific offset
         u8 *dataPacketPtr = reinterpret_cast<u8 *>(header);
