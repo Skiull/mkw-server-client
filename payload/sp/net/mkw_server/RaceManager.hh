@@ -11,19 +11,19 @@ static constexpr u8 RaceFrameMagic[2] = {'R', 'F'};
 
 static constexpr size_t FrameBufferSize = 240;
 
-class __attribute__((packed)) RaceFrame {
+class RaceFrame {
 public:
     RaceFrame();
 
     void setRecvData(u8 aid, u32 crc);
 
 private:
-    void setOwnData(u16 inputs, const Vec3 *pos);
-
-    u32 m_data[3];
+    // TODO: Pack.
+    u32 m_inputs;
+    Vec3 m_pos;
     u32 m_receivedCRC[12];
 };
-static_assert(sizeof(RaceFrame) == 0x3c);
+static_assert(sizeof(RaceFrame) == 0x40);
 
 struct RaceFramePacket {
     RaceFramePacket(u16 time);
@@ -38,10 +38,9 @@ struct RaceFramePacket {
     // in 15 bits (log2(21600) ~= 14.398). This frees up a bit for the sent flag.
     u16 time : 15;
     bool sent : 1;
-
     RaceFrame frame;
 };
-static_assert(sizeof(RaceFramePacket) == 0x40);
+static_assert(sizeof(RaceFramePacket) == 0x44);
 
 class RaceManager {
 public:

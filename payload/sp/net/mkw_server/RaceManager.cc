@@ -20,27 +20,16 @@ namespace MKWServer {
 
 RaceFrame::RaceFrame() {
     s8 playerId = System::RaceConfig::Instance()->raceScenario().localPlayerIds[0];
-    u16 inputs = System::RaceManager::Instance()
-                         ->player(playerId)
-                         ->padProxy()
-                         ->currentRaceInputState()
-                         .inputBitfield();
-    auto pos = Kart::KartObjectManager::Instance()->object(0)->getVehiclePhysics()->pos();
-    setOwnData(inputs, pos);
+    m_inputs = System::RaceManager::Instance()
+                       ->player(playerId)
+                       ->padProxy()
+                       ->currentRaceInputState()
+                       .inputBitfield();
+    m_pos = *Kart::KartObjectManager::Instance()->object(0)->getVehiclePhysics()->pos();
 }
 
 void RaceFrame::setRecvData(u8 aid, u32 crc) {
     m_receivedCRC[aid] = crc;
-}
-
-void RaceFrame::setOwnData(u16 inputs, const Vec3 *pos) {
-    u32 px = std::bit_cast<u32>(pos->x) >> 5;
-    u32 py = std::bit_cast<u32>(pos->y) >> 5;
-    u32 pz = std::bit_cast<u32>(pos->z) >> 5;
-
-    m_data[0] = (inputs & 0x7fff) | ((px & 0x1fffff) << 15);
-    m_data[1] = ((px >> 17) & 0x3ff) | ((py & 0x3fffff) << 10);
-    m_data[2] = ((py >> 22) & 0x1f) | ((pz & 0x7ffffff) << 5);
 }
 
 RaceFramePacket::RaceFramePacket(u16 time) : time(time), frame(RaceFrame()) {}
