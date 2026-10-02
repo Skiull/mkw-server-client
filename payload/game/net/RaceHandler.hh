@@ -47,7 +47,8 @@ private:
 
     // 0x80654d08
     // Exports relevant records as a racer (as opposed to a spectator)
-    void exportAsRacer();
+    REPLACE void exportAsRacer();
+    void REPLACED(exportAsRacer)();
 
     // 0x806554a0
     // Unpacks and processes received Race Info records. Updates m_aidsLoadedIntoRace and time of

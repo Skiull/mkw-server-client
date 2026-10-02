@@ -693,6 +693,7 @@
 0x806532d8 _ZN3Net11RaceHandler4initEv
 0x80654150 RaceHandler_updateAsRacer
 0x80654150 _ZN3Net11RaceHandler13updateAsRacerEv
+0x80654d08 _ZN3Net11RaceHandler13exportAsRacerEv
 0x80655b24 NetManager_CreateInstance
 0x80655c10 _ZN3Net10NetManager4initEh
 0x806561a8 _ZN3Net10NetManager16scheduleShutdownEv

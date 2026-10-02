@@ -38,7 +38,7 @@ u64 getSearchId();
 
 bool hasMKWServerAddress();
 
-bool sendRaceFrame(const RaceFramePacket *raceFrame);
+bool sendRaceFrame(const RaceFrame *raceFrame);
 
 void sendReadyPacket();
 

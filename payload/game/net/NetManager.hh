@@ -70,10 +70,14 @@ private:
 
     bool aidInUse(u8 aid) const;
 
+public:
     // check that the aid isn't ours and the aid is in the room before sending a race packet
     bool canSendToAid(u8 aid) const;
 
     RacePacketHolder *lastSentRaceBuffer(u8 aid);
+
+private:
+    RacePacketHolder *lastRecvRaceBuffer(u8 aid, RecordType recordType);
 
     RecordHolder<Header> *outgoingBuffer(u8 aid);
 

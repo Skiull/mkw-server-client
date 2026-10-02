@@ -39,8 +39,8 @@ struct RaceInfoRecord {
     u8 _17;
     u8 aidMap[12];
     Registry::EngineClass engineClass : 8;
-
-    u8 _25[0x28 - 0x25];
+    bool startedCountdown : 8; // added, was padding.
+    u8 _26[0x28 - 0x26];
 };
 static_assert(sizeof(RaceInfoRecord) == 0x28);
 

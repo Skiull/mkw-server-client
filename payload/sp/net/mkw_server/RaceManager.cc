@@ -7,61 +7,11 @@
 #include <game/system/RaceConfig.hh>
 #include <game/system/RaceManager.hh>
 
-#include <bit>
-#include <utility>
-
-#include <string.h>
-
 extern "C" {
 #include <revolution.h>
 }
 
 namespace MKWServer {
-
-RaceFrame::RaceFrame() {
-    s8 playerId = System::RaceConfig::Instance()->raceScenario().localPlayerIds[0];
-    if (auto *raceManager = System::RaceManager::Instance()) {
-        m_inputs =
-                raceManager->player(playerId)->padProxy()->currentRaceInputState().inputBitfield();
-    }
-
-    auto *kartObjectManager = Kart::KartObjectManager::Instance();
-    if (!kartObjectManager) {
-        return;
-    }
-
-    auto *obj = kartObjectManager->object(0);
-    if (!obj) {
-        return;
-    }
-
-    auto *physics = obj->getVehiclePhysics();
-    if (!physics) {
-        return;
-    }
-
-    m_pos = *physics->pos();
-}
-
-void RaceFrame::setRecvData(u8 aid, u32 crc) {
-    m_receivedCRC[aid] = crc;
-}
-
-RaceFramePacket::RaceFramePacket(u16 time) : time(time), frame(RaceFrame()) {}
-
-RaceFramePacket::RaceFramePacket(RaceFrame frame) : frame(frame) {}
-
-void RaceFramePacket::setPacketReceived(u8 aid, u32 crc) {
-    frame.setRecvData(aid, crc);
-}
-
-bool RaceFramePacket::send() {
-    // Temporarily flip the sent flag to false so the server doesn't have to do any bit operations.
-    sent = false;
-    bool result = MKWServer::sendRaceFrame(this);
-    sent = true;
-    return result;
-}
 
 RaceManager *RaceManager::s_instance = nullptr;
 
@@ -70,14 +20,23 @@ void RaceManager::update() {
         return;
     }
 
-    // save m_time incase it changed.
+    // save m_time in case it changed.
     u32 currTime = m_time;
     if (updateTime()) {
-        // it updated, export/send the old frame and initialize the new frame.
-        exportFrame(currTime);
-        // just create it, no need to set anything.
-        getOrCreateFrame(m_time);
-    };
+        // it changed, meaning the last frame is finalized and can be sent.
+        if (auto raceFrame = getOrCreateFrame(currTime)) {
+            if (!MKWServer::sendRaceFrame(raceFrame)) {
+                SP_LOG("Failed to send frame %d", currTime);
+            }
+        } else {
+            SP_LOG("failed get frame to send (%d)", currTime);
+        }
+
+        // Create a new race frame for the current frame.
+        if (!getOrCreateFrame(m_time)) {
+            SP_LOG("Creating frame %d failed", m_time);
+        }
+    }
     resendFrames();
 }
 
@@ -92,20 +51,19 @@ bool RaceManager::removeRaceFrame(u16 time) {
     return true;
 }
 
-void RaceManager::pushReceivedPacket(u8 aid, u32 crc) {
-    // Calling update
+void RaceManager::markReceived(u8 aid, u32 time) {
     if (!isActive()) {
         return;
     }
+
+    // Call update() to handle the unlikely event that m_frame changed. This function is called
+    // upon receiving a packet and runs on a different thread than System::RaceManager::upate(),
+    // which calls MKWServer::RaceManager::update(). So this prevents m_frame from being stale when
+    // marking recv timestamps.
     update();
     if (auto raceFrame = getOrCreateFrame(m_time)) {
-        raceFrame->setPacketReceived(aid, crc);
+        raceFrame->recvPacketTimestamps[aid] = time;
     }
-}
-
-bool RaceManager::isRaceFramePacket(const u8 *message, s32 len) {
-    return len == static_cast<s32>(sizeof(RaceFrameMagic)) + sizeof(u16) &&
-            memcmp(message, RaceFrameMagic, sizeof(RaceFrameMagic)) == 0;
 }
 
 void RaceManager::CreateInstance() {
@@ -125,10 +83,10 @@ void RaceManager::DestroyInstance() {
     s_instance = nullptr;
 }
 
-RaceFramePacket *RaceManager::getOrCreateFrame(u16 time) {
+RaceFrame *RaceManager::getOrCreateFrame(u16 time) {
     s32 idx = findFrame(time);
     if (idx < 0) {
-        if (!m_raceFrames.push_back(RaceFramePacket(time))) {
+        if (!m_raceFrames.push_back(makeFrame(time))) {
             return nullptr;
         }
         idx = m_raceFrames.count() - 1;
@@ -146,8 +104,9 @@ bool RaceManager::updateTime() {
     if (!raceManager->isRaceOngoing()) {
         return false;
     }
-    auto raceScenario = System::RaceConfig::Instance()->raceScenario();
-    if (!raceScenario.isOnline()) {
+
+    auto *raceConfig = System::RaceConfig::Instance();
+    if (!raceConfig || !raceConfig->raceScenario().isOnline()) {
         return false;
     }
 
@@ -161,36 +120,24 @@ bool RaceManager::updateTime() {
 }
 
 bool RaceManager::isActive() {
-    auto raceScenario = System::RaceConfig::Instance()->raceScenario();
+    auto *raceConfig = System::RaceConfig::Instance();
     auto *raceManager = System::RaceManager::Instance();
-    if (!raceScenario.isOnline() || !raceManager->isRaceOngoing()) {
+    if (!raceConfig || !raceManager) {
         return false;
     }
 
-    return true;
-}
-
-void RaceManager::exportFrame(u32 time) {
-    if (auto raceFrame = getOrCreateFrame(time)) {
-        if (!raceFrame->send()) {
-            SP_LOG("Failed to send frame %d", time);
-            return;
-        }
-        raceFrame->sent = true;
-    }
+    return raceConfig->raceScenario().isOnline() && raceManager->isRaceOngoing();
 }
 
 void RaceManager::resendFrames() {
     for (u32 i = 0; i < m_raceFrames.count(); i++) {
         auto raceFrame = m_raceFrames[i];
-        if (!raceFrame->sent) {
-            continue;
-        }
 
         u16 timeSinceSend = m_time - raceFrame->time;
         // Start resending after 2 seconds, every half second.
+        // TODO: Figure out what numbers/logic is good here.
         if (timeSinceSend > 30 && timeSinceSend % 10 == 0) {
-            if (!raceFrame->send()) {
+            if (!MKWServer::sendRaceFrame(raceFrame)) {
                 SP_LOG("RaceFrame %d failed to resend!", raceFrame->time);
             }
         }
@@ -205,6 +152,31 @@ s32 RaceManager::findFrame(u16 time) {
         }
     }
     return -1;
+}
+
+RaceFrame RaceManager::makeFrame(u16 time) {
+    u32 inputs = 0;
+    Vec3 pos = {};
+
+    auto *raceConfig = System::RaceConfig::Instance();
+    auto *raceManager = System::RaceManager::Instance();
+    if (raceConfig && raceManager) {
+        s8 playerId = raceConfig->raceScenario().localPlayerIds[0];
+        if (auto *player = raceManager->player(playerId)) {
+            inputs = player->padProxy()->currentRaceInputState().inputBitfield();
+        }
+    }
+
+    if (auto *kartObjectManager = Kart::KartObjectManager::Instance()) {
+        // TODO!!! Replace 0 with playerId!!!
+        if (auto *obj = kartObjectManager->object(0)) {
+            if (auto *physics = obj->getVehiclePhysics()) {
+                pos = *physics->pos();
+            }
+        }
+    }
+
+    return RaceFrame(time, inputs, pos);
 }
 
 } // namespace MKWServer

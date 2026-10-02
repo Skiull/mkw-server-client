@@ -5,7 +5,6 @@
 #include "game/ui/SectionManager.hh"
 
 #include <sp/net/mkw_server/MKWServer.hh>
-#include <sp/net/mkw_server/RaceManager.hh>
 
 extern "C" {
 #include <revolution.h>
@@ -35,6 +34,10 @@ bool NetManager::canSendToAid(u8 aid) const {
 
 RacePacketHolder *NetManager::lastSentRaceBuffer(u8 aid) {
     return m_sendRacePackets[m_lastSendIdx[aid]][aid];
+}
+
+RacePacketHolder *NetManager::lastRecvRaceBuffer(u8 aid, RecordType recordType) {
+    return m_recvRacePackets[m_lastRecvIdx[aid][static_cast<u32>(recordType)]][aid];
 }
 
 RecordHolder<Header> *NetManager::outgoingBuffer(u8 aid) {
@@ -278,36 +281,60 @@ void NetManager::connectToGameServerFromGroupId() {
 }
 
 void NetManager::processRacePacket(u8 aid, u8 *packet, u32 size) {
+    if (!packet || size < sizeof(Header)) {
+        SP_LOG("Race packet too small (%d)", size);
+        return;
+    }
+
     Header *header = reinterpret_cast<Header *>(packet);
     u32 origCrc32 = header->crc32;
     header->crc32 = 0;
     u32 calcCrc32 = NETCalcCRC32(header, size);
 
     // make sure the packet isn't corrupted
-    if (origCrc32 == calcCrc32) {
-        if (auto *mkwServerRaceManager = MKWServer::RaceManager::Instance()) {
-            mkwServerRaceManager->pushReceivedPacket(aid, calcCrc32);
-        }
-
-        // data for other packet is right after the header, so add the
-        // packet[i] size to this to get a specific offset
-        u8 *dataPacketPtr = reinterpret_cast<u8 *>(header);
-        for (u32 i = 0; i < std::size(header->recordSizes); i++) {
-            if (header->recordSizes[i] != 0) {
-                // reset and copy the recieved packet into recv structs
-                m_recvRacePackets[m_lastRecvIdx[aid][i] ^ 1][aid]->holder(i)->reset();
-                m_recvRacePackets[m_lastRecvIdx[aid][i] ^ 1][aid]->holder(i)->copy(dataPacketPtr,
-                        header->recordSizes[i]);
-
-                // increment the data pointer to the next packet offset
-                dataPacketPtr += header->recordSizes[i];
-
-                // flip the last recieved buffer idx
-                m_lastRecvIdx[aid][i] ^= 1;
-            }
-        }
-    } else {
+    if (origCrc32 != calcCrc32) {
         SP_LOG("Invalid Checksum!");
+        return;
+    }
+
+    u8 *currentRecord = reinterpret_cast<u8 *>(header);
+    u8 *const packetEnd = packet + size;
+
+    for (u32 i = 0; i < std::size(header->recordSizes); i++) {
+        u32 recordSize = header->recordSizes[i];
+        if (recordSize == 0) {
+            continue;
+        }
+
+        // don't read past the end of the packet
+        if (recordSize > static_cast<u32>(packetEnd - currentRecord)) {
+            SP_LOG("aid %d's record %u size %u overruns packet", aid, i, recordSize);
+            return;
+        }
+
+        // TODO: Clean this up.
+        m_recvRacePackets[m_lastRecvIdx[aid][i] ^ 1][aid]->holder(i)->reset();
+        m_recvRacePackets[m_lastRecvIdx[aid][i] ^ 1][aid]->holder(i)->copy(currentRecord,
+                recordSize);
+
+        currentRecord += recordSize;
+        m_lastRecvIdx[aid][i] ^= 1;
+    }
+
+    // Try to mark the time we received this packet.
+    auto *raceManager = MKWServer::RaceManager::Instance();
+    if (!raceManager) {
+        return;
+    }
+
+    auto *aidRaceInfo = lastRecvRaceBuffer(aid, RecordType::RaceInfo)->raceInfo()->record();
+    if (!aidRaceInfo) {
+        return;
+    }
+
+    // If the aid has started the countdown, mark when we received their packet.
+    if (aidRaceInfo->startedCountdown) {
+        raceManager->markReceived(aid, aidRaceInfo->timeSinceCountdown);
     }
 }
 

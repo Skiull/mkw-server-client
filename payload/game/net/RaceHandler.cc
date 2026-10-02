@@ -1,5 +1,6 @@
 #include "RaceHandler.hh"
 
+#include "game/net/NetManager.hh"
 #include "game/system/RaceManager.hh"
 
 #include <sp/net/mkw_server/MKWServer.hh>
@@ -43,6 +44,22 @@ void RaceHandler::updateAsRacer() {
     }
 
     REPLACED(updateAsRacer)();
+}
+
+void RaceHandler::exportAsRacer() {
+    REPLACED(exportAsRacer)();
+
+    auto *netManager = NetManager::Instance();
+    auto *raceManager = System::RaceManager::Instance();
+
+    // Set if we've started the countdown or not in the outgoing records.
+    for (u8 aid = 0; aid < MAX_PLAYER_COUNT; aid++) {
+        if (!netManager->canSendToAid(aid)) {
+            continue;
+        }
+        netManager->lastSentRaceBuffer(aid)->raceInfo()->record()->startedCountdown =
+                raceManager->isRaceOngoing();
+    }
 }
 
 } // namespace Net
