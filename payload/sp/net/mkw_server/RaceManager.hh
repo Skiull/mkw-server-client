@@ -9,6 +9,7 @@ namespace MKWServer {
 
 // TODO: Not sure what a good size is in practice.
 static constexpr size_t FrameBufferSize = 300;
+static constexpr u32 FinishTimeResendMs = 2000;
 
 class RaceManager {
 public:
@@ -17,6 +18,10 @@ public:
     bool removeRaceFrame(u16 time);
 
     void markReceived(u8 aid, u32 time);
+
+    void updateRaceFinished();
+
+    void onFinishTimeAck();
 
     static void CreateInstance();
 
@@ -40,6 +45,11 @@ private:
     // Number of frames since the countdown started (RaceManager::m_countdownTimer).
     // Sends mkw-server a frame when updated.
     u32 m_time = 0;
+
+    u32 m_raceFinishTime = 0;
+    bool m_finishTimeSent = false;
+    bool m_finishTimeAcked = false;
+    u64 m_finishTimeLastSendTick = 0;
 
     static RaceManager *s_instance;
 };

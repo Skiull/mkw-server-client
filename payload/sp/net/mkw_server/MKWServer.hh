@@ -40,6 +40,8 @@ bool hasMKWServerAddress();
 
 bool sendRaceFrame(const RaceFrame *raceFrame);
 
+bool sendFinishTime(u16 finishTime);
+
 void sendReadyPacket();
 
 PingTime getPing();

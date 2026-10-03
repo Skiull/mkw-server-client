@@ -66,6 +66,42 @@ void RaceManager::markReceived(u8 aid, u32 time) {
     }
 }
 
+void RaceManager::updateRaceFinished() {
+    if (m_finishTimeAcked) {
+        return;
+    }
+
+    if (m_raceFinishTime == 0) {
+        auto *raceManager = System::RaceManager::Instance();
+        if (!raceManager) {
+            SP_LOG("raceManager is nullptr in updateRaceState()");
+            return;
+        }
+        m_raceFinishTime = raceManager->countdownTimer();
+        SP_LOG("finishTime updated to %d", m_raceFinishTime);
+    }
+
+    u64 now = OSGetTick();
+    if (m_finishTimeSent &&
+            OSTicksToMilliseconds(now - m_finishTimeLastSendTick) < FinishTimeResendMs) {
+        return;
+    }
+
+    if (m_finishTimeSent) {
+        SP_LOG("no finishTime ack yet, resending %d", m_raceFinishTime);
+    }
+
+    m_finishTimeLastSendTick = now;
+    m_finishTimeSent = MKWServer::sendFinishTime(m_raceFinishTime);
+}
+
+void RaceManager::onFinishTimeAck() {
+    if (!m_finishTimeAcked) {
+        SP_LOG("finishTime acked");
+    }
+    m_finishTimeAcked = true;
+}
+
 void RaceManager::CreateInstance() {
     if (s_instance) {
         return;

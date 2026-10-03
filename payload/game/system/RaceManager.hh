@@ -12,8 +12,8 @@ public:
         IntroCamera = 0,
         Countdown = 1,
         Racing = 2,
-        Finished = 3,
-        FinishedTimeAttack = 4,
+        Finishing = 3,
+        Finished = 4,
     };
 
     class Player {

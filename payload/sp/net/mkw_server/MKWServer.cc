@@ -5,9 +5,9 @@ extern "C" {
 #include <revolution/dwc/DWCMatch.h>
 }
 
-#include <sp/net/WiiLink.hh>
-#include <sp/net/mkw_server/RoomManager.hh>
-#include <sp/net/mkw_server/packets/MatchMakingInfo.hh>
+#include "sp/net/WiiLink.hh"
+#include "sp/net/mkw_server/FinishTime.hh"
+#include "sp/net/mkw_server/RoomManager.hh"
 
 #include <string.h>
 
@@ -69,6 +69,22 @@ bool sendRaceFrame(const RaceFrame *raceFrame) {
             SOSendTo(s_dwcMatch->qrec->hbsock, raceFrame, sizeof(RaceFrame), 0, &s_mkwServerAddr);
     if (!result) {
         SP_LOG("Failed to send RaceFrame packet to mkw-server! SOSendTo failed!");
+    }
+    return result;
+}
+
+bool sendFinishTime(u16 finishTime) {
+    if (!hasMKWServerAddress()) {
+        SP_LOG("Can't send FinishTime: Don't have mkw-server address!");
+        return false;
+    }
+
+    auto finishTimePacket = FinishTime(finishTime);
+
+    bool result = SOSendTo(s_dwcMatch->qrec->hbsock, &finishTimePacket, sizeof(FinishTime), 0,
+            &s_mkwServerAddr);
+    if (!result) {
+        SP_LOG("Failed to send FinishTime to mkw-server! SOSendTo failed!");
     }
     return result;
 }

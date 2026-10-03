@@ -75,6 +75,10 @@ void RaceManager::update() {
 
     if (auto *raceManager = MKWServer::RaceManager::Instance()) {
         raceManager->update();
+
+        if (m_state == RaceState::Finished) {
+            raceManager->updateRaceFinished();
+        }
     }
 }
 

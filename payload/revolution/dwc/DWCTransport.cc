@@ -3,6 +3,7 @@
 #include <game/net/RaceHandler.hh>
 #include <game/system/RaceManager.hh>
 
+#include <sp/net/mkw_server/FinishTime.hh>
 #include <sp/net/mkw_server/MKWServer.hh>
 
 #include <string.h>
@@ -70,6 +71,13 @@ BOOL DWCi_GT2UnrecognizedMessageCallback(GT2Socket socket, u32 ip, u16 port, con
 
     if (isPingTimePacket(message, len)) {
         MKWServer::setPingTime(message);
+        return TRUE;
+    }
+
+    if (MKWServer::FinishTime::IsFinishTimeAck(message, len)) {
+        if (auto *raceManager = MKWServer::RaceManager::Instance()) {
+            raceManager->onFinishTimeAck();
+        }
         return TRUE;
     }
 
