@@ -1,6 +1,7 @@
 #include "RaceManager.hh"
 
 #include "sp/net/mkw_server/MKWServer.hh"
+#include "sp/net/mkw_server/MissingFrames.hh"
 
 #include <game/kart/KartObjectManager.hh>
 #include <game/kart/VehiclePhysics.hh>
@@ -77,7 +78,10 @@ void RaceManager::updateRaceFinished() {
             SP_LOG("raceManager is nullptr in updateRaceState()");
             return;
         }
-        m_raceFinishTime = raceManager->countdownTimer();
+        // A race frame isn't created on the frame prior to the finished frame. Its unclear why,
+        // but this subtraction is needed to not miss a frame.
+        // TODO: Figure out the off by one.
+        m_raceFinishTime = raceManager->countdownTimer() - 1;
         SP_LOG("finishTime updated to %d", m_raceFinishTime);
     }
 
@@ -100,6 +104,44 @@ void RaceManager::onFinishTimeAck() {
         SP_LOG("finishTime acked");
     }
     m_finishTimeAcked = true;
+}
+
+void RaceManager::handleMissingFrames(const u8 *message, s32 len) {
+    if (!MissingFramesRequest::IsWellFormed(message, len)) {
+        SP_LOG("Malformed missing frames request (len %d)", len);
+        return;
+    }
+
+    u16 missingFrameCount = MissingFramesRequest::Count(message);
+
+    for (u32 i = 0; i < missingFrameCount; i++) {
+        u16 time = MissingFramesRequest::TimeAt(message, i);
+
+        s32 idx = findFrame(time);
+        if (idx < 0) {
+            // Uh oh! Can't find it! TODO: Inform server.
+            continue;
+        }
+
+        if (!MKWServer::sendRaceFrame(m_raceFrames[idx])) {
+            SP_LOG("Failed to resend missing frame %d", time);
+            continue;
+        }
+    }
+}
+
+void RaceManager::onMissingFramesAck() {
+    if (!m_missingFramesAcked) {
+        SP_LOG("missing frames acked");
+    }
+
+    m_missingFramesAcked = true;
+}
+
+bool RaceManager::canStartNextRace() {
+    // For now, mkw-server just needs to send an ack for the missing race frames to transition
+    // to the next race. But more requirements to transition may be added.
+    return m_missingFramesAcked;
 }
 
 void RaceManager::CreateInstance() {

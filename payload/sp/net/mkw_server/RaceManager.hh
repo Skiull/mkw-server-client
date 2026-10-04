@@ -23,6 +23,12 @@ public:
 
     void onFinishTimeAck();
 
+    void handleMissingFrames(const u8 *message, s32 len);
+
+    void onMissingFramesAck();
+
+    bool canStartNextRace();
+
     static void CreateInstance();
 
     static void DestroyInstance();
@@ -50,6 +56,7 @@ private:
     bool m_finishTimeSent = false;
     bool m_finishTimeAcked = false;
     u64 m_finishTimeLastSendTick = 0;
+    bool m_missingFramesAcked = false;
 
     static RaceManager *s_instance;
 };

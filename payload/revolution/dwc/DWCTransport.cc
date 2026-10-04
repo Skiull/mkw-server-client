@@ -5,6 +5,7 @@
 
 #include <sp/net/mkw_server/FinishTime.hh>
 #include <sp/net/mkw_server/MKWServer.hh>
+#include <sp/net/mkw_server/MissingFrames.hh>
 
 #include <string.h>
 
@@ -89,6 +90,22 @@ BOOL DWCi_GT2UnrecognizedMessageCallback(GT2Socket socket, u32 ip, u16 port, con
 
         u16 time = (static_cast<u16>(message[2]) << 8) | message[3];
         return raceManager->removeRaceFrame(time);
+    }
+
+    if (MKWServer::MissingFramesRequest::IsMissingFramesRequest(message, len)) {
+        if (auto *raceManager = MKWServer::RaceManager::Instance()) {
+            raceManager->handleMissingFrames(message, len);
+        } else {
+            SP_LOG("Missing frames request sent but MKWServer::RaceManager is nullptr!");
+        }
+        return TRUE;
+    }
+
+    if (MKWServer::MissingFramesAck::IsAck(message, len)) {
+        if (auto *raceManager = MKWServer::RaceManager::Instance()) {
+            raceManager->onMissingFramesAck();
+        }
+        return TRUE;
     }
 
     MKWServer::PacketType messageType = static_cast<MKWServer::PacketType>(message[0]);

@@ -13,6 +13,7 @@
 
 namespace UI {
 
+class WifiRaceEndCountdownPage;
 class MenuSettingsPage;
 class WifiMenuTopPage;
 
@@ -90,6 +91,11 @@ private:
 };
 static_assert(sizeof(Section) ==
         ROUND_UP(0x408 + std::max(1uz, sizeof(Page *) * ExtendedPageCount()), alignof(Section)));
+
+template <>
+struct Section::PageIdHelper<PageId::WifiRaceEndCountDown> {
+    using type = WifiRaceEndCountdownPage;
+};
 
 template <>
 struct Section::PageIdHelper<PageId::WifiMenuTop> {

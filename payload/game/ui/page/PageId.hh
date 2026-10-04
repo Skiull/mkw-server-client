@@ -8,6 +8,9 @@ enum class PageId {
     None = -0x1,
     Empty = 0x0,
 
+    WifiRaceEndCountDown = 0x45,
+    WifiRaceEndWait = 0x48,
+
     WifiShutdown = 0x87,
     WifiMenuTop = 0x8B,
     WifiMenuModeSelect = 0x8C,
