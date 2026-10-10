@@ -6,9 +6,9 @@ extern "C" {
 #include <revolution.h>
 }
 
-#include <sp/net/mkw_server/RaceManager.hh>
 #include <sp/net/mkw_server/packets/PingTime.hh>
 #include <sp/net/mkw_server/packets/SearchId.hh>
+#include <sp/net/mkw_server/race_verification/RaceManager.hh>
 
 namespace MKWServer {
 

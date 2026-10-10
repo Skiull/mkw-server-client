@@ -1,7 +1,7 @@
 #include "RaceManager.hh"
 
 #include "sp/net/mkw_server/MKWServer.hh"
-#include "sp/net/mkw_server/MissingFrames.hh"
+#include "sp/net/mkw_server/race_verification/MissingFrames.hh"
 
 #include <game/kart/KartObjectManager.hh>
 #include <game/kart/VehiclePhysics.hh>

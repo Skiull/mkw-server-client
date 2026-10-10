@@ -6,8 +6,8 @@ extern "C" {
 }
 
 #include "sp/net/WiiLink.hh"
-#include "sp/net/mkw_server/FinishTime.hh"
 #include "sp/net/mkw_server/RoomManager.hh"
+#include "sp/net/mkw_server/race_verification/FinishTime.hh"
 
 #include <string.h>
 

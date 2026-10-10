@@ -3,9 +3,9 @@
 #include <game/net/RaceHandler.hh>
 #include <game/system/RaceManager.hh>
 
-#include <sp/net/mkw_server/FinishTime.hh>
 #include <sp/net/mkw_server/MKWServer.hh>
-#include <sp/net/mkw_server/MissingFrames.hh>
+#include <sp/net/mkw_server/race_verification/FinishTime.hh>
+#include <sp/net/mkw_server/race_verification/MissingFrames.hh>
 
 #include <string.h>
 

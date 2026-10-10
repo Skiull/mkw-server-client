@@ -1,7 +1,7 @@
 #include "RaceScene.hh"
 
 #include <sp/SaveStateManager.hh>
-#include <sp/net/mkw_server/RaceManager.hh>
+#include <sp/net/mkw_server/race_verification/RaceManager.hh>
 
 namespace Scene {
 

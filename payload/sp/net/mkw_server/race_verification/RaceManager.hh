@@ -3,7 +3,7 @@
 #include <Common.hh>
 
 #include "sp/CircularBuffer.hh"
-#include "sp/net/mkw_server/RaceFrame.hh"
+#include "sp/net/mkw_server/race_verification/RaceFrame.hh"
 
 namespace MKWServer {
 

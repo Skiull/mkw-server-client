@@ -3,7 +3,7 @@
 #include "game/ui/SectionManager.hh"
 #include "game/ui/page/WifiRaceEndCountdownPage.hh"
 
-#include <sp/net/mkw_server/RaceManager.hh>
+#include <sp/net/mkw_server/race_verification/RaceManager.hh>
 
 namespace UI {
 
