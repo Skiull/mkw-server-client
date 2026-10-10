@@ -5,6 +5,8 @@
 #include "sp/CircularBuffer.hh"
 #include "sp/net/mkw_server/race_verification/RaceFrame.hh"
 
+#include <array>
+
 namespace MKWServer {
 
 // TODO: Not sure what a good size is in practice.
@@ -44,6 +46,7 @@ private:
     void resendFrames();
     s32 findFrame(u16 time);
     RaceFrame makeFrame(u16 time);
+    u32 raceFrameSize() const;
 
     // Race frames sent but waiting to be acked by mkw-server.
     SP::CircularBuffer<RaceFrame, FrameBufferSize> m_raceFrames;
@@ -57,6 +60,10 @@ private:
     bool m_finishTimeAcked = false;
     u64 m_finishTimeLastSendTick = 0;
     bool m_missingFramesAcked = false;
+
+    u8 m_localPlayerCount;
+    u8 m_myAid;
+    std::array<s8, 2> m_playerIds;
 
     static RaceManager *s_instance;
 };

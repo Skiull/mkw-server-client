@@ -5,8 +5,11 @@
 
 #include <game/kart/KartObjectManager.hh>
 #include <game/kart/VehiclePhysics.hh>
+#include <game/net/NetManager.hh>
 #include <game/system/RaceConfig.hh>
 #include <game/system/RaceManager.hh>
+
+#include <ranges>
 
 extern "C" {
 #include <revolution.h>
@@ -26,7 +29,7 @@ void RaceManager::update() {
     if (updateTime()) {
         // it changed, meaning the last frame is finalized and can be sent.
         if (auto raceFrame = getOrCreateFrame(currTime)) {
-            if (!MKWServer::sendRaceFrame(raceFrame)) {
+            if (!MKWServer::sendRaceFrame(raceFrame, raceFrameSize())) {
                 SP_LOG("Failed to send frame %d", currTime);
             }
         } else {
@@ -123,7 +126,7 @@ void RaceManager::handleMissingFrames(const u8 *message, s32 len) {
             continue;
         }
 
-        if (!MKWServer::sendRaceFrame(m_raceFrames[idx])) {
+        if (!MKWServer::sendRaceFrame(m_raceFrames[idx], raceFrameSize())) {
             SP_LOG("Failed to resend missing frame %d", time);
             continue;
         }
@@ -150,6 +153,13 @@ void RaceManager::CreateInstance() {
     }
 
     s_instance = new RaceManager;
+
+    auto *netManager = Net::NetManager::Instance();
+    s_instance->m_myAid = netManager->myAid();
+    s_instance->m_localPlayerCount = netManager->localPlayerCount();
+    for (auto [i, val] : std::views::enumerate(s_instance->m_playerIds)) {
+        s_instance->m_playerIds[i] = netManager->localPlayersPlayerId(i);
+    }
 }
 
 void RaceManager::DestroyInstance() {
@@ -215,7 +225,7 @@ void RaceManager::resendFrames() {
         // Start resending after 2 seconds, every half second.
         // TODO: Figure out what numbers/logic is good here.
         if (timeSinceSend > 30 && timeSinceSend % 10 == 0) {
-            if (!MKWServer::sendRaceFrame(raceFrame)) {
+            if (!MKWServer::sendRaceFrame(raceFrame, raceFrameSize())) {
                 SP_LOG("RaceFrame %d failed to resend!", raceFrame->time);
             }
         }
@@ -233,28 +243,26 @@ s32 RaceManager::findFrame(u16 time) {
 }
 
 RaceFrame RaceManager::makeFrame(u16 time) {
-    u32 inputs = 0;
-    Vec3 pos = {};
-
-    auto *raceConfig = System::RaceConfig::Instance();
     auto *raceManager = System::RaceManager::Instance();
-    if (raceConfig && raceManager) {
-        s8 playerId = raceConfig->raceScenario().localPlayerIds[0];
-        if (auto *player = raceManager->player(playerId)) {
-            inputs = player->padProxy()->currentRaceInputState().inputBitfield();
-        }
-    }
+    auto *kartObjectManager = Kart::KartObjectManager::Instance();
 
-    if (auto *kartObjectManager = Kart::KartObjectManager::Instance()) {
-        // TODO!!! Replace 0 with playerId!!!
-        if (auto *obj = kartObjectManager->object(0)) {
-            if (auto *physics = obj->getVehiclePhysics()) {
-                pos = *physics->pos();
-            }
+    RaceFrame frame(time);
+    for (auto [i, playerId] : std::views::enumerate(m_playerIds)) {
+        if (playerId == -1) {
+            continue;
         }
+        u32 inputs =
+                raceManager->player(playerId)->padProxy()->currentRaceInputState().inputBitfield();
+        Vec3 pos = *kartObjectManager->object(playerId)->getVehiclePhysics()->pos();
+        RaceFramePlayer player(inputs, pos);
+        frame.players[i] = player;
     }
+    return frame;
+}
 
-    return RaceFrame(time, inputs, pos);
+u32 RaceManager::raceFrameSize() const {
+    u32 playerRecordSize = m_localPlayerCount * sizeof(RaceFramePlayer);
+    return sizeof(RaceFrame) - (2 * sizeof(RaceFramePlayer)) + playerRecordSize;
 }
 
 } // namespace MKWServer

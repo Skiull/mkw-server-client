@@ -38,7 +38,9 @@ u64 getSearchId();
 
 bool hasMKWServerAddress();
 
-bool sendRaceFrame(const RaceFrame *raceFrame);
+// This function has a size param because race frames can differ in size depending on the local
+// player count.
+bool sendRaceFrame(const RaceFrame *raceFrame, u32 size);
 
 bool sendFinishTime(u16 finishTime);
 

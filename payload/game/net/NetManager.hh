@@ -64,8 +64,6 @@ public:
 private:
     const MatchMakingInfo &currentMMInfo() const;
 
-    u8 myAid() const;
-
     u32 numAids() const;
 
     bool aidInUse(u8 aid) const;
@@ -75,6 +73,14 @@ public:
     bool canSendToAid(u8 aid) const;
 
     RacePacketHolder *lastSentRaceBuffer(u8 aid);
+
+    u8 localPlayerCount() const;
+
+    // 0x80659d58
+    // Gets the playerId of the passed in localPlayerId (sometimes called hudId).
+    s8 localPlayersPlayerId(u8 localPlayerId) const;
+
+    u8 myAid() const;
 
 private:
     RacePacketHolder *lastRecvRaceBuffer(u8 aid, RecordType recordType);

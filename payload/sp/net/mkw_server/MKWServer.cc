@@ -59,14 +59,13 @@ bool hasMKWServerAddress() {
     return s_mkwServerAddr.addr.addr != 0 && s_mkwServerAddr.port != 0;
 }
 
-bool sendRaceFrame(const RaceFrame *raceFrame) {
+bool sendRaceFrame(const RaceFrame *raceFrame, u32 size) {
     if (!hasMKWServerAddress()) {
         SP_LOG("Can't send raceFrame: Don't have mkw-server address!");
         return false;
     }
 
-    bool result =
-            SOSendTo(s_dwcMatch->qrec->hbsock, raceFrame, sizeof(RaceFrame), 0, &s_mkwServerAddr);
+    bool result = SOSendTo(s_dwcMatch->qrec->hbsock, raceFrame, size, 0, &s_mkwServerAddr);
     if (!result) {
         SP_LOG("Failed to send RaceFrame packet to mkw-server! SOSendTo failed!");
     }

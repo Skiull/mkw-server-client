@@ -16,10 +16,6 @@ const MatchMakingInfo &NetManager::currentMMInfo() const {
     return m_matchMakingInfos[m_currMMInfo];
 }
 
-u8 NetManager::myAid() const {
-    return currentMMInfo().myAid;
-}
-
 u32 NetManager::numAids() const {
     return currentMMInfo().numAids;
 }
@@ -34,6 +30,14 @@ bool NetManager::canSendToAid(u8 aid) const {
 
 RacePacketHolder *NetManager::lastSentRaceBuffer(u8 aid) {
     return m_sendRacePackets[m_lastSendIdx[aid]][aid];
+}
+
+u8 NetManager::localPlayerCount() const {
+    return currentMMInfo().myLocalPlayerCount;
+}
+
+u8 NetManager::myAid() const {
+    return currentMMInfo().myAid;
 }
 
 RacePacketHolder *NetManager::lastRecvRaceBuffer(u8 aid, RecordType recordType) {
