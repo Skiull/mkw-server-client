@@ -27,7 +27,7 @@ void RaceManager::update() {
     }
 
     // save m_time in case it changed.
-    u32 currTime = m_time;
+    u16 currTime = m_time;
     if (updateTime()) {
         // it changed, meaning the last frame is finalized and can be sent.
         if (auto raceFrame = getOrCreateFrame(currTime)) {
@@ -57,7 +57,7 @@ bool RaceManager::removeRaceFrame(u16 time) {
     return true;
 }
 
-void RaceManager::markReceived(u8 aid, u32 time) {
+void RaceManager::markReceived(u8 aid, u16 time) {
     if (!isActive()) {
         return;
     }
@@ -225,7 +225,7 @@ bool RaceManager::updateTime() {
         return false;
     }
 
-    u32 raceManagerTime = raceManager->countdownTimer();
+    u16 raceManagerTime = raceManager->countdownTimer();
     if (m_time == raceManagerTime) {
         return false;
     }

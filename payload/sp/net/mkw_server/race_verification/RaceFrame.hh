@@ -43,11 +43,11 @@ struct RaceFrame {
     u16 time;
 
     // The time each aid sent a race packet to us.
-    u32 recvPacketTimestamps[12];
+    u16 recvPacketTimestamps[12];
 
     // Data for each local player.
     RaceFramePlayer players[2];
 };
-static_assert(sizeof(RaceFrame) == 0x50);
+static_assert(sizeof(RaceFrame) == 0x38);
 
 } // namespace MKWServer

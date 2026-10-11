@@ -19,7 +19,7 @@ public:
 
     bool removeRaceFrame(u16 time);
 
-    void markReceived(u8 aid, u32 time);
+    void markReceived(u8 aid, u16 time);
 
     void updateRaceFinished();
 
@@ -55,13 +55,13 @@ private:
 
     // Number of frames since the countdown started (RaceManager::m_countdownTimer).
     // Sends mkw-server a frame when updated.
-    u32 m_time = 0;
+    u32 m_time;
 
-    u32 m_raceFinishTime = 0;
-    bool m_finishTimeSent = false;
-    bool m_finishTimeAcked = false;
-    u64 m_finishTimeLastSendTick = 0;
-    bool m_missingFramesAcked = false;
+    u16 m_raceFinishTime;
+    bool m_finishTimeSent;
+    bool m_finishTimeAcked;
+    u64 m_finishTimeLastSendTick;
+    bool m_missingFramesAcked;
 
     u8 m_localPlayerCount;
     u8 m_myAid;
