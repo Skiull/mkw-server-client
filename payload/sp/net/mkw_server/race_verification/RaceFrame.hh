@@ -10,17 +10,17 @@ static constexpr u16 RaceFrameMagic = 0x5246; // "RF"
 static constexpr size_t RaceFrameAckSize = 4;
 
 // RaceFramePlayer contains info of a local players' frame needed to replay it.
-struct RaceFramePlayer {
+struct __attribute__((packed)) RaceFramePlayer {
     RaceFramePlayer() = default;
-    RaceFramePlayer(u32 inputs, const Vec3 &pos) : inputs(inputs), pos(pos) {}
+    RaceFramePlayer(u16 inputs, const Vec3 &pos) : inputs(inputs), pos{pos.x, pos.y, pos.z} {}
 
     // Players' inputs. See RaceInputState::inputBitfield().
-    u32 inputs;
+    u16 inputs;
 
     // Players' position used to verify physics.
-    Vec3 pos;
+    f32 pos[3];
 };
-static_assert(sizeof(RaceFramePlayer) == 0x10);
+static_assert(sizeof(RaceFramePlayer) == 0xe);
 
 // RaceFrame holds received packets and player info on a single frame.
 // TODO: Pack members as much as possible.
@@ -48,6 +48,6 @@ struct RaceFrame {
     // Data for each local player.
     RaceFramePlayer players[2];
 };
-static_assert(sizeof(RaceFrame) == 0x54);
+static_assert(sizeof(RaceFrame) == 0x50);
 
 } // namespace MKWServer

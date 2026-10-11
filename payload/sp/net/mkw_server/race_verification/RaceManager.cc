@@ -278,7 +278,7 @@ RaceFrame RaceManager::makeFrame(u16 time) {
         if (playerId == -1) {
             continue;
         }
-        u32 inputs =
+        u16 inputs =
                 raceManager->player(playerId)->padProxy()->currentRaceInputState().inputBitfield();
         Vec3 pos = *kartObjectManager->object(playerId)->getVehiclePhysics()->pos();
         RaceFramePlayer player(inputs, pos);

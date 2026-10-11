@@ -55,7 +55,10 @@ struct RaceInputState {
 
     bool isInputValid() const;
 
-    s16 inputBitfield() const;
+    // Bits 0  -  6: See RaceInput
+    // Bits 7  - 10: rawStick.x
+    // Bits 11 - 14: rawStick.y
+    u16 inputBitfield() const;
 
     u16 _04 : 10;
     bool lookBackwards : 1;

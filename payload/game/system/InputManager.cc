@@ -19,7 +19,7 @@ bool RaceInputState::isInputValid() const {
     return true;
 }
 
-s16 RaceInputState::inputBitfield() const {
+u16 RaceInputState::inputBitfield() const {
     if (!isInputValid()) {
         return -1;
     }
@@ -42,6 +42,9 @@ s16 RaceInputState::inputBitfield() const {
     if (item) {
         inputBitfield |= RaceInput::Item;
     }
+
+    inputBitfield |= (rawStick.x & 0xf) << 7;
+    inputBitfield |= (rawStick.y & 0xf) << 11;
 
     return inputBitfield;
 }
