@@ -88,6 +88,20 @@ bool sendFinishTime(u16 finishTime) {
     return result;
 }
 
+bool sendConfig(const ConfigPacket &configPacket, s32 packetSize) {
+    if (!hasMKWServerAddress()) {
+        SP_LOG("Can't send FinishTime: Don't have mkw-server address!");
+        return false;
+    }
+
+    bool result =
+            SOSendTo(s_dwcMatch->qrec->hbsock, &configPacket, packetSize, 0, &s_mkwServerAddr);
+    if (!result) {
+        SP_LOG("Failed to send FinishTime to mkw-server! SOSendTo failed!");
+    }
+    return result;
+}
+
 void sendReadyPacket() {
     if (!hasMKWServerAddress()) {
         SP_LOG("Can't send Ready packet: Don't have mkw-server address!");

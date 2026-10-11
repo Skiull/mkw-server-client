@@ -31,6 +31,8 @@ public:
 
     bool canStartNextRace();
 
+    bool makeAndSendConfig();
+
     static void CreateInstance();
 
     static void DestroyInstance();

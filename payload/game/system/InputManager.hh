@@ -141,12 +141,18 @@ public:
     const RaceInputState &currentRaceInputState() const;
     void setPad(Pad *pad, Pad *r5);
 
+    Registry::DriftType driftType() const {
+        return m_driftType;
+    }
+
 private:
     Pad *m_pad;
     u8 _08[0x28 - 0x08];
     RaceInputState m_currentRaceInputState;
     RaceInputState m_lastRaceInputState;
-    u8 _58[0xd8 - 0x58];
+    u8 _58[0xc0 - 0x58];
+    Registry::DriftType m_driftType : 16;
+    u8 _c2[0xd8 - 0xc2];
 };
 static_assert(sizeof(PadProxy) == 0xd8);
 

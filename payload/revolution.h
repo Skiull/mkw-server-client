@@ -11,6 +11,7 @@
 #include "revolution/nand.h"
 #include "revolution/os.h"
 #include "revolution/pad.h"
+#include "revolution/rfl/rfl.h"
 #include "revolution/sc.h"
 #include "revolution/so/so.h"
 #include "revolution/vi.h"

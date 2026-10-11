@@ -211,6 +211,40 @@ enum class EngineClass {
     Mirror = 0x03,
 };
 
-extern const Course OrderedCourses[0x20];
+enum class GameMode {
+    OfflineVS = 1,
+    TimeAttack = 2,
+    OfflineBT = 3,
+    Mission = 4,
+    OnlinePrivateVS = 7,
+    OnlinePublicVS = 8,
+    OnlinePublicBT = 9,
+    OnlinePrivateBT = 10,
+    Awards = 11,
+};
+
+enum class BattleType {
+    BalloonBattle = 0,
+    CoinRunners = 1,
+};
+
+enum class ModeFlags {
+    Mirror = 1 << 0,
+    Teams = 1 << 1,
+};
+
+enum class DriftType {
+    Manual = 0,
+    Auto = 1,
+};
+
+enum class RegionLine {
+    Japan = 0,
+    Americas = 1,
+    Europe = 2,
+    Australia = 3,
+    Taiwan = 4,
+    Korea = 5,
+};
 
 } // namespace Registry

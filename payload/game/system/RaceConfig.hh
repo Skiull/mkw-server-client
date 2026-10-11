@@ -15,25 +15,34 @@ public:
     virtual ~RaceConfig();
     virtual void dt(s32 type);
 
-    enum class GameMode {
-        OfflineVS = 1,
-        TimeAttack = 2,
-        OfflineBT = 3,
-        Mission = 4,
-        OnlinePrivateVS = 7,
-        OnlinePublicVS = 8,
-        OnlinePublicBT = 9,
-        OnlinePrivateBT = 10,
-        Awards = 11,
+    struct Player {
+        u8 _00[0x08 - 0x00];
+        Registry::Vehicle vehicle;
+        Registry::Character character;
+        u8 _10[0xcc - 0x10];
+        Registry::Team team;
+        u8 _d0[0xd8 - 0xd0];
+        u16 points;
+        u8 _da[0xe1 - 0xda];
+        u8 startingSpot;
+        u8 _e2[0xf0 - 0xe2];
     };
+    static_assert(sizeof(Player) == 0xf0);
 
     struct Scenario {
         bool isOnline() const;
-        u8 _000[0xb50 - 0x000];
-        GameMode gameMode;
-        u8 _b54[0xb64 - 0xb54];
-        s8 localPlayerIds[4];
-        u8 _b68[0xbf0 - 0xb68];
+        bool isOnlineVS() const;
+        bool isOnlineBattle() const;
+        u8 _000[0x008 - 0x000];
+        Player players[12];
+        Registry::Course course;
+        Registry::EngineClass engineClass;
+        Registry::GameMode gameMode;
+        u8 _b54[0xb58 - 0xb54];
+        Registry::BattleType battleType;
+        u8 _b5c[0xb73 - 0xb5c];
+        Registry::ModeFlags modeFlags : 8;
+        u8 _b74[0xbf0 - 0xb74];
     };
     static_assert(sizeof(Scenario) == 0xbf0);
 

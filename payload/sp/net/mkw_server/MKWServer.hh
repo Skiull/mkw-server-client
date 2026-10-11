@@ -8,6 +8,7 @@ extern "C" {
 
 #include <sp/net/mkw_server/packets/PingTime.hh>
 #include <sp/net/mkw_server/packets/SearchId.hh>
+#include <sp/net/mkw_server/race_verification/Config.hh>
 #include <sp/net/mkw_server/race_verification/RaceManager.hh>
 
 namespace MKWServer {
@@ -45,6 +46,8 @@ bool sendRaceFrame(const RaceFrame *raceFrame, u32 size);
 bool sendFinishTime(u16 finishTime);
 
 void sendReadyPacket();
+
+bool sendConfig(const ConfigPacket &configPacket, s32 packetSize);
 
 PingTime getPing();
 

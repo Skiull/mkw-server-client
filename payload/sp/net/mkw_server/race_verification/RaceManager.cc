@@ -1,11 +1,13 @@
 #include "RaceManager.hh"
 
 #include "sp/net/mkw_server/MKWServer.hh"
+#include "sp/net/mkw_server/race_verification/Config.hh"
 #include "sp/net/mkw_server/race_verification/MissingFrames.hh"
 
 #include <game/kart/KartObjectManager.hh>
 #include <game/kart/VehiclePhysics.hh>
 #include <game/net/NetManager.hh>
+#include <game/net/records/User.hh>
 #include <game/system/RaceConfig.hh>
 #include <game/system/RaceManager.hh>
 
@@ -145,6 +147,31 @@ bool RaceManager::canStartNextRace() {
     // For now, mkw-server just needs to send an ack for the missing race frames to transition
     // to the next race. But more requirements to transition may be added.
     return m_missingFramesAcked;
+}
+
+bool RaceManager::makeAndSendConfig() {
+    auto &raceScenario = System::RaceConfig::Instance()->raceScenario();
+    MKWServer::Race race(raceScenario);
+
+    // outgoingRecord() will create a User record incase it has been cleared.
+    auto *userRecord = Net::UserHandler::Instance()->outgoingRecord();
+    if (!userRecord) {
+        SP_LOG("Failed to make config because my User record is nullptr!");
+        return false;
+    }
+
+    MKWServer::Aid aid(userRecord);
+    MKWServer::ConfigPacket configPacket(race, aid);
+
+    for (auto [i, playerId] : std::views::enumerate(m_playerIds)) {
+        if (playerId < 0) {
+            continue;
+        }
+        auto &player = raceScenario.players[playerId];
+        configPacket.players[i] = MKWServer::Player(playerId, m_myAid, i, player);
+    }
+
+    return MKWServer::sendConfig(configPacket, ConfigPacket::CalcPacketSize(m_localPlayerCount));
 }
 
 void RaceManager::CreateInstance() {

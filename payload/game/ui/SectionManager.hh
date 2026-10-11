@@ -23,6 +23,10 @@ public:
 
     u8 getLocalPlayerCount() const;
 
+    const SectionParams *sectionParams() const {
+        return m_sectionParams;
+    }
+
     static SectionManager *Instance() {
         return s_instance;
     }

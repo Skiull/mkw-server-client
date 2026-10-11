@@ -21,7 +21,7 @@ void RaceManager::Player::calc() {
     auto gameMode = raceConfig->raceScenario().gameMode;
     // These settings are exclusive to TTs. We check for playerId to prevent unintended behavior
     // from ghosts.
-    if (gameMode == System::RaceConfig::GameMode::TimeAttack && m_playerId == 0) {
+    if (gameMode == Registry::GameMode::TimeAttack && m_playerId == 0) {
         auto *playerPadProxy = m_padProxy;
         auto buttons = playerPadProxy->currentRaceInputState().rawButtons;
         auto controller = playerPadProxy->pad()->getControllerId();

@@ -10,14 +10,14 @@ namespace Item {
 
 void ItemInventory::resetItem() {
     auto *raceConfig = System::RaceConfig::Instance();
-    if (raceConfig->raceScenario().gameMode != System::RaceConfig::GameMode::TimeAttack) {
+    if (raceConfig->raceScenario().gameMode != Registry::GameMode::TimeAttack) {
         REPLACED(resetItem)();
     }
 }
 
 void ItemInventory::resetHeldItem() {
     auto *raceConfig = System::RaceConfig::Instance();
-    if (raceConfig->raceScenario().gameMode != System::RaceConfig::GameMode::TimeAttack) {
+    if (raceConfig->raceScenario().gameMode != Registry::GameMode::TimeAttack) {
         REPLACED(resetHeldItem)();
     }
 }
