@@ -39,15 +39,15 @@ static_assert(sizeof(Aid) == 0xa1);
 
 struct __attribute__((packed)) Player {
     Player() = default;
-    Player(u8 aid, u8 playerId, u8 localPlayerId, const System::RaceConfig::Player &player)
-        : aid(aid), playerId(playerId), character(player.character), vehicle(player.vehicle),
+    Player(u8 playerId, u8 aid, u8 localPlayerId, const System::RaceConfig::Player &player)
+        : playerId(playerId), aid(aid), character(player.character), vehicle(player.vehicle),
           team(player.team), startingSpot(player.startingSpot),
           driftType(System::RaceManager::Instance()->player(playerId)->padProxy()->driftType()),
           rankIconId(UI::SectionManager::Instance()->sectionParams()->getRankIconId(localPlayerId)),
           points(player.points), rating(Net::UserHandler::Instance()->getRating()) {}
 
-    u8 aid;
     u8 playerId;
+    u8 aid;
     Registry::Character character : 8;
     Registry::Vehicle vehicle : 8;
     Registry::Team team : 8;
