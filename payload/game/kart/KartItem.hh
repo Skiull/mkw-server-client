@@ -16,6 +16,10 @@ public:
 
     void calcItemWheel(bool isPressed);
 
+    u8 playerId() const {
+        return m_playerId;
+    }
+
 private:
     u8 _000[0x018 - 0x000];
     u8 m_playerId;
