@@ -18,6 +18,11 @@ public:
     // Added. sets m_readyAcked
     void setAckReady();
 
+    // 0x80654918
+    // Returns the local player index (0 for the main player, 1 for a guest) of playerId, or -1 if
+    // playerId isn't a local player.
+    s32 getLocalPlayerIdx(u32 playerId);
+
     static RaceHandler *Instance() {
         return s_instance;
     }
