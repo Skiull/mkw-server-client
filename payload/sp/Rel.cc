@@ -1,3 +1,5 @@
+#include "sp/net/mkw_server/GameHash.hh"
+#include "sp/TestCheats.hh"
 #include "Rel.hh"
 
 #include "Common.hh"
@@ -124,9 +126,23 @@ std::expected<void, const char *> Load() {
     return {};
 }
 
+// StaticR.rel's .data (section 5) after linking, when section offsets are addresses.
+static void SnapshotData() {
+    auto *header = reinterpret_cast<OSModuleHeader *>(OSRoundUp32B(Rel_getStart()));
+    auto *sections = reinterpret_cast<OSSectionInfo *>(header->info.sectionInfoOffset);
+    if (header->info.numSections <= 5) {
+        return;
+    }
+    const OSSectionInfo &data = sections[5];
+    MKWServer::GameHash::SnapshotRelData(reinterpret_cast<const void *>(data.offset & ~1), data.size);
+}
+
 void Run() {
     assert(entry);
     Patcher_patch(PATCHER_BINARY_REL);
+    // Before the test cheats, so cheat builds show up as changed .data.
+    SnapshotData();
+    TestCheats::Apply();
 
     if (HostPlatform_IsDolphin(Host_GetPlatform())) {
         Console_init();

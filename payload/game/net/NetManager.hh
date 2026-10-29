@@ -85,6 +85,11 @@ private:
     REPLACE void init(u8 localPlayerCount);
     void REPLACED(init)(u8 localPlayerCount);
 
+    // 0x80656920
+    // Hooked to log who reports a disconnect (finding unexplained mid-race drops).
+    REPLACE void setDisconnectInfo(DisconnectType type, s32 code);
+    void REPLACED(setDisconnectInfo)(DisconnectType type, s32 code);
+
     // 0x806561a8
     // Sets m_shutdownScheduled, which mainNetworkLoop() reacts to during next iteration.
     // Resets all wfc-server/mkw-server structures

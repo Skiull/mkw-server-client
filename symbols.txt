@@ -689,6 +689,8 @@
 0x80642a98 _ZN2UI14UpDownAnimator5vf_08Ev
 0x80643168 onInit
 0x80649590 DCPageCalc
+0x80649c70 ErrorPage_explainDWCErrorCall
+0x80649da4 ExplainDWCError
 0x8064b450 _ZN2UI12FriendButton8calcSelfEv
 0x806532d8 _ZN3Net11RaceHandler4initEv
 0x80654150 RaceHandler_updateAsRacer

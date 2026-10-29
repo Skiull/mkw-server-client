@@ -64,7 +64,16 @@ void NetManager::init(u8 localPlayerCount) {
     m_outgoingUniquePackets.reset();
 }
 
+void NetManager::setDisconnectInfo(DisconnectType type, s32 code) {
+    SP_LOG("setDisconnectInfo(type %d, code %d) called from %p", type, code,
+            __builtin_return_address(0));
+    REPLACED(setDisconnectInfo)(type, code);
+}
+
 void NetManager::scheduleShutdown() {
+    // Logs who asked for the disconnect, to find unexplained drops mid-race.
+    SP_LOG("scheduleShutdown called from %p (disconnect type %d, code %d)", __builtin_return_address(0),
+            m_disconnectInfo.type, m_disconnectInfo.code);
     m_shutdownScheduled = true;
 
     MKWServer::resetRoomManagerConnection();

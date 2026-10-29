@@ -42,6 +42,9 @@ parser.add_argument("--ci", action="store_true")
 parser.add_argument("--debug", action="store_true")
 parser.add_argument("--local_mkw_server", action="store_true")
 parser.add_argument("--test_mkw_server", action="store_true")
+parser.add_argument("--mkw_server_ip", help="Self-hosted server's public IPv4. Uses <hex ip>.nip.io as the domain. Implies --local_mkw_server's payload key.")
+parser.add_argument("--test_fake_game_hash", help="LOGIN,INROOM hex game hashes to report instead of the real ones. Test builds only: for checking mkw-server's game hash challenges.")
+parser.add_argument("--test_cheats", help="Gecko code text file to build into the client. Test builds only: for checking mkw-server's anti-cheat.")
 parser.add_argument("--asm", action="store_true", help="Generate assembly files (.s) alongside object files")
 args = parser.parse_args(our_argv)
 
@@ -410,6 +413,30 @@ if args.debug:
 if args.local_mkw_server:
     common_cflags.append("-DLOCAL_MKW_SERVER")
     common_ccflags.append("-DLOCAL_MKW_SERVER")
+if args.mkw_server_ip:
+    import ipaddress
+    ip_hex = "%08x" % int(ipaddress.IPv4Address(args.mkw_server_ip))
+    flags = ["-DLOCAL_MKW_SERVER", "-DMKW_SERVER_IP_HEX=" + ip_hex]
+    common_cflags += flags
+    common_ccflags += flags
+if args.test_fake_game_hash:
+    _login, _inroom = args.test_fake_game_hash.split(",")
+    flags = ["-DTEST_FAKE_LOGIN_HASH=0x" + _login + "ull", "-DTEST_FAKE_INROOM_HASH=0x" + _inroom + "ull"]
+    common_cflags += flags
+    common_ccflags += flags
+# Test cheat codes (empty unless --test_cheats): payload/sp/TestCheats.cc includes this.
+os.makedirs("build", exist_ok=True)
+_cheat_words = []
+if args.test_cheats:
+    import re
+    for _line in open(args.test_cheats, encoding="utf-8"):
+        _m = re.fullmatch(r"\s*([0-9A-Fa-f]{8})\s+([0-9A-Fa-f]{8})\s*", _line)
+        if _m:
+            _cheat_words += ["0x" + _m.group(1), "0x" + _m.group(2)]
+_cheat_inc = "".join(w + ",\n" for w in _cheat_words)
+_cheat_path = os.path.join("build", "TestCheatsCodes.inc")
+if not os.path.exists(_cheat_path) or open(_cheat_path).read() != _cheat_inc:
+    open(_cheat_path, "w").write(_cheat_inc)
 if args.test_mkw_server:
     common_cflags.append("-DTEST_MKW_SERVER")
     common_ccflags.append("-DTEST_MKW_SERVER")

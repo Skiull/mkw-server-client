@@ -1,5 +1,9 @@
 #include "WiiLink.hh"
 
+#include "game/system/Mii.hh"
+#include "game/ui/MessageInfo.hh"
+#include "sp/net/mkw_server/GameHash.hh"
+
 extern "C" {
 #include <revolution.h>
 }
@@ -11,6 +15,8 @@ _Alignas(0x20) static u8 s_payloadBlock[PAYLOAD_BLOCK_SIZE + 0x20];
 static WWFCPayload *s_payload = NULL;
 static bool s_payloadReady = false;
 static u8 s_saltHash[SHA256_DIGEST_SIZE];
+// The server said this client's game version is unknown (see WL_ERROR_PAYLOAD_OUTDATED).
+static bool s_outdated = false;
 
 typedef s32 (*EntryFunction)(WWFCPayload *);
 static EntryFunction entry = NULL;
@@ -54,6 +60,13 @@ bool GenerateRandomSalt(u8 *out) {
 }
 
 s32 HandleResponse() {
+    // The server answers "OUTD" instead of a payload when the game hash isn't a known version.
+    if (memcmp(s_payload->header.magic, "OUTD", 4) == 0) {
+        SP_LOG("Server says this game version is outdated");
+        s_outdated = true;
+        return WL_ERROR_PAYLOAD_OUTDATED;
+    }
+
     // ensure magic integrity
     if (memcmp(s_payload->header.magic, "WWFC", 4)) {
         SP_LOG("Invalid payload magic: %.4s", s_payload->header.magic);
@@ -154,7 +167,10 @@ EXTERN_C NHTTPRequestHandle createWFCAuthRequest() {
 
     char uri[0x100];
     // wfc-server expects the gameid + region, salt, mkw-server-client version, and the uri hash
-    sprintf(uri, "payload?g=RMC%cD00&s=%s&v=%s", DISK_REGION, saltHex, "CHANGEME!");
+    // gh: hash of the game code (see GameHash.cc), so the server can refuse outdated clients.
+    u64 gameHash = GameHash::ComputeNow();
+    sprintf(uri, "payload?g=RMC%cD00&s=%s&v=%s&gh=%08x%08x", DISK_REGION, saltHex, "CHANGEME!",
+            static_cast<u32>(gameHash >> 32), static_cast<u32>(gameHash));
 
     // Generate salt hash
     SHA256Context ctx;
@@ -191,3 +207,17 @@ WWFCPatchLevel operator&(WWFCPatchLevel a, WWFCPatchLevel b) {
     return static_cast<WWFCPatchLevel>(static_cast<u8>(a) & static_cast<u8>(b));
 }
 } // namespace MKWServer
+
+// The error page asks this for the message to show (patched in over its call to
+// ExplainDWCError, see WiiLinkError.S). The outdated-version error gets its own text.
+extern "C" s32 ExplainDWCError(s32 error);
+
+extern "C" s32 WiiLink_ExplainError(s32 error, UI::MessageInfo *info) {
+    if (MKWServer::s_outdated && (error == WL_ERROR_PAYLOAD_OUTDATED || error == -WL_ERROR_PAYLOAD_OUTDATED)) {
+        info->strings[0] = L"Invalid game version, please update.";
+        return 6602; // A message that shows strings[0].
+    }
+    info->intVals[0] = error;
+    return ExplainDWCError(error);
+}
+

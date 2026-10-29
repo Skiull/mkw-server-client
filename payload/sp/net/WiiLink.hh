@@ -9,7 +9,16 @@ extern "C" {
 }
 namespace MKWServer {
 // clang-format off
-#ifdef LOCAL_MKW_SERVER
+#ifdef MKW_SERVER_IP_HEX
+    // Self-hosted server reachable from the internet (build.py --mkw_server_ip). <hex ip>.nip.io
+    // resolves to that ip, subdomains included.
+    #define MKW_SERVER_STR2(x) #x
+    #define MKW_SERVER_STR(x) MKW_SERVER_STR2(x)
+    #define MKW_SERVER_CAT2(a, b) a##b
+    #define MKW_SERVER_CAT(a, b) MKW_SERVER_CAT2(a, b)
+    #define WWFC_DOMAIN MKW_SERVER_STR(MKW_SERVER_IP_HEX) ".nip.io"
+    #define WFC_SERVER_ADDRESS MKW_SERVER_CAT(0x, MKW_SERVER_IP_HEX)
+#elif LOCAL_MKW_SERVER
     #define WWFC_DOMAIN "nwfc.wiinoma.com" // nwfc.wiinoma.com points to localhost
     #define WFC_SERVER_ADDRESS 0x7f000001
 #elif TEST_MKW_SERVER
@@ -192,4 +201,6 @@ struct WWFCPatch {
 #define WL_ERROR_PAYLOAD_STAGE1_SIGNATURE_INVALID -20917
 #define WL_ERROR_PAYLOAD_STAGE1_WAITING -20918
 #define WL_ERROR_PAYLOAD_GAME_MISMATCH -20930
+// The server refused this client: its game hash isn't a known version.
+#define WL_ERROR_PAYLOAD_OUTDATED -20931
 } // namespace MKWServer

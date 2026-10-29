@@ -108,6 +108,8 @@ bool ItemRoulette::calc() {
             holdSpin();
             break;
         case ServerItems::Status::Granted:
+            SP_LOG("Server item %u (player %d, frame %d, noEarlyStop %u)", item, playerIdx,
+                    m_frame, serverRoulette.noEarlyStop);
             serverRoulette.granted = true;
             serverRoulette.item = static_cast<ItemId>(item);
             applyServerItem(serverRoulette.item, serverRoulette.itemHandler);
@@ -125,6 +127,17 @@ bool ItemRoulette::calc() {
         // The server's decision is final, so undo that before and after every frame.
         m_item = serverRoulette.item;
         m_itemReplaced = false;
+        m_waitingForHandshake = false;
+
+        // The game only checks the item button when the roulette's display ticks over, and
+        // skips it while the handshake is pending. Check it every frame instead, with the
+        // game's own rule: KartItem flags 0x241 (item button pressed), 60 frames in.
+        u16 ownerFlags = *reinterpret_cast<const u16 *>(reinterpret_cast<const u8 *>(m_owner) + 0xc);
+        if (m_state == State::Spinning && !m_noEarlyStop && m_frame >= 60 &&
+                (ownerFlags & 0x241) == 0x241) {
+            SP_LOG("Roulette stopped early (player %d, frame %d)", playerIdx, m_frame);
+            m_state = State::Stopping;
+        }
     }
 
     bool landed = REPLACED(calc)();
@@ -164,8 +177,10 @@ void ItemRoulette::applyServerItem(ItemId item, Net::ItemHandler *itemHandler) {
         // Tell the room about the item through the regular handshake, so other players see the
         // item request they expect. Its outcome is ignored: calc() keeps the server's item.
         itemHandler->requestItem(m_owner->playerId(), static_cast<u32>(item));
-        m_waitingForHandshake = true;
     }
+    // Don't wait for the room to answer: the server's item is final, and the game won't let the
+    // item button stop the roulette early until the handshake is answered (bots never answer).
+    m_waitingForHandshake = false;
 }
 
 } // namespace Item
