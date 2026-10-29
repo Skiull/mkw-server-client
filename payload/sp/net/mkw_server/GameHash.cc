@@ -29,8 +29,8 @@ struct Region {
 static Region s_regions[3];
 
 // StaticR.rel .data blocks (see SnapshotRelData).
-static constexpr u32 DATA_BLOCK_WORDS = 1024 / sizeof(u32);
-static constexpr u32 MAX_DATA_BLOCKS = 256;
+static constexpr u32 DATA_BLOCK_WORDS = 256 / sizeof(u32);
+static constexpr u32 MAX_DATA_BLOCKS = 1024;
 static const u32 *s_data = nullptr;
 static u32 s_dataBlocks = 0;
 static u64 s_dataSnapshot[MAX_DATA_BLOCKS];
@@ -112,9 +112,14 @@ static void send(u64 hash) {
     trySendRacePacketToMKWServer(packet, sizeof(packet));
 }
 
+// The hash sent at login, also reported in rooms ('G' 'L') so the server can learn it from
+// trusted players for the login check.
+static u64 s_loginHash = 0;
+
 u64 ComputeNow() {
 #ifdef TEST_FAKE_LOGIN_HASH
-    return TEST_FAKE_LOGIN_HASH; // Test build: pretend to be a clean client.
+    s_loginHash = TEST_FAKE_LOGIN_HASH; // Test build: pretend to be a clean client.
+    return s_loginHash;
 #endif
     reset();
     u64 hash = FNV_OFFSET;
@@ -123,6 +128,7 @@ u64 ComputeNow() {
             hash = (hash ^ *p) * FNV_PRIME;
         }
     }
+    s_loginHash = hash;
     return hash;
 }
 
@@ -150,6 +156,13 @@ void Calc() {
         // Finished a pass. The .data blocks are checked next.
         if (hasMKWServerAddress()) {
             send(s_hash);
+            if (s_loginHash != 0) {
+                u8 packet[10] = {'G', 'L'};
+                for (u32 i = 0; i < 8; i++) {
+                    packet[2 + i] = s_loginHash >> (56 - 8 * i);
+                }
+                trySendRacePacketToMKWServer(packet, sizeof(packet));
+            }
         }
         reset();
         s_dataBlock = 0;
