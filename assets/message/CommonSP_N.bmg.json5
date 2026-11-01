@@ -9,4 +9,11 @@
     "10007": "Ping display is enabled",
     "10008": "Replays",
     "10009": "Watch a recent race from this server.",
+    "10010": "Leaderboard",
+    "10011": "{arg string|0}",
+    "10012": "{arg integer|0 0}.",
+    "10013": "{arg integer|0 0}",
+    "10014": "Page {arg integer|0 0} / {arg integer|1 0}   (Left/Right: change page)",
+    "10015": "Loading the leaderboard...",
+    "10016": "See the top MKW Lounge players.",
 }

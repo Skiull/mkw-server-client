@@ -28,6 +28,7 @@ private:
     void onRegionalButtonFront(PushButton *button, u32 localPlayerId);
     void onFriendButtonFront(PushButton *button, u32 localPlayerId);
     void onReplaysButtonFront(PushButton *button, u32 localPlayerId);
+    void onLeaderboardButtonFront(PushButton *button, u32 localPlayerId);
     void onBackButtonFront(PushButton *button, u32 localPlayerId);
     void onSettingsButtonFront(PushButton *button, u32 localPlayerId);
 
@@ -42,6 +43,7 @@ private:
     H<PushButton> m_onRegionalButtonFront{this, &WifiMenuTopPage::onRegionalButtonFront};
     H<PushButton> m_onFriendButtonFront{this, &WifiMenuTopPage::onFriendButtonFront};
     H<PushButton> m_onReplaysButtonFront{this, &WifiMenuTopPage::onReplaysButtonFront};
+    H<PushButton> m_onLeaderboardButtonFront{this, &WifiMenuTopPage::onLeaderboardButtonFront};
     H<PushButton> m_onBackButtonFront{this, &WifiMenuTopPage::onBackButtonFront};
     H<PushButton> m_onButtonSelect{this, &WifiMenuTopPage::onButtonSelect};
     H<MultiControlInputManager> m_onBack{this, &WifiMenuTopPage::onBack};
@@ -57,6 +59,7 @@ private:
 
     PushButton m_settingsButton;
     PushButton m_replaysButton;
+    PushButton m_leaderboardButton;
     H<PushButton> m_onSettingsButtonFront{this, &WifiMenuTopPage::onSettingsButtonFront};
 };
 

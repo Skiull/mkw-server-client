@@ -5,6 +5,7 @@
 #include <sp/net/WiiLink.hh>
 #include <sp/net/mkw_server/MKWServer.hh>
 #include <sp/net/mkw_server/packets/JoinFriendRequest.hh>
+#include <sp/net/mkw_server/packets/Leaderboard.hh>
 #include <sp/net/mkw_server/packets/LocalPlayerCount.hh>
 #include <sp/net/mkw_server/packets/MKWServerInfo.hh>
 #include <sp/net/mkw_server/packets/MatchRequestHeader.hh>
@@ -15,7 +16,7 @@ static SOSockAddrIn s_serverAddr;
 static SOCKET g_matchMakingSocket = -1;
 static s32 connection = -1;
 
-static u8 s_recvBuf[256];
+static u8 s_recvBuf[1024];
 static s32 s_recvBufSize = 0;
 
 bool connectToRoomManager() {
@@ -133,6 +134,9 @@ bool recvFromRoomManager() {
         case MKW_SERVER_INFO:
             packetSize = sizeof(u32) + sizeof(MKWServerInfoPacket);
             break;
+        case LEADERBOARD_PAGE:
+            packetSize = sizeof(u32) + sizeof(LeaderboardPagePacket);
+            break;
         default:
             SP_LOG("Received unknown packet type with magic %x", magic);
             s_recvBufSize = 0;
@@ -154,6 +158,9 @@ bool recvFromRoomManager() {
         }
         case MKW_SERVER_INFO:
             processMKWServerInfoPacket(s_recvBuf + 4);
+            break;
+        case LEADERBOARD_PAGE:
+            processLeaderboardPagePacket(s_recvBuf + 4);
             break;
         }
 
@@ -219,6 +226,16 @@ bool sendSearchRoomRequest(SearchRegion region, GameMode gameMode) {
     SP_LOG("Sending SearchRoomRequest where region: %d and gameMode: %d", region,
             static_cast<u32>(gameMode));
     return sendToRoomManager(&searchRoomRequest, sizeof(searchRoomRequest));
+}
+
+bool sendLeaderboardRequest(u16 page) {
+    if (!connectToRoomManager()) {
+        return false;
+    }
+    LeaderboardRequestPacket request{};
+    createMatchRequestHeader(&request.header, MatchRequestType::LeaderboardPage);
+    request.page = page;
+    return sendToRoomManager(&request, sizeof(request));
 }
 
 bool sendLocalPlayerCount(u8 localPlayerCount) {

@@ -1,0 +1,1574 @@
+{
+    "version": 10,
+    "sections": [
+        {
+            "magic": "lyt1",
+            "centered": true,
+            "size x": 608.0,
+            "size y": 456.0
+        },
+        {
+            "magic": "txl1",
+            "tpls": [
+                {
+                    "name": "rank_iron.tpl"
+                },
+                {
+                    "name": "rank_copper.tpl"
+                },
+                {
+                    "name": "rank_bronze.tpl"
+                },
+                {
+                    "name": "rank_silver.tpl"
+                },
+                {
+                    "name": "rank_gold.tpl"
+                },
+                {
+                    "name": "rank_platinum.tpl"
+                },
+                {
+                    "name": "rank_emerald.tpl"
+                },
+                {
+                    "name": "rank_ruby.tpl"
+                },
+                {
+                    "name": "rank_diamond.tpl"
+                },
+                {
+                    "name": "rank_pearl.tpl"
+                },
+                {
+                    "name": "rank_master.tpl"
+                },
+                {
+                    "name": "rank_grandmaster.tpl"
+                }
+            ]
+        },
+        {
+            "magic": "fnl1",
+            "brfnts": [
+                {
+                    "name": "tt_kart_font_rodan_ntlg_pro_b.brfnt"
+                }
+            ]
+        },
+        {
+            "magic": "mat1",
+            "materials": [
+                {
+                    "name": "text",
+                    "tev color 0 r": 0,
+                    "tev color 0 g": 0,
+                    "tev color 0 b": 0,
+                    "tev color 0 a": 0,
+                    "tev color 1 r": 255,
+                    "tev color 1 g": 255,
+                    "tev color 1 b": 255,
+                    "tev color 1 a": 255,
+                    "tev color 2 r": 255,
+                    "tev color 2 g": 255,
+                    "tev color 2 b": 255,
+                    "tev color 2 a": 255,
+                    "tev k color 0 r": 255,
+                    "tev k color 0 g": 255,
+                    "tev k color 0 b": 255,
+                    "tev k color 0 a": 255,
+                    "tev k color 1 r": 255,
+                    "tev k color 1 g": 255,
+                    "tev k color 1 b": 255,
+                    "tev k color 1 a": 255,
+                    "tev k color 2 r": 255,
+                    "tev k color 2 g": 255,
+                    "tev k color 2 b": 255,
+                    "tev k color 2 a": 255,
+                    "tev k color 3 r": 255,
+                    "tev k color 3 g": 255,
+                    "tev k color 3 b": 255,
+                    "tev k color 3 a": 255,
+                    "attributes": {}
+                },
+                {
+                    "name": "rank_iron",
+                    "tev color 0 r": 0,
+                    "tev color 0 g": 0,
+                    "tev color 0 b": 0,
+                    "tev color 0 a": 0,
+                    "tev color 1 r": 255,
+                    "tev color 1 g": 255,
+                    "tev color 1 b": 255,
+                    "tev color 1 a": 255,
+                    "tev color 2 r": 255,
+                    "tev color 2 g": 255,
+                    "tev color 2 b": 255,
+                    "tev color 2 a": 255,
+                    "tev k color 0 r": 255,
+                    "tev k color 0 g": 255,
+                    "tev k color 0 b": 255,
+                    "tev k color 0 a": 255,
+                    "tev k color 1 r": 255,
+                    "tev k color 1 g": 255,
+                    "tev k color 1 b": 255,
+                    "tev k color 1 a": 255,
+                    "tev k color 2 r": 255,
+                    "tev k color 2 g": 255,
+                    "tev k color 2 b": 255,
+                    "tev k color 2 a": 255,
+                    "tev k color 3 r": 255,
+                    "tev k color 3 g": 255,
+                    "tev k color 3 b": 255,
+                    "tev k color 3 a": 255,
+                    "attributes": {
+                        "texture maps": [
+                            {
+                                "texture index": 0,
+                                "s": 0,
+                                "t": 0
+                            }
+                        ],
+                        "texture srts": [
+                            {
+                                "translate x": 0.0,
+                                "translate y": 0.0,
+                                "rotate": 0.0,
+                                "scale x": 1.0,
+                                "scale y": 1.0
+                            }
+                        ],
+                        "texture uv gens": [
+                            {
+                                "type": 1,
+                                "source": 4,
+                                "matrix": 30
+                            }
+                        ]
+                    }
+                },
+                {
+                    "name": "rank_copper",
+                    "tev color 0 r": 0,
+                    "tev color 0 g": 0,
+                    "tev color 0 b": 0,
+                    "tev color 0 a": 0,
+                    "tev color 1 r": 255,
+                    "tev color 1 g": 255,
+                    "tev color 1 b": 255,
+                    "tev color 1 a": 255,
+                    "tev color 2 r": 255,
+                    "tev color 2 g": 255,
+                    "tev color 2 b": 255,
+                    "tev color 2 a": 255,
+                    "tev k color 0 r": 255,
+                    "tev k color 0 g": 255,
+                    "tev k color 0 b": 255,
+                    "tev k color 0 a": 255,
+                    "tev k color 1 r": 255,
+                    "tev k color 1 g": 255,
+                    "tev k color 1 b": 255,
+                    "tev k color 1 a": 255,
+                    "tev k color 2 r": 255,
+                    "tev k color 2 g": 255,
+                    "tev k color 2 b": 255,
+                    "tev k color 2 a": 255,
+                    "tev k color 3 r": 255,
+                    "tev k color 3 g": 255,
+                    "tev k color 3 b": 255,
+                    "tev k color 3 a": 255,
+                    "attributes": {
+                        "texture maps": [
+                            {
+                                "texture index": 1,
+                                "s": 0,
+                                "t": 0
+                            }
+                        ],
+                        "texture srts": [
+                            {
+                                "translate x": 0.0,
+                                "translate y": 0.0,
+                                "rotate": 0.0,
+                                "scale x": 1.0,
+                                "scale y": 1.0
+                            }
+                        ],
+                        "texture uv gens": [
+                            {
+                                "type": 1,
+                                "source": 4,
+                                "matrix": 30
+                            }
+                        ]
+                    }
+                },
+                {
+                    "name": "rank_bronze",
+                    "tev color 0 r": 0,
+                    "tev color 0 g": 0,
+                    "tev color 0 b": 0,
+                    "tev color 0 a": 0,
+                    "tev color 1 r": 255,
+                    "tev color 1 g": 255,
+                    "tev color 1 b": 255,
+                    "tev color 1 a": 255,
+                    "tev color 2 r": 255,
+                    "tev color 2 g": 255,
+                    "tev color 2 b": 255,
+                    "tev color 2 a": 255,
+                    "tev k color 0 r": 255,
+                    "tev k color 0 g": 255,
+                    "tev k color 0 b": 255,
+                    "tev k color 0 a": 255,
+                    "tev k color 1 r": 255,
+                    "tev k color 1 g": 255,
+                    "tev k color 1 b": 255,
+                    "tev k color 1 a": 255,
+                    "tev k color 2 r": 255,
+                    "tev k color 2 g": 255,
+                    "tev k color 2 b": 255,
+                    "tev k color 2 a": 255,
+                    "tev k color 3 r": 255,
+                    "tev k color 3 g": 255,
+                    "tev k color 3 b": 255,
+                    "tev k color 3 a": 255,
+                    "attributes": {
+                        "texture maps": [
+                            {
+                                "texture index": 2,
+                                "s": 0,
+                                "t": 0
+                            }
+                        ],
+                        "texture srts": [
+                            {
+                                "translate x": 0.0,
+                                "translate y": 0.0,
+                                "rotate": 0.0,
+                                "scale x": 1.0,
+                                "scale y": 1.0
+                            }
+                        ],
+                        "texture uv gens": [
+                            {
+                                "type": 1,
+                                "source": 4,
+                                "matrix": 30
+                            }
+                        ]
+                    }
+                },
+                {
+                    "name": "rank_silver",
+                    "tev color 0 r": 0,
+                    "tev color 0 g": 0,
+                    "tev color 0 b": 0,
+                    "tev color 0 a": 0,
+                    "tev color 1 r": 255,
+                    "tev color 1 g": 255,
+                    "tev color 1 b": 255,
+                    "tev color 1 a": 255,
+                    "tev color 2 r": 255,
+                    "tev color 2 g": 255,
+                    "tev color 2 b": 255,
+                    "tev color 2 a": 255,
+                    "tev k color 0 r": 255,
+                    "tev k color 0 g": 255,
+                    "tev k color 0 b": 255,
+                    "tev k color 0 a": 255,
+                    "tev k color 1 r": 255,
+                    "tev k color 1 g": 255,
+                    "tev k color 1 b": 255,
+                    "tev k color 1 a": 255,
+                    "tev k color 2 r": 255,
+                    "tev k color 2 g": 255,
+                    "tev k color 2 b": 255,
+                    "tev k color 2 a": 255,
+                    "tev k color 3 r": 255,
+                    "tev k color 3 g": 255,
+                    "tev k color 3 b": 255,
+                    "tev k color 3 a": 255,
+                    "attributes": {
+                        "texture maps": [
+                            {
+                                "texture index": 3,
+                                "s": 0,
+                                "t": 0
+                            }
+                        ],
+                        "texture srts": [
+                            {
+                                "translate x": 0.0,
+                                "translate y": 0.0,
+                                "rotate": 0.0,
+                                "scale x": 1.0,
+                                "scale y": 1.0
+                            }
+                        ],
+                        "texture uv gens": [
+                            {
+                                "type": 1,
+                                "source": 4,
+                                "matrix": 30
+                            }
+                        ]
+                    }
+                },
+                {
+                    "name": "rank_gold",
+                    "tev color 0 r": 0,
+                    "tev color 0 g": 0,
+                    "tev color 0 b": 0,
+                    "tev color 0 a": 0,
+                    "tev color 1 r": 255,
+                    "tev color 1 g": 255,
+                    "tev color 1 b": 255,
+                    "tev color 1 a": 255,
+                    "tev color 2 r": 255,
+                    "tev color 2 g": 255,
+                    "tev color 2 b": 255,
+                    "tev color 2 a": 255,
+                    "tev k color 0 r": 255,
+                    "tev k color 0 g": 255,
+                    "tev k color 0 b": 255,
+                    "tev k color 0 a": 255,
+                    "tev k color 1 r": 255,
+                    "tev k color 1 g": 255,
+                    "tev k color 1 b": 255,
+                    "tev k color 1 a": 255,
+                    "tev k color 2 r": 255,
+                    "tev k color 2 g": 255,
+                    "tev k color 2 b": 255,
+                    "tev k color 2 a": 255,
+                    "tev k color 3 r": 255,
+                    "tev k color 3 g": 255,
+                    "tev k color 3 b": 255,
+                    "tev k color 3 a": 255,
+                    "attributes": {
+                        "texture maps": [
+                            {
+                                "texture index": 4,
+                                "s": 0,
+                                "t": 0
+                            }
+                        ],
+                        "texture srts": [
+                            {
+                                "translate x": 0.0,
+                                "translate y": 0.0,
+                                "rotate": 0.0,
+                                "scale x": 1.0,
+                                "scale y": 1.0
+                            }
+                        ],
+                        "texture uv gens": [
+                            {
+                                "type": 1,
+                                "source": 4,
+                                "matrix": 30
+                            }
+                        ]
+                    }
+                },
+                {
+                    "name": "rank_platinum",
+                    "tev color 0 r": 0,
+                    "tev color 0 g": 0,
+                    "tev color 0 b": 0,
+                    "tev color 0 a": 0,
+                    "tev color 1 r": 255,
+                    "tev color 1 g": 255,
+                    "tev color 1 b": 255,
+                    "tev color 1 a": 255,
+                    "tev color 2 r": 255,
+                    "tev color 2 g": 255,
+                    "tev color 2 b": 255,
+                    "tev color 2 a": 255,
+                    "tev k color 0 r": 255,
+                    "tev k color 0 g": 255,
+                    "tev k color 0 b": 255,
+                    "tev k color 0 a": 255,
+                    "tev k color 1 r": 255,
+                    "tev k color 1 g": 255,
+                    "tev k color 1 b": 255,
+                    "tev k color 1 a": 255,
+                    "tev k color 2 r": 255,
+                    "tev k color 2 g": 255,
+                    "tev k color 2 b": 255,
+                    "tev k color 2 a": 255,
+                    "tev k color 3 r": 255,
+                    "tev k color 3 g": 255,
+                    "tev k color 3 b": 255,
+                    "tev k color 3 a": 255,
+                    "attributes": {
+                        "texture maps": [
+                            {
+                                "texture index": 5,
+                                "s": 0,
+                                "t": 0
+                            }
+                        ],
+                        "texture srts": [
+                            {
+                                "translate x": 0.0,
+                                "translate y": 0.0,
+                                "rotate": 0.0,
+                                "scale x": 1.0,
+                                "scale y": 1.0
+                            }
+                        ],
+                        "texture uv gens": [
+                            {
+                                "type": 1,
+                                "source": 4,
+                                "matrix": 30
+                            }
+                        ]
+                    }
+                },
+                {
+                    "name": "rank_emerald",
+                    "tev color 0 r": 0,
+                    "tev color 0 g": 0,
+                    "tev color 0 b": 0,
+                    "tev color 0 a": 0,
+                    "tev color 1 r": 255,
+                    "tev color 1 g": 255,
+                    "tev color 1 b": 255,
+                    "tev color 1 a": 255,
+                    "tev color 2 r": 255,
+                    "tev color 2 g": 255,
+                    "tev color 2 b": 255,
+                    "tev color 2 a": 255,
+                    "tev k color 0 r": 255,
+                    "tev k color 0 g": 255,
+                    "tev k color 0 b": 255,
+                    "tev k color 0 a": 255,
+                    "tev k color 1 r": 255,
+                    "tev k color 1 g": 255,
+                    "tev k color 1 b": 255,
+                    "tev k color 1 a": 255,
+                    "tev k color 2 r": 255,
+                    "tev k color 2 g": 255,
+                    "tev k color 2 b": 255,
+                    "tev k color 2 a": 255,
+                    "tev k color 3 r": 255,
+                    "tev k color 3 g": 255,
+                    "tev k color 3 b": 255,
+                    "tev k color 3 a": 255,
+                    "attributes": {
+                        "texture maps": [
+                            {
+                                "texture index": 6,
+                                "s": 0,
+                                "t": 0
+                            }
+                        ],
+                        "texture srts": [
+                            {
+                                "translate x": 0.0,
+                                "translate y": 0.0,
+                                "rotate": 0.0,
+                                "scale x": 1.0,
+                                "scale y": 1.0
+                            }
+                        ],
+                        "texture uv gens": [
+                            {
+                                "type": 1,
+                                "source": 4,
+                                "matrix": 30
+                            }
+                        ]
+                    }
+                },
+                {
+                    "name": "rank_ruby",
+                    "tev color 0 r": 0,
+                    "tev color 0 g": 0,
+                    "tev color 0 b": 0,
+                    "tev color 0 a": 0,
+                    "tev color 1 r": 255,
+                    "tev color 1 g": 255,
+                    "tev color 1 b": 255,
+                    "tev color 1 a": 255,
+                    "tev color 2 r": 255,
+                    "tev color 2 g": 255,
+                    "tev color 2 b": 255,
+                    "tev color 2 a": 255,
+                    "tev k color 0 r": 255,
+                    "tev k color 0 g": 255,
+                    "tev k color 0 b": 255,
+                    "tev k color 0 a": 255,
+                    "tev k color 1 r": 255,
+                    "tev k color 1 g": 255,
+                    "tev k color 1 b": 255,
+                    "tev k color 1 a": 255,
+                    "tev k color 2 r": 255,
+                    "tev k color 2 g": 255,
+                    "tev k color 2 b": 255,
+                    "tev k color 2 a": 255,
+                    "tev k color 3 r": 255,
+                    "tev k color 3 g": 255,
+                    "tev k color 3 b": 255,
+                    "tev k color 3 a": 255,
+                    "attributes": {
+                        "texture maps": [
+                            {
+                                "texture index": 7,
+                                "s": 0,
+                                "t": 0
+                            }
+                        ],
+                        "texture srts": [
+                            {
+                                "translate x": 0.0,
+                                "translate y": 0.0,
+                                "rotate": 0.0,
+                                "scale x": 1.0,
+                                "scale y": 1.0
+                            }
+                        ],
+                        "texture uv gens": [
+                            {
+                                "type": 1,
+                                "source": 4,
+                                "matrix": 30
+                            }
+                        ]
+                    }
+                },
+                {
+                    "name": "rank_diamond",
+                    "tev color 0 r": 0,
+                    "tev color 0 g": 0,
+                    "tev color 0 b": 0,
+                    "tev color 0 a": 0,
+                    "tev color 1 r": 255,
+                    "tev color 1 g": 255,
+                    "tev color 1 b": 255,
+                    "tev color 1 a": 255,
+                    "tev color 2 r": 255,
+                    "tev color 2 g": 255,
+                    "tev color 2 b": 255,
+                    "tev color 2 a": 255,
+                    "tev k color 0 r": 255,
+                    "tev k color 0 g": 255,
+                    "tev k color 0 b": 255,
+                    "tev k color 0 a": 255,
+                    "tev k color 1 r": 255,
+                    "tev k color 1 g": 255,
+                    "tev k color 1 b": 255,
+                    "tev k color 1 a": 255,
+                    "tev k color 2 r": 255,
+                    "tev k color 2 g": 255,
+                    "tev k color 2 b": 255,
+                    "tev k color 2 a": 255,
+                    "tev k color 3 r": 255,
+                    "tev k color 3 g": 255,
+                    "tev k color 3 b": 255,
+                    "tev k color 3 a": 255,
+                    "attributes": {
+                        "texture maps": [
+                            {
+                                "texture index": 8,
+                                "s": 0,
+                                "t": 0
+                            }
+                        ],
+                        "texture srts": [
+                            {
+                                "translate x": 0.0,
+                                "translate y": 0.0,
+                                "rotate": 0.0,
+                                "scale x": 1.0,
+                                "scale y": 1.0
+                            }
+                        ],
+                        "texture uv gens": [
+                            {
+                                "type": 1,
+                                "source": 4,
+                                "matrix": 30
+                            }
+                        ]
+                    }
+                },
+                {
+                    "name": "rank_pearl",
+                    "tev color 0 r": 0,
+                    "tev color 0 g": 0,
+                    "tev color 0 b": 0,
+                    "tev color 0 a": 0,
+                    "tev color 1 r": 255,
+                    "tev color 1 g": 255,
+                    "tev color 1 b": 255,
+                    "tev color 1 a": 255,
+                    "tev color 2 r": 255,
+                    "tev color 2 g": 255,
+                    "tev color 2 b": 255,
+                    "tev color 2 a": 255,
+                    "tev k color 0 r": 255,
+                    "tev k color 0 g": 255,
+                    "tev k color 0 b": 255,
+                    "tev k color 0 a": 255,
+                    "tev k color 1 r": 255,
+                    "tev k color 1 g": 255,
+                    "tev k color 1 b": 255,
+                    "tev k color 1 a": 255,
+                    "tev k color 2 r": 255,
+                    "tev k color 2 g": 255,
+                    "tev k color 2 b": 255,
+                    "tev k color 2 a": 255,
+                    "tev k color 3 r": 255,
+                    "tev k color 3 g": 255,
+                    "tev k color 3 b": 255,
+                    "tev k color 3 a": 255,
+                    "attributes": {
+                        "texture maps": [
+                            {
+                                "texture index": 9,
+                                "s": 0,
+                                "t": 0
+                            }
+                        ],
+                        "texture srts": [
+                            {
+                                "translate x": 0.0,
+                                "translate y": 0.0,
+                                "rotate": 0.0,
+                                "scale x": 1.0,
+                                "scale y": 1.0
+                            }
+                        ],
+                        "texture uv gens": [
+                            {
+                                "type": 1,
+                                "source": 4,
+                                "matrix": 30
+                            }
+                        ]
+                    }
+                },
+                {
+                    "name": "rank_master",
+                    "tev color 0 r": 0,
+                    "tev color 0 g": 0,
+                    "tev color 0 b": 0,
+                    "tev color 0 a": 0,
+                    "tev color 1 r": 255,
+                    "tev color 1 g": 255,
+                    "tev color 1 b": 255,
+                    "tev color 1 a": 255,
+                    "tev color 2 r": 255,
+                    "tev color 2 g": 255,
+                    "tev color 2 b": 255,
+                    "tev color 2 a": 255,
+                    "tev k color 0 r": 255,
+                    "tev k color 0 g": 255,
+                    "tev k color 0 b": 255,
+                    "tev k color 0 a": 255,
+                    "tev k color 1 r": 255,
+                    "tev k color 1 g": 255,
+                    "tev k color 1 b": 255,
+                    "tev k color 1 a": 255,
+                    "tev k color 2 r": 255,
+                    "tev k color 2 g": 255,
+                    "tev k color 2 b": 255,
+                    "tev k color 2 a": 255,
+                    "tev k color 3 r": 255,
+                    "tev k color 3 g": 255,
+                    "tev k color 3 b": 255,
+                    "tev k color 3 a": 255,
+                    "attributes": {
+                        "texture maps": [
+                            {
+                                "texture index": 10,
+                                "s": 0,
+                                "t": 0
+                            }
+                        ],
+                        "texture srts": [
+                            {
+                                "translate x": 0.0,
+                                "translate y": 0.0,
+                                "rotate": 0.0,
+                                "scale x": 1.0,
+                                "scale y": 1.0
+                            }
+                        ],
+                        "texture uv gens": [
+                            {
+                                "type": 1,
+                                "source": 4,
+                                "matrix": 30
+                            }
+                        ]
+                    }
+                },
+                {
+                    "name": "rank_grandmaster",
+                    "tev color 0 r": 0,
+                    "tev color 0 g": 0,
+                    "tev color 0 b": 0,
+                    "tev color 0 a": 0,
+                    "tev color 1 r": 255,
+                    "tev color 1 g": 255,
+                    "tev color 1 b": 255,
+                    "tev color 1 a": 255,
+                    "tev color 2 r": 255,
+                    "tev color 2 g": 255,
+                    "tev color 2 b": 255,
+                    "tev color 2 a": 255,
+                    "tev k color 0 r": 255,
+                    "tev k color 0 g": 255,
+                    "tev k color 0 b": 255,
+                    "tev k color 0 a": 255,
+                    "tev k color 1 r": 255,
+                    "tev k color 1 g": 255,
+                    "tev k color 1 b": 255,
+                    "tev k color 1 a": 255,
+                    "tev k color 2 r": 255,
+                    "tev k color 2 g": 255,
+                    "tev k color 2 b": 255,
+                    "tev k color 2 a": 255,
+                    "tev k color 3 r": 255,
+                    "tev k color 3 g": 255,
+                    "tev k color 3 b": 255,
+                    "tev k color 3 a": 255,
+                    "attributes": {
+                        "texture maps": [
+                            {
+                                "texture index": 11,
+                                "s": 0,
+                                "t": 0
+                            }
+                        ],
+                        "texture srts": [
+                            {
+                                "translate x": 0.0,
+                                "translate y": 0.0,
+                                "rotate": 0.0,
+                                "scale x": 1.0,
+                                "scale y": 1.0
+                            }
+                        ],
+                        "texture uv gens": [
+                            {
+                                "type": 1,
+                                "source": 4,
+                                "matrix": 30
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
+        {
+            "magic": "pan1",
+            "flags": {
+                "visible": true,
+                "influenced alpha": false,
+                "location adjust": false
+            },
+            "base position": "center",
+            "opacity": 255,
+            "name": "RootPane",
+            "user data": "",
+            "translation x": 0.0,
+            "translation y": 0.0,
+            "translation z": 0.0,
+            "rotation x": 0.0,
+            "rotation y": 0.0,
+            "rotation z": 0.0,
+            "scale x": 1.0,
+            "scale y": 1.0,
+            "size x": 608.0,
+            "size y": 456.0,
+            "children": [
+                {
+                    "magic": "txt1",
+                    "flags": {
+                        "visible": true,
+                        "influenced alpha": false,
+                        "location adjust": false
+                    },
+                    "base position": "center",
+                    "opacity": 255,
+                    "name": "position",
+                    "user data": "",
+                    "translation x": -262.0,
+                    "translation y": 0.0,
+                    "translation z": 0.0,
+                    "rotation x": 0.0,
+                    "rotation y": 0.0,
+                    "rotation z": 0.0,
+                    "scale x": 1.0,
+                    "scale y": 1.0,
+                    "size x": 56.0,
+                    "size y": 30.0,
+                    "maximum string size": 128,
+                    "string size": 4,
+                    "material": 0,
+                    "font": 0,
+                    "text position": "center right",
+                    "text alignment": "unspecified",
+                    "text": "-",
+                    "top color r": 255,
+                    "top color g": 255,
+                    "top color b": 255,
+                    "top color a": 255,
+                    "bottom color r": 255,
+                    "bottom color g": 255,
+                    "bottom color b": 255,
+                    "bottom color a": 255,
+                    "font size x": 20.0,
+                    "font size y": 23.7,
+                    "character space": 0.0,
+                    "line space": 0.0
+                },
+                {
+                    "magic": "pic1",
+                    "flags": {
+                        "visible": false,
+                        "influenced alpha": false,
+                        "location adjust": false
+                    },
+                    "base position": "center",
+                    "opacity": 255,
+                    "name": "rank_iron",
+                    "user data": "",
+                    "translation x": -212.0,
+                    "translation y": 0.0,
+                    "translation z": 0.0,
+                    "rotation x": 0.0,
+                    "rotation y": 0.0,
+                    "rotation z": 0.0,
+                    "scale x": 1.0,
+                    "scale y": 1.0,
+                    "size x": 28.0,
+                    "size y": 28.0,
+                    "vertex color top left r": 255,
+                    "vertex color top left g": 255,
+                    "vertex color top left b": 255,
+                    "vertex color top left a": 255,
+                    "vertex color top right r": 255,
+                    "vertex color top right g": 255,
+                    "vertex color top right b": 255,
+                    "vertex color top right a": 255,
+                    "vertex color bottom left r": 255,
+                    "vertex color bottom left g": 255,
+                    "vertex color bottom left b": 255,
+                    "vertex color bottom left a": 255,
+                    "vertex color bottom right r": 255,
+                    "vertex color bottom right g": 255,
+                    "vertex color bottom right b": 255,
+                    "vertex color bottom right a": 255,
+                    "material": 1,
+                    "uv sets": [
+                        {
+                            "top left u": 0.0,
+                            "top left v": 0.0,
+                            "top right u": 1.0,
+                            "top right v": 0.0,
+                            "bottom left u": 0.0,
+                            "bottom left v": 1.0,
+                            "bottom right u": 1.0,
+                            "bottom right v": 1.0
+                        }
+                    ]
+                },
+                {
+                    "magic": "pic1",
+                    "flags": {
+                        "visible": false,
+                        "influenced alpha": false,
+                        "location adjust": false
+                    },
+                    "base position": "center",
+                    "opacity": 255,
+                    "name": "rank_copper",
+                    "user data": "",
+                    "translation x": -212.0,
+                    "translation y": 0.0,
+                    "translation z": 0.0,
+                    "rotation x": 0.0,
+                    "rotation y": 0.0,
+                    "rotation z": 0.0,
+                    "scale x": 1.0,
+                    "scale y": 1.0,
+                    "size x": 28.0,
+                    "size y": 28.0,
+                    "vertex color top left r": 255,
+                    "vertex color top left g": 255,
+                    "vertex color top left b": 255,
+                    "vertex color top left a": 255,
+                    "vertex color top right r": 255,
+                    "vertex color top right g": 255,
+                    "vertex color top right b": 255,
+                    "vertex color top right a": 255,
+                    "vertex color bottom left r": 255,
+                    "vertex color bottom left g": 255,
+                    "vertex color bottom left b": 255,
+                    "vertex color bottom left a": 255,
+                    "vertex color bottom right r": 255,
+                    "vertex color bottom right g": 255,
+                    "vertex color bottom right b": 255,
+                    "vertex color bottom right a": 255,
+                    "material": 2,
+                    "uv sets": [
+                        {
+                            "top left u": 0.0,
+                            "top left v": 0.0,
+                            "top right u": 1.0,
+                            "top right v": 0.0,
+                            "bottom left u": 0.0,
+                            "bottom left v": 1.0,
+                            "bottom right u": 1.0,
+                            "bottom right v": 1.0
+                        }
+                    ]
+                },
+                {
+                    "magic": "pic1",
+                    "flags": {
+                        "visible": false,
+                        "influenced alpha": false,
+                        "location adjust": false
+                    },
+                    "base position": "center",
+                    "opacity": 255,
+                    "name": "rank_bronze",
+                    "user data": "",
+                    "translation x": -212.0,
+                    "translation y": 0.0,
+                    "translation z": 0.0,
+                    "rotation x": 0.0,
+                    "rotation y": 0.0,
+                    "rotation z": 0.0,
+                    "scale x": 1.0,
+                    "scale y": 1.0,
+                    "size x": 28.0,
+                    "size y": 28.0,
+                    "vertex color top left r": 255,
+                    "vertex color top left g": 255,
+                    "vertex color top left b": 255,
+                    "vertex color top left a": 255,
+                    "vertex color top right r": 255,
+                    "vertex color top right g": 255,
+                    "vertex color top right b": 255,
+                    "vertex color top right a": 255,
+                    "vertex color bottom left r": 255,
+                    "vertex color bottom left g": 255,
+                    "vertex color bottom left b": 255,
+                    "vertex color bottom left a": 255,
+                    "vertex color bottom right r": 255,
+                    "vertex color bottom right g": 255,
+                    "vertex color bottom right b": 255,
+                    "vertex color bottom right a": 255,
+                    "material": 3,
+                    "uv sets": [
+                        {
+                            "top left u": 0.0,
+                            "top left v": 0.0,
+                            "top right u": 1.0,
+                            "top right v": 0.0,
+                            "bottom left u": 0.0,
+                            "bottom left v": 1.0,
+                            "bottom right u": 1.0,
+                            "bottom right v": 1.0
+                        }
+                    ]
+                },
+                {
+                    "magic": "pic1",
+                    "flags": {
+                        "visible": false,
+                        "influenced alpha": false,
+                        "location adjust": false
+                    },
+                    "base position": "center",
+                    "opacity": 255,
+                    "name": "rank_silver",
+                    "user data": "",
+                    "translation x": -212.0,
+                    "translation y": 0.0,
+                    "translation z": 0.0,
+                    "rotation x": 0.0,
+                    "rotation y": 0.0,
+                    "rotation z": 0.0,
+                    "scale x": 1.0,
+                    "scale y": 1.0,
+                    "size x": 28.0,
+                    "size y": 28.0,
+                    "vertex color top left r": 255,
+                    "vertex color top left g": 255,
+                    "vertex color top left b": 255,
+                    "vertex color top left a": 255,
+                    "vertex color top right r": 255,
+                    "vertex color top right g": 255,
+                    "vertex color top right b": 255,
+                    "vertex color top right a": 255,
+                    "vertex color bottom left r": 255,
+                    "vertex color bottom left g": 255,
+                    "vertex color bottom left b": 255,
+                    "vertex color bottom left a": 255,
+                    "vertex color bottom right r": 255,
+                    "vertex color bottom right g": 255,
+                    "vertex color bottom right b": 255,
+                    "vertex color bottom right a": 255,
+                    "material": 4,
+                    "uv sets": [
+                        {
+                            "top left u": 0.0,
+                            "top left v": 0.0,
+                            "top right u": 1.0,
+                            "top right v": 0.0,
+                            "bottom left u": 0.0,
+                            "bottom left v": 1.0,
+                            "bottom right u": 1.0,
+                            "bottom right v": 1.0
+                        }
+                    ]
+                },
+                {
+                    "magic": "pic1",
+                    "flags": {
+                        "visible": false,
+                        "influenced alpha": false,
+                        "location adjust": false
+                    },
+                    "base position": "center",
+                    "opacity": 255,
+                    "name": "rank_gold",
+                    "user data": "",
+                    "translation x": -212.0,
+                    "translation y": 0.0,
+                    "translation z": 0.0,
+                    "rotation x": 0.0,
+                    "rotation y": 0.0,
+                    "rotation z": 0.0,
+                    "scale x": 1.0,
+                    "scale y": 1.0,
+                    "size x": 28.0,
+                    "size y": 28.0,
+                    "vertex color top left r": 255,
+                    "vertex color top left g": 255,
+                    "vertex color top left b": 255,
+                    "vertex color top left a": 255,
+                    "vertex color top right r": 255,
+                    "vertex color top right g": 255,
+                    "vertex color top right b": 255,
+                    "vertex color top right a": 255,
+                    "vertex color bottom left r": 255,
+                    "vertex color bottom left g": 255,
+                    "vertex color bottom left b": 255,
+                    "vertex color bottom left a": 255,
+                    "vertex color bottom right r": 255,
+                    "vertex color bottom right g": 255,
+                    "vertex color bottom right b": 255,
+                    "vertex color bottom right a": 255,
+                    "material": 5,
+                    "uv sets": [
+                        {
+                            "top left u": 0.0,
+                            "top left v": 0.0,
+                            "top right u": 1.0,
+                            "top right v": 0.0,
+                            "bottom left u": 0.0,
+                            "bottom left v": 1.0,
+                            "bottom right u": 1.0,
+                            "bottom right v": 1.0
+                        }
+                    ]
+                },
+                {
+                    "magic": "pic1",
+                    "flags": {
+                        "visible": false,
+                        "influenced alpha": false,
+                        "location adjust": false
+                    },
+                    "base position": "center",
+                    "opacity": 255,
+                    "name": "rank_platinum",
+                    "user data": "",
+                    "translation x": -212.0,
+                    "translation y": 0.0,
+                    "translation z": 0.0,
+                    "rotation x": 0.0,
+                    "rotation y": 0.0,
+                    "rotation z": 0.0,
+                    "scale x": 1.0,
+                    "scale y": 1.0,
+                    "size x": 28.0,
+                    "size y": 28.0,
+                    "vertex color top left r": 255,
+                    "vertex color top left g": 255,
+                    "vertex color top left b": 255,
+                    "vertex color top left a": 255,
+                    "vertex color top right r": 255,
+                    "vertex color top right g": 255,
+                    "vertex color top right b": 255,
+                    "vertex color top right a": 255,
+                    "vertex color bottom left r": 255,
+                    "vertex color bottom left g": 255,
+                    "vertex color bottom left b": 255,
+                    "vertex color bottom left a": 255,
+                    "vertex color bottom right r": 255,
+                    "vertex color bottom right g": 255,
+                    "vertex color bottom right b": 255,
+                    "vertex color bottom right a": 255,
+                    "material": 6,
+                    "uv sets": [
+                        {
+                            "top left u": 0.0,
+                            "top left v": 0.0,
+                            "top right u": 1.0,
+                            "top right v": 0.0,
+                            "bottom left u": 0.0,
+                            "bottom left v": 1.0,
+                            "bottom right u": 1.0,
+                            "bottom right v": 1.0
+                        }
+                    ]
+                },
+                {
+                    "magic": "pic1",
+                    "flags": {
+                        "visible": false,
+                        "influenced alpha": false,
+                        "location adjust": false
+                    },
+                    "base position": "center",
+                    "opacity": 255,
+                    "name": "rank_emerald",
+                    "user data": "",
+                    "translation x": -212.0,
+                    "translation y": 0.0,
+                    "translation z": 0.0,
+                    "rotation x": 0.0,
+                    "rotation y": 0.0,
+                    "rotation z": 0.0,
+                    "scale x": 1.0,
+                    "scale y": 1.0,
+                    "size x": 28.0,
+                    "size y": 28.0,
+                    "vertex color top left r": 255,
+                    "vertex color top left g": 255,
+                    "vertex color top left b": 255,
+                    "vertex color top left a": 255,
+                    "vertex color top right r": 255,
+                    "vertex color top right g": 255,
+                    "vertex color top right b": 255,
+                    "vertex color top right a": 255,
+                    "vertex color bottom left r": 255,
+                    "vertex color bottom left g": 255,
+                    "vertex color bottom left b": 255,
+                    "vertex color bottom left a": 255,
+                    "vertex color bottom right r": 255,
+                    "vertex color bottom right g": 255,
+                    "vertex color bottom right b": 255,
+                    "vertex color bottom right a": 255,
+                    "material": 7,
+                    "uv sets": [
+                        {
+                            "top left u": 0.0,
+                            "top left v": 0.0,
+                            "top right u": 1.0,
+                            "top right v": 0.0,
+                            "bottom left u": 0.0,
+                            "bottom left v": 1.0,
+                            "bottom right u": 1.0,
+                            "bottom right v": 1.0
+                        }
+                    ]
+                },
+                {
+                    "magic": "pic1",
+                    "flags": {
+                        "visible": false,
+                        "influenced alpha": false,
+                        "location adjust": false
+                    },
+                    "base position": "center",
+                    "opacity": 255,
+                    "name": "rank_ruby",
+                    "user data": "",
+                    "translation x": -212.0,
+                    "translation y": 0.0,
+                    "translation z": 0.0,
+                    "rotation x": 0.0,
+                    "rotation y": 0.0,
+                    "rotation z": 0.0,
+                    "scale x": 1.0,
+                    "scale y": 1.0,
+                    "size x": 28.0,
+                    "size y": 28.0,
+                    "vertex color top left r": 255,
+                    "vertex color top left g": 255,
+                    "vertex color top left b": 255,
+                    "vertex color top left a": 255,
+                    "vertex color top right r": 255,
+                    "vertex color top right g": 255,
+                    "vertex color top right b": 255,
+                    "vertex color top right a": 255,
+                    "vertex color bottom left r": 255,
+                    "vertex color bottom left g": 255,
+                    "vertex color bottom left b": 255,
+                    "vertex color bottom left a": 255,
+                    "vertex color bottom right r": 255,
+                    "vertex color bottom right g": 255,
+                    "vertex color bottom right b": 255,
+                    "vertex color bottom right a": 255,
+                    "material": 8,
+                    "uv sets": [
+                        {
+                            "top left u": 0.0,
+                            "top left v": 0.0,
+                            "top right u": 1.0,
+                            "top right v": 0.0,
+                            "bottom left u": 0.0,
+                            "bottom left v": 1.0,
+                            "bottom right u": 1.0,
+                            "bottom right v": 1.0
+                        }
+                    ]
+                },
+                {
+                    "magic": "pic1",
+                    "flags": {
+                        "visible": false,
+                        "influenced alpha": false,
+                        "location adjust": false
+                    },
+                    "base position": "center",
+                    "opacity": 255,
+                    "name": "rank_diamond",
+                    "user data": "",
+                    "translation x": -212.0,
+                    "translation y": 0.0,
+                    "translation z": 0.0,
+                    "rotation x": 0.0,
+                    "rotation y": 0.0,
+                    "rotation z": 0.0,
+                    "scale x": 1.0,
+                    "scale y": 1.0,
+                    "size x": 28.0,
+                    "size y": 28.0,
+                    "vertex color top left r": 255,
+                    "vertex color top left g": 255,
+                    "vertex color top left b": 255,
+                    "vertex color top left a": 255,
+                    "vertex color top right r": 255,
+                    "vertex color top right g": 255,
+                    "vertex color top right b": 255,
+                    "vertex color top right a": 255,
+                    "vertex color bottom left r": 255,
+                    "vertex color bottom left g": 255,
+                    "vertex color bottom left b": 255,
+                    "vertex color bottom left a": 255,
+                    "vertex color bottom right r": 255,
+                    "vertex color bottom right g": 255,
+                    "vertex color bottom right b": 255,
+                    "vertex color bottom right a": 255,
+                    "material": 9,
+                    "uv sets": [
+                        {
+                            "top left u": 0.0,
+                            "top left v": 0.0,
+                            "top right u": 1.0,
+                            "top right v": 0.0,
+                            "bottom left u": 0.0,
+                            "bottom left v": 1.0,
+                            "bottom right u": 1.0,
+                            "bottom right v": 1.0
+                        }
+                    ]
+                },
+                {
+                    "magic": "pic1",
+                    "flags": {
+                        "visible": false,
+                        "influenced alpha": false,
+                        "location adjust": false
+                    },
+                    "base position": "center",
+                    "opacity": 255,
+                    "name": "rank_pearl",
+                    "user data": "",
+                    "translation x": -212.0,
+                    "translation y": 0.0,
+                    "translation z": 0.0,
+                    "rotation x": 0.0,
+                    "rotation y": 0.0,
+                    "rotation z": 0.0,
+                    "scale x": 1.0,
+                    "scale y": 1.0,
+                    "size x": 28.0,
+                    "size y": 28.0,
+                    "vertex color top left r": 255,
+                    "vertex color top left g": 255,
+                    "vertex color top left b": 255,
+                    "vertex color top left a": 255,
+                    "vertex color top right r": 255,
+                    "vertex color top right g": 255,
+                    "vertex color top right b": 255,
+                    "vertex color top right a": 255,
+                    "vertex color bottom left r": 255,
+                    "vertex color bottom left g": 255,
+                    "vertex color bottom left b": 255,
+                    "vertex color bottom left a": 255,
+                    "vertex color bottom right r": 255,
+                    "vertex color bottom right g": 255,
+                    "vertex color bottom right b": 255,
+                    "vertex color bottom right a": 255,
+                    "material": 10,
+                    "uv sets": [
+                        {
+                            "top left u": 0.0,
+                            "top left v": 0.0,
+                            "top right u": 1.0,
+                            "top right v": 0.0,
+                            "bottom left u": 0.0,
+                            "bottom left v": 1.0,
+                            "bottom right u": 1.0,
+                            "bottom right v": 1.0
+                        }
+                    ]
+                },
+                {
+                    "magic": "pic1",
+                    "flags": {
+                        "visible": false,
+                        "influenced alpha": false,
+                        "location adjust": false
+                    },
+                    "base position": "center",
+                    "opacity": 255,
+                    "name": "rank_master",
+                    "user data": "",
+                    "translation x": -212.0,
+                    "translation y": 0.0,
+                    "translation z": 0.0,
+                    "rotation x": 0.0,
+                    "rotation y": 0.0,
+                    "rotation z": 0.0,
+                    "scale x": 1.0,
+                    "scale y": 1.0,
+                    "size x": 28.0,
+                    "size y": 28.0,
+                    "vertex color top left r": 255,
+                    "vertex color top left g": 255,
+                    "vertex color top left b": 255,
+                    "vertex color top left a": 255,
+                    "vertex color top right r": 255,
+                    "vertex color top right g": 255,
+                    "vertex color top right b": 255,
+                    "vertex color top right a": 255,
+                    "vertex color bottom left r": 255,
+                    "vertex color bottom left g": 255,
+                    "vertex color bottom left b": 255,
+                    "vertex color bottom left a": 255,
+                    "vertex color bottom right r": 255,
+                    "vertex color bottom right g": 255,
+                    "vertex color bottom right b": 255,
+                    "vertex color bottom right a": 255,
+                    "material": 11,
+                    "uv sets": [
+                        {
+                            "top left u": 0.0,
+                            "top left v": 0.0,
+                            "top right u": 1.0,
+                            "top right v": 0.0,
+                            "bottom left u": 0.0,
+                            "bottom left v": 1.0,
+                            "bottom right u": 1.0,
+                            "bottom right v": 1.0
+                        }
+                    ]
+                },
+                {
+                    "magic": "pic1",
+                    "flags": {
+                        "visible": false,
+                        "influenced alpha": false,
+                        "location adjust": false
+                    },
+                    "base position": "center",
+                    "opacity": 255,
+                    "name": "rank_grandmaster",
+                    "user data": "",
+                    "translation x": -212.0,
+                    "translation y": 0.0,
+                    "translation z": 0.0,
+                    "rotation x": 0.0,
+                    "rotation y": 0.0,
+                    "rotation z": 0.0,
+                    "scale x": 1.0,
+                    "scale y": 1.0,
+                    "size x": 28.0,
+                    "size y": 28.0,
+                    "vertex color top left r": 255,
+                    "vertex color top left g": 255,
+                    "vertex color top left b": 255,
+                    "vertex color top left a": 255,
+                    "vertex color top right r": 255,
+                    "vertex color top right g": 255,
+                    "vertex color top right b": 255,
+                    "vertex color top right a": 255,
+                    "vertex color bottom left r": 255,
+                    "vertex color bottom left g": 255,
+                    "vertex color bottom left b": 255,
+                    "vertex color bottom left a": 255,
+                    "vertex color bottom right r": 255,
+                    "vertex color bottom right g": 255,
+                    "vertex color bottom right b": 255,
+                    "vertex color bottom right a": 255,
+                    "material": 12,
+                    "uv sets": [
+                        {
+                            "top left u": 0.0,
+                            "top left v": 0.0,
+                            "top right u": 1.0,
+                            "top right v": 0.0,
+                            "bottom left u": 0.0,
+                            "bottom left v": 1.0,
+                            "bottom right u": 1.0,
+                            "bottom right v": 1.0
+                        }
+                    ]
+                },
+                {
+                    "magic": "txt1",
+                    "flags": {
+                        "visible": true,
+                        "influenced alpha": false,
+                        "location adjust": false
+                    },
+                    "base position": "center",
+                    "opacity": 255,
+                    "name": "name",
+                    "user data": "",
+                    "translation x": -40.0,
+                    "translation y": 0.0,
+                    "translation z": 0.0,
+                    "rotation x": 0.0,
+                    "rotation y": 0.0,
+                    "rotation z": 0.0,
+                    "scale x": 1.0,
+                    "scale y": 1.0,
+                    "size x": 300.0,
+                    "size y": 30.0,
+                    "maximum string size": 128,
+                    "string size": 4,
+                    "material": 0,
+                    "font": 0,
+                    "text position": "center left",
+                    "text alignment": "unspecified",
+                    "text": "-",
+                    "top color r": 255,
+                    "top color g": 255,
+                    "top color b": 255,
+                    "top color a": 255,
+                    "bottom color r": 255,
+                    "bottom color g": 255,
+                    "bottom color b": 255,
+                    "bottom color a": 255,
+                    "font size x": 20.0,
+                    "font size y": 23.7,
+                    "character space": 0.0,
+                    "line space": 0.0
+                },
+                {
+                    "magic": "txt1",
+                    "flags": {
+                        "visible": true,
+                        "influenced alpha": false,
+                        "location adjust": false
+                    },
+                    "base position": "center",
+                    "opacity": 255,
+                    "name": "country",
+                    "user data": "",
+                    "translation x": 150.0,
+                    "translation y": 0.0,
+                    "translation z": 0.0,
+                    "rotation x": 0.0,
+                    "rotation y": 0.0,
+                    "rotation z": 0.0,
+                    "scale x": 1.0,
+                    "scale y": 1.0,
+                    "size x": 50.0,
+                    "size y": 30.0,
+                    "maximum string size": 128,
+                    "string size": 4,
+                    "material": 0,
+                    "font": 0,
+                    "text position": "center",
+                    "text alignment": "unspecified",
+                    "text": "-",
+                    "top color r": 255,
+                    "top color g": 255,
+                    "top color b": 255,
+                    "top color a": 255,
+                    "bottom color r": 255,
+                    "bottom color g": 255,
+                    "bottom color b": 255,
+                    "bottom color a": 255,
+                    "font size x": 20.0,
+                    "font size y": 23.7,
+                    "character space": 0.0,
+                    "line space": 0.0
+                },
+                {
+                    "magic": "txt1",
+                    "flags": {
+                        "visible": true,
+                        "influenced alpha": false,
+                        "location adjust": false
+                    },
+                    "base position": "center",
+                    "opacity": 255,
+                    "name": "lr",
+                    "user data": "",
+                    "translation x": 245.0,
+                    "translation y": 0.0,
+                    "translation z": 0.0,
+                    "rotation x": 0.0,
+                    "rotation y": 0.0,
+                    "rotation z": 0.0,
+                    "scale x": 1.0,
+                    "scale y": 1.0,
+                    "size x": 100.0,
+                    "size y": 30.0,
+                    "maximum string size": 128,
+                    "string size": 4,
+                    "material": 0,
+                    "font": 0,
+                    "text position": "center right",
+                    "text alignment": "unspecified",
+                    "text": "-",
+                    "top color r": 255,
+                    "top color g": 255,
+                    "top color b": 255,
+                    "top color a": 255,
+                    "bottom color r": 255,
+                    "bottom color g": 255,
+                    "bottom color b": 255,
+                    "bottom color a": 255,
+                    "font size x": 20.0,
+                    "font size y": 23.7,
+                    "character space": 0.0,
+                    "line space": 0.0
+                }
+            ]
+        },
+        {
+            "magic": "grp1",
+            "name": "RootGroup",
+            "panes": []
+        }
+    ]
+}

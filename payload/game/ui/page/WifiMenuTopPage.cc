@@ -14,6 +14,7 @@ enum ButtonId {
     Settings,
     Back,
     Replays,
+    Leaderboard,
 };
 
 WifiMenuTopPage::WifiMenuTopPage() = default;
@@ -48,7 +49,7 @@ void WifiMenuTopPage::onInit() {
     m_inputManager.setWrappingMode(UI::MultiControlInputManager::WrappingMode::XY);
     m_inputManager.setHandler(MenuInputManager::InputId::Back, &m_onBack, false);
 
-    initChildren(9);
+    initChildren(10);
 
     insertChild(0, &m_pageTitleText, 0);
     m_pageTitleText.load(0);
@@ -81,6 +82,13 @@ void WifiMenuTopPage::onInit() {
     m_replaysButton.m_index = ButtonId::Replays;
     m_replaysButton.setFrontHandler(&m_onReplaysButtonFront, false);
     m_replaysButton.setSelectHandler(&m_onButtonSelect, false);
+
+    // Bottom right: the MKW Lounge leaderboard.
+    insertChild(9, &m_leaderboardButton, 0);
+    m_leaderboardButton.load("button", "LeaderboardButton", "Leaderboard", 1, false, false);
+    m_leaderboardButton.m_index = ButtonId::Leaderboard;
+    m_leaderboardButton.setFrontHandler(&m_onLeaderboardButtonFront, false);
+    m_leaderboardButton.setSelectHandler(&m_onButtonSelect, false);
 
     insertChild(4, &m_settingsButton, 0);
     m_settingsButton.load("button", "SettingsButton", "Option", 1, false, false);
@@ -158,6 +166,11 @@ void WifiMenuTopPage::onReplaysButtonFront(PushButton *button, u32 /* localPlaye
     transitionToPublicRoomModeSelect(button, RandomMatchingPage::JoinType::AnyoneRegional);
 }
 
+void WifiMenuTopPage::onLeaderboardButtonFront(PushButton *button, u32 /* localPlayerId */) {
+    m_replacement = PageId::MenuLeaderboard;
+    startReplace(Anim::Next, button->getDelay());
+}
+
 void WifiMenuTopPage::onBackButtonFront(PushButton * /* button */, u32 localPlayerId) {
     onBack(localPlayerId);
 }
@@ -175,6 +188,9 @@ void WifiMenuTopPage::onButtonSelect(PushButton *button, u32 /* localPlayerId */
         break;
     case ButtonId::Settings:
         m_instructionText.setMessage(10001, 0);
+        break;
+    case ButtonId::Leaderboard:
+        m_instructionText.setMessage(10016, 0);
         break;
     case ButtonId::Replays:
         m_instructionText.setMessage(10009, 0);

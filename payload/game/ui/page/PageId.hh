@@ -19,6 +19,7 @@ enum class PageId {
     ExtensionsBegin = 0xff,
 
     MenuSettings,
+    MenuLeaderboard,
 
     ExtensionsEnd,
 };
