@@ -75,8 +75,8 @@ children += [
     text('name', -50, 300, 'center left'),
     text('lr', 245, 100, 'center right'),
 ]
-# Text boxes are positioned by their centers: 'name' spans -200..100.
-children[-3]['translation x'] = -40.0
+# Text boxes are positioned by their centers: 'name' spans -190..110.
+next(c for c in children if c['name'] == 'name')['translation x'] = -40.0
 
 root = pane('pan1', 'RootPane', 0, 608, 456)
 root['children'] = children
