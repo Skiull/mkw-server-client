@@ -28,6 +28,8 @@ typedef enum {
     SEARCH_REGION_EU = 3,
     SEARCH_REGION_JP = 4,
     SEARCH_REGION_KOR = 5,
+    // Not a real region: asks wfc-server for a room that replays a recorded race.
+    SEARCH_REGION_REPLAY = 6,
 } SearchRegion;
 
 // different race packet types, currently we check the first byte (which should be reconsidered at

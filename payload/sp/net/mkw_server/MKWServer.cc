@@ -16,6 +16,9 @@ constexpr char PONG_PACKET[] = "PO";
 
 namespace MKWServer {
 
+bool s_watchReplay = false;
+
+
 #define SEARCH_ID_MAGIC "SEARCHID"
 
 static bool s_hasRequestedMKWServerAddress = false;

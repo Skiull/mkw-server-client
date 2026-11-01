@@ -123,6 +123,7 @@ asset_in_files = {
     os.path.join('Scene', 'UI', 'GlobeSP.arc.lzma'): [
         # Settings
         os.path.join('button', 'ctrl', 'SettingsButton.brctr.json5'),
+        os.path.join('button', 'ctrl', 'ReplaysButton.brctr.json5'),
         os.path.join('bg', 'blyt', 'race_obi_bottom_message.brlyt.json5'),
         os.path.join('bg', 'ctrl', 'ObiInstructionTextPopup.brctr.json5'),
         os.path.join('control', 'anim', 'common_w023_rule_menu_text_light_02_select.brlan.json5'),

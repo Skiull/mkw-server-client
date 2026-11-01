@@ -248,6 +248,9 @@ void NetManager::connectToAnybodyAsync() {
         bool isWW =
                 m_roomType == RoomType::VersusWorldWide || m_roomType == RoomType::BattleWorldWide;
         SearchRegion region = isWW ? SEARCH_REGION_WW : getSearchRegion();
+        if (MKWServer::s_watchReplay) {
+            region = SEARCH_REGION_REPLAY;
+        }
 
         bool isVS =
                 m_roomType == RoomType::VersusWorldWide || m_roomType == RoomType::VersusRegional;

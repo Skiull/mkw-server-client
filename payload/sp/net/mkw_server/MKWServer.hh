@@ -36,4 +36,7 @@ EXTERN_C void sendPong();
 EXTERN_C void setPingTime(const u8 *message);
 
 bool sendMessageToQR2(const u8 *data, u32 size);
+
+// Set by the Replays button: the next public room search asks for a replay room.
+extern bool s_watchReplay;
 } // namespace MKWServer

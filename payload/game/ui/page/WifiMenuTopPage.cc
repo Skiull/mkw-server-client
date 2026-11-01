@@ -3,6 +3,8 @@
 #include "game/ui/SectionManager.hh"
 #include "game/ui/page/SettingsPage.hh"
 
+#include <sp/net/mkw_server/MKWServer.hh>
+
 namespace UI {
 
 enum ButtonId {
@@ -11,6 +13,7 @@ enum ButtonId {
     Friend,
     Settings,
     Back,
+    Replays,
 };
 
 WifiMenuTopPage::WifiMenuTopPage() = default;
@@ -45,7 +48,7 @@ void WifiMenuTopPage::onInit() {
     m_inputManager.setWrappingMode(UI::MultiControlInputManager::WrappingMode::XY);
     m_inputManager.setHandler(MenuInputManager::InputId::Back, &m_onBack, false);
 
-    initChildren(8);
+    initChildren(9);
 
     insertChild(0, &m_pageTitleText, 0);
     m_pageTitleText.load(0);
@@ -71,6 +74,13 @@ void WifiMenuTopPage::onInit() {
     m_friendButton.m_animator.getGroup(4)->setAnimation(0, 0.0);
     m_friendButton.m_animator.getGroup(5)->setAnimation(0, 0.0);
     m_friendButton.m_index = ButtonId::Friend;
+
+    // Below Friends: watch a recorded race (a replay room on the self-hosted server).
+    insertChild(8, &m_replaysButton, 0);
+    m_replaysButton.load("button", "ReplaysButton", "ButtonReplays", 1, 0, false);
+    m_replaysButton.m_index = ButtonId::Replays;
+    m_replaysButton.setFrontHandler(&m_onReplaysButtonFront, false);
+    m_replaysButton.setSelectHandler(&m_onButtonSelect, false);
 
     insertChild(4, &m_settingsButton, 0);
     m_settingsButton.load("button", "SettingsButton", "Option", 1, false, false);
@@ -126,16 +136,26 @@ void WifiMenuTopPage::transitionToPublicRoomModeSelect(PushButton *button,
 }
 
 void WifiMenuTopPage::onWorldWideButtonFront(PushButton *button, u32 /* localPlayerId */) {
+    MKWServer::s_watchReplay = false;
     transitionToPublicRoomModeSelect(button, RandomMatchingPage::JoinType::AnyoneWW);
 }
 
 void WifiMenuTopPage::onRegionalButtonFront(PushButton *button, u32 /* localPlayerId */) {
+    MKWServer::s_watchReplay = false;
     transitionToPublicRoomModeSelect(button, RandomMatchingPage::JoinType::AnyoneRegional);
 }
 
 void WifiMenuTopPage::onFriendButtonFront(PushButton *button, u32 /* localPlayerId */) {
+    MKWServer::s_watchReplay = false;
     m_replacement = PageId::WifiFriendMenu;
     startReplace(Anim::None, button->getDelay());
+}
+
+void WifiMenuTopPage::onReplaysButtonFront(PushButton *button, u32 /* localPlayerId */) {
+    // A replay room is a VS room in its own search region. The player races as normal while
+    // the recorded racers drive around them.
+    MKWServer::s_watchReplay = true;
+    transitionToPublicRoomModeSelect(button, RandomMatchingPage::JoinType::AnyoneRegional);
 }
 
 void WifiMenuTopPage::onBackButtonFront(PushButton * /* button */, u32 localPlayerId) {
@@ -155,6 +175,9 @@ void WifiMenuTopPage::onButtonSelect(PushButton *button, u32 /* localPlayerId */
         break;
     case ButtonId::Settings:
         m_instructionText.setMessage(10001, 0);
+        break;
+    case ButtonId::Replays:
+        m_instructionText.setMessage(10009, 0);
         break;
     case ButtonId::Back:
         // Set to empty string
