@@ -74,7 +74,7 @@ void LeaderboardPage::onInit() {
         insertChild(3 + i, &m_rows[i], 0);
         char variant[0x10];
         snprintf(variant, sizeof(variant), "Row%u", i);
-        m_rows[i].load("control", "LeaderboardRow", variant, nullptr);
+        m_rows[i].load("globe", "LeaderboardRow", variant, nullptr);
     }
 
     m_pageTitleText.load(false);
@@ -149,11 +149,14 @@ void LeaderboardPage::refresh() {
         nameInfo.strings[0] = name;
         control.setMessage("name", MSG_STRING, &nameInfo);
 
-        wchar_t country[3] = {static_cast<wchar_t>(row.country[0]),
-                static_cast<wchar_t>(row.country[1]), 0};
-        MessageInfo countryInfo{};
-        countryInfo.strings[0] = country;
-        control.setMessage("country", MSG_STRING, &countryInfo);
+        // The game's flag for the country, if it has one.
+        char flag[4];
+        snprintf(flag, sizeof(flag), "%03u", row.country % 1000);
+        bool hasFlag = row.country != 0 && control.hasPictureSourcePane(flag);
+        if (hasFlag) {
+            control.setPicture("flag", flag);
+        }
+        control.setPaneVisible("flag", hasFlag);
 
         MessageInfo lrInfo{};
         lrInfo.intVals[0] = row.lr;

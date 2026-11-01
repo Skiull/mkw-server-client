@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
-# Writes the leaderboard row layout (assets/control/blyt/leaderboard_row.brlyt.json5) and its
-# control file (assets/control/ctrl/LeaderboardRow.brctr.json5). Run from the repo root.
+# Writes the leaderboard row layout (assets/globe/blyt/leaderboard_row.brlyt.json5) and its
+# control file (assets/globe/ctrl/LeaderboardRow.brctr.json5). Run from the repo root.
+# They live in 'globe' because the game's flags (globe/blyt/national_flag.brlyt, the row's
+# picture source) are there, in Globe.szs, loaded on the online menus.
 import json
 
 RANKS = ['iron', 'copper', 'bronze', 'silver', 'gold', 'platinum', 'emerald', 'ruby', 'diamond',
@@ -62,9 +64,12 @@ def text(name, x, w, position):
 
 children = [text('position', -262, 56, 'center right')]
 children += [picture(f'rank_{r}', -212, 28, 1 + i) for i, r in enumerate(RANKS)]
+# The country flag, copied from national_flag at runtime; flag_blank_00 until then.
+flag = picture('flag', 150, 24, 1 + len(RANKS))
+flag['size x'] = 36.0
+children.append(flag)
 children += [
     text('name', -50, 300, 'center left'),
-    text('country', 150, 50, 'center'),
     text('lr', 245, 100, 'center right'),
 ]
 # Text boxes are positioned by their centers: 'name' spans -200..100.
@@ -77,16 +82,16 @@ layout = {
     'version': 10,
     'sections': [
         {'magic': 'lyt1', 'centered': True, 'size x': 608.0, 'size y': 456.0},
-        {'magic': 'txl1', 'tpls': [{'name': f'rank_{r}.tpl'} for r in RANKS]},
+        {'magic': 'txl1', 'tpls': [{'name': f'rank_{r}.tpl'} for r in RANKS] + [{'name': 'flag_blank_00.tpl'}]},
         {'magic': 'fnl1', 'brfnts': [{'name': 'tt_kart_font_rodan_ntlg_pro_b.brfnt'}]},
-        {'magic': 'mat1', 'materials': [material('text')] + [material(f'rank_{r}', i) for i, r in enumerate(RANKS)]},
+        {'magic': 'mat1', 'materials': [material('text')] + [material(f'rank_{r}', i) for i, r in enumerate(RANKS)] + [material('flag', len(RANKS))]},
         root,
         {'magic': 'grp1', 'name': 'RootGroup', 'panes': []},
     ],
 }
 
 ctrl = {
-    'main brlyt': 'leaderboard_row', 'bmg': 'Menu', 'picture source brlyt': '',
+    'main brlyt': 'leaderboard_row', 'bmg': 'Menu', 'picture source brlyt': 'national_flag',
     'groups': [], 'animations': [],
     'variants': [],
     'messages': [], 'pictures': [],
@@ -100,7 +105,7 @@ for i in range(10):
     v.update({'first message': 0, 'message count': 0, 'first picture': 0, 'picture count': 0})
     ctrl['variants'].append(v)
 
-with open('assets/control/blyt/leaderboard_row.brlyt.json5', 'w', encoding='utf-8', newline='\n') as f:
+with open('assets/globe/blyt/leaderboard_row.brlyt.json5', 'w', encoding='utf-8', newline='\n') as f:
     json.dump(layout, f, indent=4, ensure_ascii=False)
-with open('assets/control/ctrl/LeaderboardRow.brctr.json5', 'w', encoding='utf-8', newline='\n') as f:
+with open('assets/globe/ctrl/LeaderboardRow.brctr.json5', 'w', encoding='utf-8', newline='\n') as f:
     json.dump(ctrl, f, indent=4, ensure_ascii=False)
