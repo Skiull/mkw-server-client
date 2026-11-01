@@ -149,14 +149,20 @@ void LeaderboardPage::refresh() {
         nameInfo.strings[0] = name;
         control.setMessage("name", MSG_STRING, &nameInfo);
 
-        // The game's flag for the country, if it has one.
-        char flag[4];
-        snprintf(flag, sizeof(flag), "%03u", row.country % 1000);
-        bool hasFlag = row.country != 0 && control.hasPictureSourcePane(flag);
-        if (hasFlag) {
-            control.setPicture("flag", flag);
+        // The game's flag for the country, if it has one (one hidden picture per flag).
+        auto &rowControl = static_cast<RowControl &>(control);
+        if (m_shownFlags[i][0] != '\0') {
+            control.setPaneVisible(m_shownFlags[i], false);
+            m_shownFlags[i][0] = '\0';
         }
-        control.setPaneVisible("flag", hasFlag);
+        if (row.country != 0) {
+            snprintf(m_shownFlags[i], sizeof(m_shownFlags[i]), "flag_%03u", row.country % 1000);
+            if (rowControl.pane(m_shownFlags[i])) {
+                control.setPaneVisible(m_shownFlags[i], true);
+            } else {
+                m_shownFlags[i][0] = '\0';
+            }
+        }
 
         MessageInfo lrInfo{};
         lrInfo.intVals[0] = row.lr;

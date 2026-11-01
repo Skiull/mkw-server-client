@@ -1,9 +1,12 @@
 #!/usr/bin/env python3
 # Writes the leaderboard row layout (assets/globe/blyt/leaderboard_row.brlyt.json5) and its
 # control file (assets/globe/ctrl/LeaderboardRow.brctr.json5). Run from the repo root.
-# They live in 'globe' because the game's flags (globe/blyt/national_flag.brlyt, the row's
-# picture source) are there, in Globe.szs, loaded on the online menus.
+# They live in 'globe' so the flag pictures find the game's own flag textures
+# (globe/timg/<group>_<Wii country code>_<name>.tpl in Globe.szs, loaded on the online menus).
+# Each row has one hidden picture per flag, named flag_<Wii country code>; the page shows one.
 import json
+
+FLAGS = ['001_001_japan', '002_136_koreaRep', '150_049_usa', '151_018_canada', '152_036_mexico', '153_008_anguilla', '153_009_antigua', '153_010_argentina', '153_011_aruba', '153_012_bahamas', '153_013_barbados', '153_014_belize', '153_015_bolivia', '153_016_brazil', '153_017_britishVirginIslands', '153_019_caymanIslands', '153_020_chile', '153_021_colombia', '153_022_costaRica', '153_023_dominica', '153_024_dominicanRep', '153_025_ecuador', '153_026_elSalvador', '153_028_grenada', '153_030_guatemala', '153_031_guyana', '153_032_haiti', '153_033_honduras', '153_034_jamaica', '153_037_montserrat', '153_038_netherlandsAntilles', '153_039_nicaragua', '153_040_panama', '153_041_paraguay', '153_042_peru', '153_043_stKitts', '153_044_stLucia', '153_045_stVincent', '153_046_suriname', '153_047_trinidadAndTobago', '153_048_turksCaicosIslands', '153_050_uruguay', '153_051_usVirginIslands', '153_052_venezuela', '200_065_australia', '200_082_ireland', '200_095_newZealand', '200_110_uk', '201_066_austria', '201_078_germany', '201_108_switzerland', '202_067_belgium', '202_077_france', '202_088_luxembourg', '203_083_italy', '204_098_portugal', '204_105_spain', '205_094_netherlands', '206_074_denmark', '206_076_finland', '206_079_greece', '206_096_norway', '206_107_sweden']
 
 RANKS = ['iron', 'copper', 'bronze', 'silver', 'gold', 'platinum', 'emerald', 'ruby', 'diamond',
          'pearl', 'master', 'grandmaster']
@@ -64,10 +67,10 @@ def text(name, x, w, position):
 
 children = [text('position', -262, 56, 'center right')]
 children += [picture(f'rank_{r}', -212, 28, 1 + i) for i, r in enumerate(RANKS)]
-# The country flag, copied from national_flag at runtime; flag_blank_00 until then.
-flag = picture('flag', 150, 24, 1 + len(RANKS))
-flag['size x'] = 36.0
-children.append(flag)
+for i, f in enumerate(FLAGS):
+    flag = picture('flag_' + f.split('_')[1], 150, 24, 1 + len(RANKS) + i)
+    flag['size x'] = 36.0
+    children.append(flag)
 children += [
     text('name', -50, 300, 'center left'),
     text('lr', 245, 100, 'center right'),
@@ -82,16 +85,16 @@ layout = {
     'version': 10,
     'sections': [
         {'magic': 'lyt1', 'centered': True, 'size x': 608.0, 'size y': 456.0},
-        {'magic': 'txl1', 'tpls': [{'name': f'rank_{r}.tpl'} for r in RANKS] + [{'name': 'flag_blank_00.tpl'}]},
+        {'magic': 'txl1', 'tpls': [{'name': f'rank_{r}.tpl'} for r in RANKS] + [{'name': f + '.tpl'} for f in FLAGS]},
         {'magic': 'fnl1', 'brfnts': [{'name': 'tt_kart_font_rodan_ntlg_pro_b.brfnt'}]},
-        {'magic': 'mat1', 'materials': [material('text')] + [material(f'rank_{r}', i) for i, r in enumerate(RANKS)] + [material('flag', len(RANKS))]},
+        {'magic': 'mat1', 'materials': [material('text')] + [material(f'rank_{r}', i) for i, r in enumerate(RANKS)] + [material('flag_' + f.split('_')[1], len(RANKS) + i) for i, f in enumerate(FLAGS)]},
         root,
         {'magic': 'grp1', 'name': 'RootGroup', 'panes': []},
     ],
 }
 
 ctrl = {
-    'main brlyt': 'leaderboard_row', 'bmg': 'Menu', 'picture source brlyt': 'national_flag',
+    'main brlyt': 'leaderboard_row', 'bmg': 'Menu', 'picture source brlyt': '',
     'groups': [], 'animations': [],
     'variants': [],
     'messages': [], 'pictures': [],

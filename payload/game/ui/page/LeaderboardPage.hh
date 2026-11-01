@@ -44,6 +44,7 @@ private:
     u16 m_pageCount = 1;
     u32 m_shownSerial = 0;
     u32 m_framesSinceRequest = 0;
+    char m_shownFlags[10][9] = {}; // Flag pane shown in each row, if any.
 };
 
 } // namespace UI
