@@ -66,7 +66,6 @@ void WifiMenuTopPage::onInit() {
     m_regionalButton.m_index = ButtonId::Regional;
     m_regionalButton.setFrontHandler(&m_onRegionalButtonFront, false);
     m_regionalButton.setSelectHandler(&m_onButtonSelect, false);
-    m_regionalButton.setMessageAll(10020); // "Create Mogi"
 
     insertChild(3, &m_friendButton, 0);
     m_friendButton.load(animInfo, "button", "WifiMenuSingleTopFriendButton", "ButtonFriend", 1, 0);
@@ -146,22 +145,16 @@ void WifiMenuTopPage::transitionToPublicRoomModeSelect(PushButton *button,
 
 void WifiMenuTopPage::onWorldWideButtonFront(PushButton *button, u32 /* localPlayerId */) {
     MKWServer::s_watchReplay = false;
-    MKWServer::s_createMogi = false;
     transitionToPublicRoomModeSelect(button, RandomMatchingPage::JoinType::AnyoneWW);
 }
 
 void WifiMenuTopPage::onRegionalButtonFront(PushButton *button, u32 /* localPlayerId */) {
-    // The Regional button is Create Mogi: the friends page, where Create Room makes a room
-    // only players with a linked Lounge profile can join.
     MKWServer::s_watchReplay = false;
-    MKWServer::s_createMogi = true;
-    m_replacement = PageId::WifiFriendMenu;
-    startReplace(Anim::None, button->getDelay());
+    transitionToPublicRoomModeSelect(button, RandomMatchingPage::JoinType::AnyoneRegional);
 }
 
 void WifiMenuTopPage::onFriendButtonFront(PushButton *button, u32 /* localPlayerId */) {
     MKWServer::s_watchReplay = false;
-    MKWServer::s_createMogi = false;
     m_replacement = PageId::WifiFriendMenu;
     startReplace(Anim::None, button->getDelay());
 }
@@ -188,7 +181,7 @@ void WifiMenuTopPage::onButtonSelect(PushButton *button, u32 /* localPlayerId */
         m_instructionText.setMessage(0x10d6, 0);
         break;
     case ButtonId::Regional:
-        m_instructionText.setMessage(10021, 0);
+        m_instructionText.setMessage(0x10d7, 0);
         break;
     case ButtonId::Friend:
         m_instructionText.setMessage(0x10d8, 0);

@@ -17,7 +17,6 @@ constexpr char PONG_PACKET[] = "PO";
 namespace MKWServer {
 
 bool s_watchReplay = false;
-bool s_createMogi = false;
 bool s_skipCharacterSelect = false;
 
 

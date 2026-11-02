@@ -189,8 +189,7 @@ static bool sendToRoomManager(void *message, s32 messageLength) {
 
 bool sendOpenRoomRequest() {
     MatchRequestHeader openRoomRequest{};
-    createMatchRequestHeader(&openRoomRequest,
-            s_createMogi ? MatchRequestType::OpenMogi : MatchRequestType::OpenRoom);
+    createMatchRequestHeader(&openRoomRequest, MatchRequestType::OpenRoom);
 
     SP_LOG("Sent OpenRoom request!");
     return sendToRoomManager(&openRoomRequest, sizeof(openRoomRequest));
