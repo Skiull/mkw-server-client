@@ -65,26 +65,23 @@ void ReplayListPage::onInit() {
     m_inputManager.init(0x1, false);
     setInputManager(&m_inputManager);
 
-    initChildren(3 + std::size(m_rows));
+    initChildren(2 + std::size(m_rows));
     insertChild(0, &m_pageTitleText, 0);
-    insertChild(1, &m_backButton, 0);
-    insertChild(2, &m_instructionText, 0);
+    insertChild(1, &m_instructionText, 0);
     for (u32 i = 0; i < std::size(m_rows); i++) {
-        insertChild(3 + i, &m_rows[i], 0);
+        insertChild(2 + i, &m_rows[i], 0);
         char variant[0x10];
         snprintf(variant, sizeof(variant), "Replay%u", i);
         m_rows[i].load("globe", "LeaderboardRow", variant, nullptr);
     }
 
     m_pageTitleText.load(false);
-    m_backButton.load("button", "Back", "ButtonBack", 0x1, false, true);
     m_instructionText.load();
 
-    m_inputManager.setHandler(MenuInputManager::InputId::Back, &m_onBack, false, false);
-    m_inputManager.setHandler(MenuInputManager::InputId::Front, &m_onFront, false, false);
-    m_inputManager.setHandler(MenuInputManager::InputId::Up, &m_onUp, false, false);
-    m_inputManager.setHandler(MenuInputManager::InputId::Down, &m_onDown, false, false);
-    m_backButton.setFrontHandler(&m_onBackButtonFront, false);
+    m_inputManager.setHandler(MenuInputManager::InputId::Back, &m_onBack, false);
+    m_inputManager.setHandler(MenuInputManager::InputId::Front, &m_onFront, false);
+    m_inputManager.setHandler(MenuInputManager::InputId::Up, &m_onUp, true);
+    m_inputManager.setHandler(MenuInputManager::InputId::Down, &m_onDown, true);
 
     m_pageTitleText.setMessage(MSG_TITLE);
 }
@@ -197,10 +194,6 @@ void ReplayListPage::onFront(u32 /* localPlayerId */) {
 void ReplayListPage::onBack(u32 /* localPlayerId */) {
     m_replacement = PageId::WifiMenuTop;
     startReplace(Anim::Prev, 0.0f);
-}
-
-void ReplayListPage::onBackButtonFront(PushButton * /* button */, u32 localPlayerId) {
-    onBack(localPlayerId);
 }
 
 } // namespace UI
