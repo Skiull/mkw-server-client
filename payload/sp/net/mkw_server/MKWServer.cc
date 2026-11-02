@@ -17,6 +17,7 @@ constexpr char PONG_PACKET[] = "PO";
 namespace MKWServer {
 
 bool s_watchReplay = false;
+bool s_skipCharacterSelect = false;
 
 
 #define SEARCH_ID_MAGIC "SEARCHID"

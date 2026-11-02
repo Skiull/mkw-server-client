@@ -8,6 +8,10 @@ enum class PageId {
     None = -0x1,
     Empty = 0x0,
 
+    CharacterSelect = 0x6B,
+    VehicleSelect = 0x6C,
+    DriftSelect = 0x6D,
+
     WifiShutdown = 0x87,
     WifiMenuTop = 0x8B,
     WifiMenuModeSelect = 0x8C,

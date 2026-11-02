@@ -185,6 +185,7 @@ void ReplayListPage::onFront(u32 /* localPlayerId */) {
     }
     MKWServer::s_watchReplay = true;
     MKWServer::s_replayIndex = m_cursor;
+    MKWServer::s_skipCharacterSelect = true;
     randomMatchingPage->setJoinType(RandomMatchingPage::JoinType::AnyoneRegional);
     randomMatchingPage->setBattle(false);
     m_replacement = PageId::WifiRandomMatching;
