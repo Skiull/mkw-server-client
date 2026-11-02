@@ -23,6 +23,11 @@ public:
 
     u8 getLocalPlayerCount() const;
 
+    // mkw-sp calls this the GlobalContext (menu selections kept across pages).
+    SectionParams *sectionParams() {
+        return m_sectionParams;
+    }
+
     static SectionManager *Instance() {
         return s_instance;
     }

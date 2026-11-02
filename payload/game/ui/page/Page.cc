@@ -3,7 +3,7 @@
 #include "Page.hh"
 
 #include "game/system/SaveManager.hh"
-#include "game/ui/ctrl/Button.hh"
+#include "game/ui/SectionManager.hh"
 
 #include <sp/net/mkw_server/MKWServer.hh>
 
@@ -35,60 +35,56 @@ MenuInputManager *Page::inputManager() {
     return m_inputManager;
 }
 
-// MenuPage's buttons (mkw-sp MenuPage.hh).
-static constexpr u32 MENU_PAGE_BUTTONS = 0x48;
-static constexpr u32 MENU_PAGE_BUTTON_COUNT = 0x3d8;
+// MenuPage::m_replacement (mkw-sp MenuPage.hh): the page that replaces this one.
+static constexpr u32 MENU_PAGE_REPLACEMENT = 0x3e8;
 
-// Frames to wait on each selection page before confirming (lets it set up its cursor).
-static constexpr s32 AUTO_CONFIRM_FRAME = 10;
+// GlobalContext (SectionParams) fields, from mkw-sp GlobalContext.hh.
+static constexpr u32 GC_LOCAL_CHARACTER_IDS = 0x12c; // Last picks, per local player.
+static constexpr u32 GC_LOCAL_VEHICLE_IDS = 0x13c;
+static constexpr u32 GC_DRIFT_MODES = 0x164;
+static constexpr u32 GC_SELECT_PLAYER = 0x220; // {character, vehicle, u8} x 2, 0xc each.
 
-static const Page *s_autoConfirmed = nullptr;
+static constexpr u32 CHARACTER_COUNT = 0x30;
+static constexpr u32 VEHICLE_COUNT = 0x24;
 
 // Watching a replay: the game makes a player joining a room pick a character, vehicle and
-// drift type. Confirm each page's highlighted button (the last pick) as if A were pressed,
-// so the pages go by on their own and the online flow carries on to the race.
-static void tryAutoConfirmSelection(Page *page) {
-    PageId id = page->id();
-    bool selectionPage = id == PageId::CharacterSelect || id == PageId::VehicleSelect ||
-            id == PageId::DriftSelect;
-    if (!selectionPage || page->state() != Page::State::State4) {
-        if (s_autoConfirmed == page) {
-            s_autoConfirmed = nullptr;
-        }
-        return;
+// drift type. Fill those in with the last picks (Mario and a Standard Kart M if there are
+// none) and replace the character select with the room search page, where drift select
+// hands over in the online menus.
+static bool trySkipSelection(Page *page) {
+    if (!MKWServer::s_skipCharacterSelect || page->id() != PageId::CharacterSelect ||
+            page->state() != Page::State::State4) {
+        return false;
     }
-    if (!MKWServer::s_skipCharacterSelect || s_autoConfirmed == page ||
-            page->frame() < AUTO_CONFIRM_FRAME) {
-        return;
+    MKWServer::s_skipCharacterSelect = false;
+    auto *context = reinterpret_cast<u8 *>(UI::SectionManager::Instance()->sectionParams());
+    if (context == nullptr) {
+        return false;
     }
-    auto *bytes = reinterpret_cast<u8 *>(page);
-    auto **buttons = *reinterpret_cast<PushButton ***>(bytes + MENU_PAGE_BUTTONS);
-    u32 count = *reinterpret_cast<u32 *>(bytes + MENU_PAGE_BUTTON_COUNT);
-    if (buttons == nullptr || count == 0 || count > 64) {
-        return;
+    u32 character = *reinterpret_cast<u32 *>(context + GC_LOCAL_CHARACTER_IDS);
+    u32 vehicle = *reinterpret_cast<u32 *>(context + GC_LOCAL_VEHICLE_IDS);
+    if (character >= CHARACTER_COUNT) {
+        character = 0; // Mario
     }
-    PushButton *button = nullptr;
-    for (u32 i = 0; i < count && button == nullptr; i++) {
-        if (buttons[i] != nullptr && buttons[i]->isSelected()) {
-            button = buttons[i];
-        }
+    if (vehicle >= VEHICLE_COUNT) {
+        vehicle = 1; // Standard Kart M
     }
-    if (button == nullptr) {
-        button = buttons[0];
+    *reinterpret_cast<u32 *>(context + GC_SELECT_PLAYER) = character;
+    *reinterpret_cast<u32 *>(context + GC_SELECT_PLAYER + 4) = vehicle;
+    u32 &drift = *reinterpret_cast<u32 *>(context + GC_DRIFT_MODES);
+    if (drift != 1 && drift != 2) {
+        drift = 1;
     }
-    if (button == nullptr) {
-        return;
-    }
-    s_autoConfirmed = page;
-    SP_LOG("Replay: confirming page %d, button %d", static_cast<s32>(id), button->m_index);
-    if (id == PageId::DriftSelect) {
-        MKWServer::s_skipCharacterSelect = false;
-    }
-    button->onFront(0, 0);
+    SP_LOG("Replay: skipping character select (character %u, vehicle %u)", character, vehicle);
+    *reinterpret_cast<PageId *>(reinterpret_cast<u8 *>(page) + MENU_PAGE_REPLACEMENT) =
+            PageId::WifiRandomMatching;
+    return true;
 }
 
 void Page::calc() {
-    tryAutoConfirmSelection(this);
+    if (trySkipSelection(this)) {
+        startReplace(Anim::Next, 0.0f);
+    }
     switch (m_state) {
     case State::State3:
     case State::State4:
