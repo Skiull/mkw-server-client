@@ -474,6 +474,7 @@
 0x805bdbe0 _ZN2UI10PushButton4initEv
 0x805bdd98 _ZN2UI10PushButton4calcEv
 0x805bdf88 _ZNK2UI10PushButton8getDelayEv
+0x805bdf44 _ZNK2UI10PushButton10isSelectedEv
 0x805bdffc _ZN2UI10PushButton8onSelectEjj
 0x805be12c _ZN2UI10PushButton5vf_40Ev
 0x805be130 _ZN2UI10PushButton10onDeselectEjj
