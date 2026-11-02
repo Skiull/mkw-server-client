@@ -160,10 +160,10 @@ void WifiMenuTopPage::onFriendButtonFront(PushButton *button, u32 /* localPlayer
 }
 
 void WifiMenuTopPage::onReplaysButtonFront(PushButton *button, u32 /* localPlayerId */) {
-    // A replay room is a VS room in its own search region. The player races as normal while
-    // the recorded racers drive around them.
-    MKWServer::s_watchReplay = true;
-    transitionToPublicRoomModeSelect(button, RandomMatchingPage::JoinType::AnyoneRegional);
+    // The list of the player's recorded races; picking one starts the search.
+    MKWServer::s_watchReplay = false;
+    m_replacement = PageId::MenuReplayList;
+    startReplace(Anim::Next, button->getDelay());
 }
 
 void WifiMenuTopPage::onLeaderboardButtonFront(PushButton *button, u32 /* localPlayerId */) {

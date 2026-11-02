@@ -16,6 +16,7 @@ enum class MatchRequestType : u8 {
     SearchRoom = 4,
     LocalPlayerCount = 5,
     LeaderboardPage = 6,
+    ReplayList = 7,
 };
 
 enum class GameMode : u8 {

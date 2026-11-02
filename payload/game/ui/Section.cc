@@ -3,6 +3,7 @@
 #include "Section.hh"
 
 #include "game/ui/page/LeaderboardPage.hh"
+#include "game/ui/page/ReplayListPage.hh"
 #include "game/ui/page/SettingsPage.hh"
 #include "game/ui/page/WifiMenuTopPage.hh"
 
@@ -60,6 +61,8 @@ void Section::addPages(SectionId id) {
             {SectionId::WifiMulti, PageId::MenuSettings},
             {SectionId::WifiSingle, PageId::MenuLeaderboard},
             {SectionId::WifiMulti, PageId::MenuLeaderboard},
+            {SectionId::WifiSingle, PageId::MenuReplayList},
+            {SectionId::WifiMulti, PageId::MenuReplayList},
             // clang-format on
     };
     for (const auto &addition : additions) {
@@ -90,6 +93,8 @@ Page *Section::createPage(PageId pageId) {
         return new MenuSettingsPage;
     case PageId::MenuLeaderboard:
         return new LeaderboardPage;
+    case PageId::MenuReplayList:
+        return new ReplayListPage;
     default:
         return REPLACED(createPage)(pageId);
     }

@@ -100,9 +100,10 @@ ctrl = {
     'variants': [],
     'messages': [], 'pictures': [],
 }
-for i in range(10):
-    y = 150.0 - i * 32.0
-    v = {'name': f'Row{i}', 'opacity': 255, 'animated': False, 'animation delay': 0.0}
+# Row0-9: the leaderboard. Replay0-11: the Replays menu (12 rows, closer together).
+rows = [(f'Row{i}', 150.0 - i * 32.0) for i in range(10)] + [(f'Replay{i}', 160.0 - i * 26.0) for i in range(12)]
+for name, y in rows:
+    v = {'name': name, 'opacity': 255, 'animated': False, 'animation delay': 0.0}
     for aspect in ['4:3', '16:9']:
         v.update({f'translation x {aspect}': 0.0, f'translation y {aspect}': y, f'translation z {aspect}': 0.0,
                   f'scale x {aspect}': 1.0, f'scale y {aspect}': 1.0})

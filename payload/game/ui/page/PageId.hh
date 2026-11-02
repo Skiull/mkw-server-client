@@ -20,6 +20,7 @@ enum class PageId {
 
     MenuSettings,
     MenuLeaderboard,
+    MenuReplayList,
 
     ExtensionsEnd,
 };

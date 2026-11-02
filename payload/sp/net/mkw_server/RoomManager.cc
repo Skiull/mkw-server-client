@@ -9,6 +9,7 @@
 #include <sp/net/mkw_server/packets/LocalPlayerCount.hh>
 #include <sp/net/mkw_server/packets/MKWServerInfo.hh>
 #include <sp/net/mkw_server/packets/MatchRequestHeader.hh>
+#include <sp/net/mkw_server/packets/ReplayList.hh>
 #include <sp/net/mkw_server/packets/SearchRoomRequest.hh>
 #include <sp/net/mkw_server/packets/SuspendRequest.hh>
 namespace MKWServer {
@@ -16,7 +17,7 @@ static SOSockAddrIn s_serverAddr;
 static SOCKET g_matchMakingSocket = -1;
 static s32 connection = -1;
 
-static u8 s_recvBuf[1024];
+static u8 s_recvBuf[2048];
 static s32 s_recvBufSize = 0;
 
 bool connectToRoomManager() {
@@ -137,6 +138,9 @@ bool recvFromRoomManager() {
         case LEADERBOARD_PAGE:
             packetSize = sizeof(u32) + sizeof(LeaderboardPagePacket);
             break;
+        case REPLAY_LIST:
+            packetSize = sizeof(u32) + sizeof(ReplayListPacket);
+            break;
         default:
             SP_LOG("Received unknown packet type with magic %x", magic);
             s_recvBufSize = 0;
@@ -161,6 +165,9 @@ bool recvFromRoomManager() {
             break;
         case LEADERBOARD_PAGE:
             processLeaderboardPagePacket(s_recvBuf + 4);
+            break;
+        case REPLAY_LIST:
+            processReplayListPacket(s_recvBuf + 4);
             break;
         }
 
@@ -222,10 +229,22 @@ bool sendSearchRoomRequest(SearchRegion region, GameMode gameMode) {
     createMatchRequestHeader(&searchRoomRequest.header, MatchRequestType::SearchRoom);
     searchRoomRequest.region = region;
     searchRoomRequest.gameMode = gameMode;
+    searchRoomRequest.replayIndex = s_replayIndex;
 
     SP_LOG("Sending SearchRoomRequest where region: %d and gameMode: %d", region,
             static_cast<u32>(gameMode));
     return sendToRoomManager(&searchRoomRequest, sizeof(searchRoomRequest));
+}
+
+bool sendReplayListRequest() {
+    if (!connectToRoomManager()) {
+        return false;
+    }
+    MatchRequestHeader request{};
+    createMatchRequestHeader(&request, MatchRequestType::ReplayList);
+    u8 packet[0x18] = {};
+    memcpy(packet, &request, sizeof(request));
+    return sendToRoomManager(packet, sizeof(packet));
 }
 
 bool sendLeaderboardRequest(u16 page) {
