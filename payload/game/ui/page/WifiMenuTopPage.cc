@@ -113,10 +113,10 @@ void WifiMenuTopPage::onInit() {
 }
 
 void WifiMenuTopPage::onActivate() {
-    if (anim() == Anim::Next) {
-        m_worldWideButton.selectDefault(0);
-        m_instructionText.setMessage(0x10d6, 0);
-    }
+    // Always select a button: coming back from a page without buttons (Replays) leaves
+    // nothing selected, and the input manager then crashes on the first input.
+    m_worldWideButton.selectDefault(0);
+    m_instructionText.setMessage(0x10d6, 0);
     m_replacement = PageId::None;
 }
 
