@@ -38,15 +38,16 @@ MenuInputManager *Page::inputManager() {
 static constexpr u32 MENU_PAGE_REPLACEMENT = 0x3e8;
 
 void Page::calc() {
-    // Watching a replay: close the character select as drift select does at the end in the
-    // online menus (replacement None), so character, vehicle and drift select are skipped and
-    // the online flow carries on to the race with the last picks.
+    // Watching a replay: replace the character select with the room search page, where drift
+    // select hands over in the online menus, so character, vehicle and drift select are skipped
+    // and the online flow carries on to the race with the last picks. (Replacing it with None
+    // goes back to the VS/Battle page.)
     if (m_state == State::State4 && MKWServer::s_skipCharacterSelect &&
             m_id == PageId::CharacterSelect) {
         MKWServer::s_skipCharacterSelect = false;
         SP_LOG("Replay: skipping character select");
         *reinterpret_cast<PageId *>(reinterpret_cast<u8 *>(this) + MENU_PAGE_REPLACEMENT) =
-                PageId::None;
+                PageId::WifiRandomMatching;
         startReplace(Anim::Next, 0.0f);
     }
     switch (m_state) {
