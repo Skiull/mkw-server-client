@@ -40,7 +40,7 @@ bool sendMessageToQR2(const u8 *data, u32 size);
 // Set by the Replays button: the next public room search asks for a replay room.
 extern bool s_watchReplay;
 
-// Set when a replay is picked: the character, vehicle and drift select pages the game shows
-// on joining a room are skipped once (see Page::calc).
+// Set when a replay is picked: the selection countdown the game shows on joining a room is
+// run out at once, so it picks a character, vehicle and drift type by itself (Page::calc).
 extern bool s_skipCharacterSelect;
 } // namespace MKWServer
