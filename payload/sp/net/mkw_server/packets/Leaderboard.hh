@@ -24,15 +24,16 @@ struct LeaderboardRow {
     u8 country;    // Wii country code, as the game's flag panes are named. 0: no flag.
     u8 controller; // 0: none, 1 Wii Wheel, 2 Nunchuk, 3 Classic, 4 GameCube, 5 Classic Pro.
     wchar_t name[16]; // Not terminated when 16 long.
+    u8 mii[0x4c];     // Raw Mii (System::RawMii) from Wiimmfi; all zero when there's none.
 } __attribute__((packed));
-static_assert(sizeof(LeaderboardRow) == 44);
+static_assert(sizeof(LeaderboardRow) == 44 + 0x4c);
 
 struct LeaderboardPagePacket {
     u16 page;
     u16 pageCount;
     LeaderboardRow rows[10];
 } __attribute__((packed));
-static_assert(sizeof(LeaderboardPagePacket) == 4 + 440);
+static_assert(sizeof(LeaderboardPagePacket) == 4 + 10 * (44 + 0x4c));
 
 void processLeaderboardPagePacket(const u8 *data);
 

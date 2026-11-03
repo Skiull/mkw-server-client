@@ -38,6 +38,9 @@ constexpr u32 RETRY_FRAMES = 120;
 // GlobalContext::m_localPlayerMiis (mkw-sp GlobalContext.hh): the local players' Miis.
 constexpr u32 GC_LOCAL_PLAYER_MIIS = 0x238;
 
+// The page's Mii group: rows 0-9, then the player's own Mii.
+constexpr u32 OWN_MII = 10;
+
 // Gives the page access to a row's panes.
 class RowControl : public LayoutUIControl {
 public:
@@ -85,8 +88,8 @@ void LeaderboardPage::onInit() {
         snprintf(variant, sizeof(variant), "Row%u", i);
         m_rows[i].load("globe", "LoungeRow", variant, nullptr);
     }
-    // Lounge players have no Miis (yet): every row shows the player's own Mii.
-    m_miiGroup.init(1, 0x1, nullptr);
+    // Slot i: row i's Mii from Wiimmfi; the last slot: the player's own Mii, for rows without.
+    m_miiGroup.init(std::size(m_rows) + 1, 0x1, nullptr);
 
     m_pageTitleText.load(false);
     m_backButton.load("button", "Back", "ButtonBack", 0x1, false, true);
@@ -106,7 +109,7 @@ void LeaderboardPage::onActivate() {
     if (auto *context = reinterpret_cast<u8 *>(SectionManager::Instance()->sectionParams())) {
         auto *localMiis = reinterpret_cast<MiiGroup *>(context + GC_LOCAL_PLAYER_MIIS);
         if (localMiis->get(0) != nullptr) {
-            m_miiGroup.copy(localMiis, 0, 0);
+            m_miiGroup.copy(localMiis, 0, OWN_MII);
             m_hasMii = true;
         }
     }
@@ -158,13 +161,25 @@ void LeaderboardPage::refresh() {
         posInfo.intVals[0] = row.position;
         control.setMessage("position", MSG_POSITION, &posInfo);
 
-        // The row's Mii icon and its shadow.
-        if (m_hasMii) {
-            control.setMiiPicture("chara_icon", &m_miiGroup, 0, 0);
-            control.setMiiPicture("chara_icon_sha", &m_miiGroup, 0, 0);
+        // The row's Mii icon and its shadow: the player's Mii from Wiimmfi, else the viewer's.
+        bool hasRowMii = false;
+        for (u8 b : row.mii) {
+            hasRowMii = hasRowMii || b != 0;
         }
-        control.setPaneVisible("chara_icon", m_hasMii);
-        control.setPaneVisible("chara_icon_sha", m_hasMii);
+        u32 slot = OWN_MII;
+        if (hasRowMii) {
+            System::RawMii raw;
+            memcpy(&raw, row.mii, sizeof(raw));
+            m_miiGroup.insertFromRaw(i, &raw);
+            slot = m_miiGroup.get(i) != nullptr ? i : OWN_MII;
+        }
+        bool showMii = slot != OWN_MII || m_hasMii;
+        if (showMii) {
+            control.setMiiPicture("chara_icon", &m_miiGroup, slot, 0);
+            control.setMiiPicture("chara_icon_sha", &m_miiGroup, slot, 0);
+        }
+        control.setPaneVisible("chara_icon", showMii);
+        control.setPaneVisible("chara_icon_sha", showMii);
 
         for (u32 r = 0; r < std::size(RANK_PANES); r++) {
             control.setPaneVisible(RANK_PANES[r], r == row.rank);
