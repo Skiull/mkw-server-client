@@ -19,10 +19,8 @@ const char *const RANK_PANES[] = {"rank_iron", "rank_copper", "rank_bronze", "ra
         "rank_gold", "rank_platinum", "rank_emerald", "rank_ruby", "rank_diamond", "rank_pearl",
         "rank_master", "rank_grandmaster"};
 
-// Controller icon panes (body and light), by LeaderboardRow::controller - 1.
-// Pane names are 16 bytes at most in layouts.
-const char *const CONTROLLER_PANES[][2] = {{"pad_whl_b", "pad_whl_l"}, {"pad_nun_b", "pad_nun_l"},
-        {"pad_cla_b", "pad_cla_l"}, {"pad_gc_b", "pad_gc_l"}};
+// Controller icon panes, by LeaderboardRow::controller - 1 (pane names are 16 bytes at most).
+const char *const CONTROLLER_PANES[] = {"pad_whl", "pad_nun", "pad_cla", "pad_gc", "pad_ccp"};
 
 // Messages (CommonSP).
 constexpr u32 MSG_TITLE = 10010;
@@ -193,9 +191,7 @@ void LeaderboardPage::refresh() {
         }
 
         for (u32 p = 0; p < std::size(CONTROLLER_PANES); p++) {
-            bool shown = row.controller == p + 1;
-            control.setPaneVisible(CONTROLLER_PANES[p][0], shown);
-            control.setPaneVisible(CONTROLLER_PANES[p][1], shown);
+            control.setPaneVisible(CONTROLLER_PANES[p], row.controller == p + 1);
         }
 
         MessageInfo lrInfo{};

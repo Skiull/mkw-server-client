@@ -31,10 +31,9 @@ FLAG_X, FLAG_W, FLAG_H = 12.75, 33.0, 22.0
 PAD_X, PAD_SIZE = 56.0, 28.0
 RANK_X, RANK_SIZE = 84.0, 26.0
 
-# Controller pictures (the game's "connect a controller" art, pad_recognize/timg): a body and
-# a coloured light on top. Panes pad_<name>_b / pad_<name>_l (pane names are 16 bytes at most:
-# longer ones overrun and crash the game).
-PADS = [('whl', 'tt_remocon_han'), ('nun', 'tt_remocon_nun'), ('cla', 'tt_clacon'), ('gc', 'tt_gccon')]
+# Controller icons (assets/globe/timg/ctrl_<name>.tpl, made with tools/png2tpl.py from
+# assets/globe/controller-icons-src). Panes pad_<name>; pane names are 16 bytes at most.
+PADS = ['whl', 'nun', 'cla', 'ccp', 'gc']
 
 
 def archive_files(path):
@@ -66,12 +65,6 @@ def main():
         data = next(c for p, c in files.items() if p.endswith('/timg/' + name))
         open(os.path.join('assets/globe/timg', name), 'wb').write(data)
 
-    for _, tex in PADS:
-        for part in ('body', 'light'):
-            name = f'{tex}_{part}.tpl'
-            data = next(c for p, c in files.items() if p.endswith('/timg/' + name))
-            open(os.path.join('assets/globe/timg', name), 'wb').write(data)
-
     tpls = sections['txl1']['tpls']
     materials = sections['mat1']['materials']
 
@@ -97,13 +90,12 @@ def main():
         p['translation y'] = 4.0
         materials.append(material('flag_' + f.split('_')[1], first_tex + len(RANKS) + i))
         row['children'].append(p)
-    for pad, tex in PADS:
-        for part in ('body', 'light'):
-            p = picture(f'pad_{pad}_{part[0]}', PAD_X, PAD_SIZE, len(materials))
-            p['translation y'] = 4.0
-            materials.append(material(f'pad_{pad}_{part[0]}', len(tpls)))
-            tpls.append({'name': f'{tex}_{part}.tpl'})
-            row['children'].append(p)
+    for pad in PADS:
+        p = picture(f'pad_{pad}', PAD_X, PAD_SIZE, len(materials))
+        p['translation y'] = 4.0
+        materials.append(material(f'pad_{pad}', len(tpls)))
+        tpls.append({'name': f'ctrl_{pad}.tpl'})
+        row['children'].append(p)
     for i, r in enumerate(RANKS):
         p = picture(f'rank_{r}', RANK_X, RANK_SIZE, len(materials))
         p['translation y'] = 4.0
