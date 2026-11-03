@@ -21,3 +21,11 @@ compile_commands.json
 .cache/
 
 .nvim.lua
+
+# Extracted from the game's files by tools/extract_lounge_row.py (Nintendo's, not kept here).
+assets/globe/blyt/lounge_row.brlyt.json5
+assets/globe/timg/fm_handle_new_x.tpl
+assets/globe/timg/tt_america.tpl
+assets/globe/timg/tt_mario_64x64.tpl
+assets/globe/timg/tt_pattern_chek_32x32_alpha.tpl
+assets/globe/timg/tt_pattern_chek_bokashi_32x32.tpl

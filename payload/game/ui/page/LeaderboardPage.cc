@@ -154,10 +154,13 @@ void LeaderboardPage::refresh() {
         posInfo.intVals[0] = row.position;
         control.setMessage("position", MSG_POSITION, &posInfo);
 
+        // The Channel row's Mii icon and its shadow.
         if (m_hasMii) {
-            control.setMiiPicture("mii", &m_miiGroup, 0, 0);
+            control.setMiiPicture("chara_icon", &m_miiGroup, 0, 0);
+            control.setMiiPicture("chara_icon_sha", &m_miiGroup, 0, 0);
         }
-        control.setPaneVisible("mii", m_hasMii);
+        control.setPaneVisible("chara_icon", m_hasMii);
+        control.setPaneVisible("chara_icon_sha", m_hasMii);
 
         for (u32 r = 0; r < std::size(RANK_PANES); r++) {
             control.setPaneVisible(RANK_PANES[r], r == row.rank);
@@ -167,7 +170,7 @@ void LeaderboardPage::refresh() {
         memcpy(name, row.name, sizeof(row.name));
         MessageInfo nameInfo{};
         nameInfo.strings[0] = name;
-        control.setMessage("name", MSG_STRING, &nameInfo);
+        control.setMessage("player_name", MSG_STRING, &nameInfo);
 
         // The game's flag for the country, if it has one (one hidden picture per flag).
         auto &rowControl = static_cast<RowControl &>(control);
@@ -186,8 +189,8 @@ void LeaderboardPage::refresh() {
 
         MessageInfo lrInfo{};
         lrInfo.intVals[0] = row.lr;
-        control.setMessage("lr", MSG_LR, &lrInfo);
-        setTextColor(static_cast<RowControl &>(control).pane("lr"), row.color);
+        control.setMessage("time", MSG_LR, &lrInfo);
+        setTextColor(static_cast<RowControl &>(control).pane("time"), row.color);
     }
 }
 

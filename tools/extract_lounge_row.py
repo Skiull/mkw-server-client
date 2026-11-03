@@ -1,0 +1,103 @@
+#!/usr/bin/env python3
+# Builds the Lounge leaderboard row from the Mario Kart Channel rankings row in the game's
+# files (ranking/blyt/common_w078_ghost_top10.brlyt in Channel.szs), so nothing of
+# Nintendo's is kept in the repo. Run from the repo root before building:
+#
+#   DolphinTool extract -i "<Mario Kart Wii disc>" -o <dir> -g -s Scene/UI/Channel.szs
+#   python tools/extract_lounge_row.py <dir>/DATA/files/Scene/UI/Channel.szs
+#
+# Writes (git-ignored) assets/globe/blyt/lounge_row.brlyt.json5 and the row's textures in
+# assets/globe/timg/, and assets/globe/ctrl/LoungeRow.brctr.json5. Changes to the Channel
+# row: the time shows the LR, the controller is hidden, the flag is one of the game's flags
+# (one hidden picture each, flag_<Wii country code>), and the rank icon sits left of the LR.
+import json
+import os
+import sys
+
+sys.path.insert(0, os.path.dirname(__file__))
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', 'vendor', 'wuj5'))
+from gen_leaderboard_layout import FLAGS, RANKS, material, picture  # noqa: E402
+from brlyt import unpack_brlyt  # noqa: E402
+from u8 import unpack_u8  # noqa: E402
+from yaz import unpack_yaz  # noqa: E402
+
+ROW = 'ranking/blyt/common_w078_ghost_top10.brlyt'
+
+# Where the added pictures go, in the row's coordinates (the time pane ends at x ~217).
+FLAG_X, FLAG_W, FLAG_H = 12.75, 33.0, 22.0
+RANK_X, RANK_SIZE = 56.0, 26.0
+
+
+def archive_files(path):
+    data = open(path, 'rb').read()
+    if data[:4] == b'Yaz0':
+        data = unpack_yaz(data)
+    files = {}
+
+    def walk(node, prefix):
+        for child in node.get('children', []):
+            name = prefix + child['name']
+            if child['is_dir']:
+                walk(child, name + '/')
+            else:
+                files[name] = child['content']
+    walk(unpack_u8(data), '')
+    return files
+
+
+def main():
+    files = archive_files(sys.argv[1])
+    layout = unpack_brlyt(files[ROW])
+    sections = {s['magic']: s for s in layout['sections'] if 'magic' in s}
+
+    # The row's own textures, from the same archive.
+    os.makedirs('assets/globe/timg', exist_ok=True)
+    for tpl in sections['txl1']['tpls']:
+        name = tpl['name']
+        data = next(c for p, c in files.items() if p.endswith('/timg/' + name))
+        open(os.path.join('assets/globe/timg', name), 'wb').write(data)
+
+    tpls = sections['txl1']['tpls']
+    materials = sections['mat1']['materials']
+    first_tex = len(tpls)
+    tpls += [{'name': f'rank_{r}.tpl'} for r in RANKS] + [{'name': f + '.tpl'} for f in FLAGS]
+
+    root = next(s for s in layout['sections'] if s.get('magic') == 'pan1')
+    row = next(c for c in root['children'] if c['name'] == 'null_all')
+    for child in row['children']:
+        if child['name'] in ('controller', 'national_flag'):
+            child['flags']['visible'] = False
+
+    for i, f in enumerate(FLAGS):
+        p = picture('flag_' + f.split('_')[1], FLAG_X, FLAG_H, len(materials))
+        p['size x'] = FLAG_W
+        p['translation y'] = 4.0
+        materials.append(material('flag_' + f.split('_')[1], first_tex + len(RANKS) + i))
+        row['children'].append(p)
+    for i, r in enumerate(RANKS):
+        p = picture(f'rank_{r}', RANK_X, RANK_SIZE, len(materials))
+        p['translation y'] = 4.0
+        materials.append(material(f'rank_{r}', first_tex + i))
+        row['children'].append(p)
+
+    with open('assets/globe/blyt/lounge_row.brlyt.json5', 'w', encoding='utf-8', newline='\n') as out:
+        json.dump(layout, out, indent=4, ensure_ascii=False)
+
+    ctrl = {
+        'main brlyt': 'lounge_row', 'bmg': 'Menu', 'picture source brlyt': '',
+        'groups': [], 'animations': [], 'variants': [], 'messages': [], 'pictures': [],
+    }
+    for i in range(10):
+        v = {'name': f'Row{i}', 'opacity': 255, 'animated': False, 'animation delay': 0.0}
+        for aspect in ['4:3', '16:9']:
+            v.update({f'translation x {aspect}': 40.0, f'translation y {aspect}': 150.0 - i * 31.0,
+                      f'translation z {aspect}': 0.0, f'scale x {aspect}': 1.0, f'scale y {aspect}': 1.0})
+        v.update({'first message': 0, 'message count': 0, 'first picture': 0, 'picture count': 0})
+        ctrl['variants'].append(v)
+    with open('assets/globe/ctrl/LoungeRow.brctr.json5', 'w', encoding='utf-8', newline='\n') as out:
+        json.dump(ctrl, out, indent=4, ensure_ascii=False)
+    print('Wrote the Lounge row and', len(sections['txl1']['tpls']) - len(RANKS) - len(FLAGS), 'textures')
+
+
+if __name__ == '__main__':
+    main()
