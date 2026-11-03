@@ -33,8 +33,10 @@ PAD_X, PAD_SIZE = 98.0, 28.0
 RANK_X, RANK_SIZE = 128.0, 26.0
 ICON_Y = 3.0
 
-# The results rows start higher than the page's title bar allows: move them all down.
-ROWS_DOWN = 22.0
+# The results rows are a little big for the page (the first one cuts into the title bar):
+# 90% size, from y 150 down, spaced to match.
+ROW_SCALE = 0.9
+ROW_TOP, ROW_STEP = 150.0, 34.0 * ROW_SCALE
 
 # Panes of the results row that aren't used.
 HIDDEN = ['get_point', 'time', 'handle_text', 'team_color_c', 'select_gold_01', 'select_gold_02',
@@ -114,7 +116,7 @@ def main():
     with open('assets/globe/blyt/lounge_row.brlyt.json5', 'w', encoding='utf-8', newline='\n') as out:
         json.dump(layout, out, indent=4, ensure_ascii=False)
 
-    # The rows where the VS results put them (rank1-10), a little lower, named Row0-9.
+    # The VS results rows (rank1-10), smaller and a little lower, named Row0-9.
     vanilla = unpack_brctr(files[ROW_CTRL])
     ctrl = {
         'main brlyt': 'lounge_row', 'bmg': 'Menu', 'picture source brlyt': '',
@@ -125,7 +127,8 @@ def main():
         v.update({'name': f'Row{i}', 'animated': False, 'first message': 0, 'message count': 0,
                   'first picture': 0, 'picture count': 0})
         for aspect in ['4:3', '16:9']:
-            v[f'translation y {aspect}'] -= ROWS_DOWN
+            v[f'translation y {aspect}'] = ROW_TOP - i * ROW_STEP
+            v[f'scale x {aspect}'] = v[f'scale y {aspect}'] = ROW_SCALE
         ctrl['variants'].append(v)
     with open('assets/globe/ctrl/LoungeRow.brctr.json5', 'w', encoding='utf-8', newline='\n') as out:
         json.dump(ctrl, out, indent=4, ensure_ascii=False)
