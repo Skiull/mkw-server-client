@@ -23,4 +23,5 @@
     "10021": "Then Create Room: only Lounge players can join.",
     "10022": "#{arg integer|0 0}",
     "10023": "{arg integer|0 0}{font scale|70} LR",
+    "10024": "LR",
 }

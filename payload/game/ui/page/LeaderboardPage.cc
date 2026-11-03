@@ -26,7 +26,8 @@ const char *const CONTROLLER_PANES[] = {"pad_whl", "pad_nun", "pad_cla", "pad_gc
 constexpr u32 MSG_TITLE = 10010;
 constexpr u32 MSG_STRING = 10011;
 constexpr u32 MSG_POSITION = 10022; // "#{n}"
-constexpr u32 MSG_LR = 10023;       // "{n} LR"
+constexpr u32 MSG_NUMBER = 10013;   // "{n}"
+constexpr u32 MSG_LR_LABEL = 10024; // "LR"
 constexpr u32 MSG_PAGE = 10014;
 constexpr u32 MSG_LOADING = 10015;
 
@@ -157,7 +158,7 @@ void LeaderboardPage::refresh() {
         posInfo.intVals[0] = row.position;
         control.setMessage("position", MSG_POSITION, &posInfo);
 
-        // The Channel row's Mii icon and its shadow.
+        // The row's Mii icon and its shadow.
         if (m_hasMii) {
             control.setMiiPicture("chara_icon", &m_miiGroup, 0, 0);
             control.setMiiPicture("chara_icon_sha", &m_miiGroup, 0, 0);
@@ -196,8 +197,11 @@ void LeaderboardPage::refresh() {
 
         MessageInfo lrInfo{};
         lrInfo.intVals[0] = row.lr;
-        control.setMessage("time", MSG_LR, &lrInfo);
-        setTextColor(static_cast<RowControl &>(control).pane("time"), row.color);
+        // The results row's score and its "VR" label: the LR and "LR", in the rank colour.
+        control.setMessage("total_score", MSG_NUMBER, &lrInfo);
+        control.setMessage("total_point", MSG_LR_LABEL, nullptr);
+        setTextColor(static_cast<RowControl &>(control).pane("total_score"), row.color);
+        setTextColor(static_cast<RowControl &>(control).pane("total_point"), row.color);
     }
 }
 
