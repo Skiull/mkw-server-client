@@ -127,6 +127,8 @@ asset_in_files = {
         os.path.join('button', 'ctrl', 'LeaderboardButton.brctr.json5'),
         os.path.join('globe', 'blyt', 'leaderboard_row.brlyt.json5'),
         os.path.join('globe', 'ctrl', 'LeaderboardRow.brctr.json5'),
+        os.path.join('globe', 'blyt', 'lounge_row.brlyt.json5'),
+        os.path.join('globe', 'ctrl', 'LoungeRow.brctr.json5'),
         os.path.join('globe', 'timg', 'rank_iron.tpl'),
         os.path.join('globe', 'timg', 'rank_copper.tpl'),
         os.path.join('globe', 'timg', 'rank_bronze.tpl'),

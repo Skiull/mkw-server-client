@@ -12,7 +12,7 @@
     "10011": "{arg string|0}",
     "10012": "{arg integer|0 0}.",
     "10013": "{arg integer|0 0}",
-    "10014": "Page {arg integer|0 0} / {arg integer|1 0}   (Left/Right: change page)",
+    "10014": "< {arg integer|0 0}/{arg integer|1 0} >",
     "10015": "Loading the leaderboard...",
     "10016": "See the top MKW Lounge players.",
     "10009": "Watch one of your last 12 races.",
@@ -21,4 +21,6 @@
     "10019": "No replays yet. Race online to record some.",
     "10020": "Create Mogi",
     "10021": "Then Create Room: only Lounge players can join.",
+    "10022": "#{arg integer|0 0}",
+    "10023": "{arg integer|0 0}{font scale|70} LR",
 }

@@ -1,5 +1,7 @@
 #include "LeaderboardPage.hh"
 
+#include "game/ui/SectionManager.hh"
+
 #include <nw4r/lyt/lyt_textBox.hh>
 
 #include <sp/net/mkw_server/RoomManager.hh>
@@ -20,14 +22,17 @@ const char *const RANK_PANES[] = {"rank_iron", "rank_copper", "rank_bronze", "ra
 // Messages (CommonSP).
 constexpr u32 MSG_TITLE = 10010;
 constexpr u32 MSG_STRING = 10011;
-constexpr u32 MSG_POSITION = 10012;
-constexpr u32 MSG_NUMBER = 10013;
+constexpr u32 MSG_POSITION = 10022; // "#{n}"
+constexpr u32 MSG_LR = 10023;       // "{n} LR"
 constexpr u32 MSG_PAGE = 10014;
 constexpr u32 MSG_LOADING = 10015;
 
 // Ask again if no rows arrived after this many frames (the ladder may still be loading on
 // the server).
 constexpr u32 RETRY_FRAMES = 120;
+
+// GlobalContext::m_localPlayerMiis (mkw-sp GlobalContext.hh): the local players' Miis.
+constexpr u32 GC_LOCAL_PLAYER_MIIS = 0x238;
 
 // Gives the page access to a row's panes.
 class RowControl : public LayoutUIControl {
@@ -74,8 +79,10 @@ void LeaderboardPage::onInit() {
         insertChild(3 + i, &m_rows[i], 0);
         char variant[0x10];
         snprintf(variant, sizeof(variant), "Row%u", i);
-        m_rows[i].load("globe", "LeaderboardRow", variant, nullptr);
+        m_rows[i].load("globe", "LoungeRow", variant, nullptr);
     }
+    // Lounge players have no Miis (yet): every row shows the player's own Mii.
+    m_miiGroup.init(1, 0x1, nullptr);
 
     m_pageTitleText.load(false);
     m_backButton.load("button", "Back", "ButtonBack", 0x1, false, true);
@@ -91,6 +98,14 @@ void LeaderboardPage::onInit() {
 
 void LeaderboardPage::onActivate() {
     m_backButton.selectDefault(0);
+    m_hasMii = false;
+    if (auto *context = reinterpret_cast<u8 *>(SectionManager::Instance()->sectionParams())) {
+        auto *localMiis = reinterpret_cast<MiiGroup *>(context + GC_LOCAL_PLAYER_MIIS);
+        if (localMiis->get(0) != nullptr) {
+            m_miiGroup.copy(localMiis, 0, 0);
+            m_hasMii = true;
+        }
+    }
     request(m_page);
     refresh();
 }
@@ -139,6 +154,11 @@ void LeaderboardPage::refresh() {
         posInfo.intVals[0] = row.position;
         control.setMessage("position", MSG_POSITION, &posInfo);
 
+        if (m_hasMii) {
+            control.setMiiPicture("mii", &m_miiGroup, 0, 0);
+        }
+        control.setPaneVisible("mii", m_hasMii);
+
         for (u32 r = 0; r < std::size(RANK_PANES); r++) {
             control.setPaneVisible(RANK_PANES[r], r == row.rank);
         }
@@ -166,7 +186,7 @@ void LeaderboardPage::refresh() {
 
         MessageInfo lrInfo{};
         lrInfo.intVals[0] = row.lr;
-        control.setMessage("lr", MSG_NUMBER, &lrInfo);
+        control.setMessage("lr", MSG_LR, &lrInfo);
         setTextColor(static_cast<RowControl &>(control).pane("lr"), row.color);
     }
 }

@@ -3,6 +3,7 @@
 #include "game/ui/ctrl/CtrlMenuBackButton.hh"
 #include "game/ui/ctrl/CtrlMenuInstructionText.hh"
 #include "game/ui/ctrl/CtrlMenuPageTitleText.hh"
+#include "game/ui/MiiGroup.hh"
 #include "game/ui/page/Page.hh"
 
 namespace UI {
@@ -45,6 +46,8 @@ private:
     u32 m_shownSerial = 0;
     u32 m_framesSinceRequest = 0;
     char m_shownFlags[10][9] = {}; // Flag pane shown in each row, if any.
+    MiiGroup m_miiGroup; // The player's own Mii, shown for everyone.
+    bool m_hasMii = false;
 };
 
 } // namespace UI
