@@ -17,11 +17,13 @@ import sys
 sys.path.insert(0, os.path.dirname(__file__))
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', 'vendor', 'wuj5'))
 from gen_leaderboard_layout import FLAGS, RANKS, material, picture  # noqa: E402
+from brctr import unpack_brctr  # noqa: E402
 from brlyt import unpack_brlyt  # noqa: E402
 from u8 import unpack_u8  # noqa: E402
 from yaz import unpack_yaz  # noqa: E402
 
 ROW = 'ranking/blyt/common_w078_ghost_top10.brlyt'
+ROW_CTRL = 'ranking/ctrl/RankingDetailItem.brctr'
 
 # Where the added pictures go, in the row's coordinates (the time pane ends at x ~217).
 FLAG_X, FLAG_W, FLAG_H = 12.75, 33.0, 22.0
@@ -59,6 +61,14 @@ def main():
 
     tpls = sections['txl1']['tpls']
     materials = sections['mat1']['materials']
+
+    # The time is drawn dark on a light outline; the LR is the rank colour (set at runtime)
+    # on a black outline, like the position and name.
+    time = next(m for m in materials if m['name'] == 'time')
+    for c, v in zip('rgba', (0, 0, 0, 0)):
+        time[f'tev color 0 {c}'] = v
+    for c in 'rgba':
+        time[f'tev color 1 {c}'] = 255
     first_tex = len(tpls)
     tpls += [{'name': f'rank_{r}.tpl'} for r in RANKS] + [{'name': f + '.tpl'} for f in FLAGS]
 
@@ -83,16 +93,16 @@ def main():
     with open('assets/globe/blyt/lounge_row.brlyt.json5', 'w', encoding='utf-8', newline='\n') as out:
         json.dump(layout, out, indent=4, ensure_ascii=False)
 
+    # The rows where the Channel puts them (RankingDetailItem's Item1-10), named Row0-9.
+    vanilla = unpack_brctr(files[ROW_CTRL])
     ctrl = {
         'main brlyt': 'lounge_row', 'bmg': 'Menu', 'picture source brlyt': '',
         'groups': [], 'animations': [], 'variants': [], 'messages': [], 'pictures': [],
     }
     for i in range(10):
-        v = {'name': f'Row{i}', 'opacity': 255, 'animated': False, 'animation delay': 0.0}
-        for aspect in ['4:3', '16:9']:
-            v.update({f'translation x {aspect}': 40.0, f'translation y {aspect}': 150.0 - i * 31.0,
-                      f'translation z {aspect}': 0.0, f'scale x {aspect}': 1.0, f'scale y {aspect}': 1.0})
-        v.update({'first message': 0, 'message count': 0, 'first picture': 0, 'picture count': 0})
+        v = dict(next(v for v in vanilla['variants'] if v['name'] == f'Item{i + 1}'))
+        v.update({'name': f'Row{i}', 'animated': False, 'first message': 0, 'message count': 0,
+                  'first picture': 0, 'picture count': 0})
         ctrl['variants'].append(v)
     with open('assets/globe/ctrl/LoungeRow.brctr.json5', 'w', encoding='utf-8', newline='\n') as out:
         json.dump(ctrl, out, indent=4, ensure_ascii=False)
