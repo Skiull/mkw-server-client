@@ -19,6 +19,11 @@ const char *const RANK_PANES[] = {"rank_iron", "rank_copper", "rank_bronze", "ra
         "rank_gold", "rank_platinum", "rank_emerald", "rank_ruby", "rank_diamond", "rank_pearl",
         "rank_master", "rank_grandmaster"};
 
+// Controller icon panes (body and light), by LeaderboardRow::controller - 1.
+const char *const CONTROLLER_PANES[][2] = {{"pad_wheel_body", "pad_wheel_light"},
+        {"pad_nunchuk_body", "pad_nunchuk_light"}, {"pad_classic_body", "pad_classic_light"},
+        {"pad_gc_body", "pad_gc_light"}};
+
 // Messages (CommonSP).
 constexpr u32 MSG_TITLE = 10010;
 constexpr u32 MSG_STRING = 10011;
@@ -185,6 +190,12 @@ void LeaderboardPage::refresh() {
             } else {
                 m_shownFlags[i][0] = '\0';
             }
+        }
+
+        for (u32 p = 0; p < std::size(CONTROLLER_PANES); p++) {
+            bool shown = row.controller == p + 1;
+            control.setPaneVisible(CONTROLLER_PANES[p][0], shown);
+            control.setPaneVisible(CONTROLLER_PANES[p][1], shown);
         }
 
         MessageInfo lrInfo{};

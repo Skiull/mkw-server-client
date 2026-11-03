@@ -21,7 +21,8 @@ struct LeaderboardRow {
     u16 lr;
     u8 rank; // Index into the rank icons (iron .. grandmaster).
     u8 color[3];
-    u16 country; // Wii country code, as the game's flag panes are named. 0: no flag.
+    u8 country;    // Wii country code, as the game's flag panes are named. 0: no flag.
+    u8 controller; // 0: none, 1 Wii Wheel, 2 Nunchuk, 3 Classic, 4 GameCube.
     wchar_t name[16]; // Not terminated when 16 long.
 } __attribute__((packed));
 static_assert(sizeof(LeaderboardRow) == 44);
