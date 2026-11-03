@@ -32,9 +32,9 @@ PAD_X, PAD_SIZE = 56.0, 28.0
 RANK_X, RANK_SIZE = 84.0, 26.0
 
 # Controller pictures (the game's "connect a controller" art, pad_recognize/timg): a body and
-# a coloured light on top. Panes pad_<name>_body / pad_<name>_light.
-PADS = [('wheel', 'tt_remocon_han'), ('nunchuk', 'tt_remocon_nun'), ('classic', 'tt_clacon'),
-        ('gc', 'tt_gccon')]
+# a coloured light on top. Panes pad_<name>_b / pad_<name>_l (pane names are 16 bytes at most:
+# longer ones overrun and crash the game).
+PADS = [('whl', 'tt_remocon_han'), ('nun', 'tt_remocon_nun'), ('cla', 'tt_clacon'), ('gc', 'tt_gccon')]
 
 
 def archive_files(path):
@@ -99,9 +99,9 @@ def main():
         row['children'].append(p)
     for pad, tex in PADS:
         for part in ('body', 'light'):
-            p = picture(f'pad_{pad}_{part}', PAD_X, PAD_SIZE, len(materials))
+            p = picture(f'pad_{pad}_{part[0]}', PAD_X, PAD_SIZE, len(materials))
             p['translation y'] = 4.0
-            materials.append(material(f'pad_{pad}_{part}', len(tpls)))
+            materials.append(material(f'pad_{pad}_{part[0]}', len(tpls)))
             tpls.append({'name': f'{tex}_{part}.tpl'})
             row['children'].append(p)
     for i, r in enumerate(RANKS):

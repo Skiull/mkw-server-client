@@ -20,9 +20,9 @@ const char *const RANK_PANES[] = {"rank_iron", "rank_copper", "rank_bronze", "ra
         "rank_master", "rank_grandmaster"};
 
 // Controller icon panes (body and light), by LeaderboardRow::controller - 1.
-const char *const CONTROLLER_PANES[][2] = {{"pad_wheel_body", "pad_wheel_light"},
-        {"pad_nunchuk_body", "pad_nunchuk_light"}, {"pad_classic_body", "pad_classic_light"},
-        {"pad_gc_body", "pad_gc_light"}};
+// Pane names are 16 bytes at most in layouts.
+const char *const CONTROLLER_PANES[][2] = {{"pad_whl_b", "pad_whl_l"}, {"pad_nun_b", "pad_nun_l"},
+        {"pad_cla_b", "pad_cla_l"}, {"pad_gc_b", "pad_gc_l"}};
 
 // Messages (CommonSP).
 constexpr u32 MSG_TITLE = 10010;
