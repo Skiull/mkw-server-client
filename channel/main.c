@@ -19,10 +19,6 @@ extern const u8 relocator_end[];
 #define STAGED_DOL ((void *)0x92000000)
 #define RELOCATOR_ADDR ((void *)0x92800000)
 
-// What the boot stub (tools/channel_bootstub.S) saved from the System Menu at boot
-#define VI_SAVE ((const vu16 *)0x80003680) // VI registers
-#define OS_SAVE ((const vu32 *)0x80003700) // OS globals 0x80000000-0x800000FF
-
 static GXRModeObj *rmode;
 static void *xfb;
 
@@ -78,17 +74,7 @@ static void drawMenu(int selected) {
 
     printf("\x1b[40m\x1b[33m");
     printCentered(20, "A: Select    HOME: Wii Menu");
-#ifdef DIAG
-    {
-        char line[96];
-        snprintf(line, sizeof(line), "saved CC=%08x 28=%08x F8=%08x  VI dcr=%04x", OS_SAVE[0xcc / 4],
-                OS_SAVE[0x28 / 4], OS_SAVE[0xf8 / 4], VI_SAVE[1]);
-        printCentered(23, line);
-        snprintf(line, sizeof(line), "now   CC=%08x 28=%08x F8=%08x  libogc mode=%u",
-                *(vu32 *)0x800000cc, *(vu32 *)0x80000028, *(vu32 *)0x800000f8, rmode->viTVMode);
-        printCentered(24, line);
-    }
-#endif
+
     printf("\x1b[37m");
 }
 
@@ -127,37 +113,20 @@ static void diagFill(u32 colour) {
 }
 #endif
 
-// The boot stub (tools/channel_bootstub.S) saves the System Menu's VI registers
-// here at boot. The payload stub's VI::Init (common/VI.cc) only rewrites a few
-// registers and relies on the rest, and on a real Wii it only works on top of the
-// System Menu's setup, not libogc's. So put the System Menu's setup back.
-static void restoreSystemMenuVideo(void) {
+// Switch the VI off and reset it before jumping. When the SDK's VIInit finds the
+// VI already running it keeps that setup and builds on it, and what libogc leaves
+// behind gives a garbage picture on a real Wii (seen in 480p). With the VI off,
+// the game sets video up from scratch. The payload loader's text won't show for
+// those few seconds.
+static void resetVideo(void) {
     volatile u16 *vi = (volatile u16 *)0xCC002000;
-    if (!(VI_SAVE[1] & 1)) {
-        return; // VI wasn't running at boot (Dolphin): keep libogc's setup
-    }
-    for (u32 i = 0; i < 64; i++) {
-        // skip DCR (written last) and the read-only beam position registers
-        if (i == 1 || i == 0x2c / 2 || i == 0x2e / 2) {
-            continue;
-        }
-        vi[i] = VI_SAVE[i];
-    }
-    vi[1] = VI_SAVE[1];
-}
-
-// The System Menu's OS globals (0x80000000-0x800000FF), saved by the boot stub.
-// libogc rewrites these (TV mode at 0xCC among them); a disc game expects the
-// System Menu's values, which is what it gets when booted from the disc channel.
-static void restoreSystemMenuGlobals(void) {
-    if (OS_SAVE[0x28 / 4] == 0) {
-        return; // nothing saved (Dolphin starts with empty memory)
-    }
-    // 0x00-0x1F is the disc header, which the loader fills in itself
-    for (u32 i = 0x20 / 4; i < 0x100 / 4; i++) {
-        ((vu32 *)0x80000000)[i] = OS_SAVE[i];
-    }
-    DCFlushRange((void *)0x80000000, 0x100);
+    vi[1] = 2; // DCR: reset
+    u32 start, now;
+    asm volatile("mftbl %0" : "=r"(start));
+    do {
+        asm volatile("mftbl %0" : "=r"(now));
+    } while (now - start < 60750); // 1 ms
+    vi[1] = 0; // DCR: off
 }
 
 static void launchGame(void) {
@@ -197,8 +166,7 @@ static void launchGame(void) {
 #ifdef DIAG
     diagFill(0x515a51f0); // red: menu shut down, about to jump
 #endif
-    restoreSystemMenuVideo();
-    restoreSystemMenuGlobals();
+    resetVideo();
 
     // Copy the relocator last, once nothing else will touch memory
     u32 relocatorSize = relocator_end - (const u8 *)relocator;
