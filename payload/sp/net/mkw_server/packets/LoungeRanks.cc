@@ -1,5 +1,6 @@
 #include "LoungeRanks.hh"
 
+#include "game/net/NetManager.hh"
 #include "game/net/records/User.hh"
 
 #include <string.h>
@@ -27,12 +28,17 @@ bool inMogiRoom() {
     return s_mogi;
 }
 
+// The player's own VR, while their LR is sent in its place (0: not replaced).
+static u16 s_ownVR = 0;
+
 void leftMogiRoom() {
     s_mogi = false;
+    auto *users = Net::UserHandler::Instance();
+    if (s_ownVR != 0 && users != nullptr) {
+        users->setOwnVR(s_ownVR);
+    }
+    s_ownVR = 0;
 }
-
-// The player's own VR isn't replaced: the record they send must stay a valid VR (the game
-// drops other players' records with VR over 9999, and they'd never connect).
 
 void mogiShowLR() {
     auto *users = Net::UserHandler::Instance();
@@ -42,6 +48,17 @@ void mogiShowLR() {
     for (u8 aid = 0; aid < 12; aid++) {
         if (s_lrs[aid] != 0) {
             users->setReceivedVR(aid, s_lrs[aid]);
+        }
+    }
+    // Their own row reads the record they send: put their LR there too (back on leaving).
+    auto *net = Net::NetManager::Instance();
+    if (net != nullptr) {
+        u8 me = net->ownAid();
+        if (me < 12 && s_lrs[me] != 0 && users->myVR() != s_lrs[me]) {
+            if (s_ownVR == 0) {
+                s_ownVR = users->myVR();
+            }
+            users->setOwnVR(s_lrs[me]);
         }
     }
 }
