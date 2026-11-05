@@ -18,7 +18,7 @@ DEVKITPRO=<devkitPro folder> PYTHONPATH=<pylib with cryptography + pyelftools> p
 
 `DEVKITPRO` must contain `devkitPPC/` and `libogc/`. On this machine they were unpacked
 from devkitPro's official packages (devkitppc-gcc, -binutils, -newlib, -crtls, -rules and
-libogc from pkg.devkitpro.org) into `%TEMP%\dkpfulloot\opt\devkitpro`.
+libogc from pkg.devkitpro.org) into `%TEMP%\dkpfull\root\opt\devkitpro`.
 
 Useful options: `--profile release`, `--disc <your MKW .wbfs/.iso>`, `--common-key <file|hex|keys.bin>`,
 `--name "..."`, `--version N`, `-o out.wad`. Run with `--help` for the rest.
