@@ -93,13 +93,13 @@ inline SettingEntry settings[]{
             .name = magic_enum::enum_name(Setting::LoungeRank),
             .messageId = 10031,
             .valueOffset = 0,
-            .defaultValue = static_cast<u32>(LoungeRank::Disabled),
+            .defaultValue = static_cast<u32>(LoungeRank::Enabled),
             .valueCount = magic_enum::enum_count<LoungeRank>(),
             .valueNames = magic_enum::enum_names<LoungeRank>().data(),
             .valueMessageIds = (const s32[]){10004, 10005},
             .valueExplanationMessageIds = (const s32[]){10032, 10033},
             .hidden = false,
-            .selectedValue = static_cast<u32>(LoungeRank::Disabled),
+            .selectedValue = static_cast<u32>(LoungeRank::Enabled),
         },
         // clang-format on
 };

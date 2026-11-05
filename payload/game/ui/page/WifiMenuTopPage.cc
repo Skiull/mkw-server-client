@@ -66,14 +66,15 @@ void WifiMenuTopPage::onInit() {
     m_worldWideButton.setSelectHandler(&m_onButtonSelect, false);
 
     insertChild(2, &m_regionalButton, 0);
-    m_regionalButton.load("button", "WifiMenuSingleTop", "ButtonRegion", 1, 0, false);
+    // Mogi goes where Worldwide was.
+    m_regionalButton.load("button", "WifiMenuSingleTop", "ButtonWorld", 1, 0, false);
     m_regionalButton.m_index = ButtonId::Regional;
     m_regionalButton.setFrontHandler(&m_onRegionalButtonFront, false);
     m_regionalButton.setSelectHandler(&m_onButtonSelect, false);
     m_regionalButton.setMessageAll(10020); // "Create Mogi"
 
     insertChild(3, &m_friendButton, 0);
-    m_friendButton.load(animInfo, "button", "WifiMenuSingleTopFriendButton", "ButtonFriend", 0, 0);
+    m_friendButton.load(animInfo, "button", "WifiMenuSingleTopFriendButton", "ButtonFriend", 1, 0);
 
     m_friendButton.setFrontHandler(&m_onFriendButtonFront, false);
     m_friendButton.setSelectHandler(&m_onButtonSelect, false);
@@ -81,9 +82,11 @@ void WifiMenuTopPage::onInit() {
     m_friendButton.m_animator.getGroup(5)->setAnimation(0, 0.0);
     m_friendButton.m_index = ButtonId::Friend;
 
-    // Below Friends: watch a recorded race (a replay room on the self-hosted server).
+    // Where Regional (then Mogi) was: watch a recorded race (a replay room on the self-hosted
+    // server).
     insertChild(8, &m_replaysButton, 0);
-    m_replaysButton.load("button", "ReplaysButton", "ButtonReplays", 1, 0, false);
+    m_replaysButton.load("button", "WifiMenuSingleTop", "ButtonRegion", 1, 0, false);
+    m_replaysButton.setMessageAll(10008); // "Replays"
     m_replaysButton.m_index = ButtonId::Replays;
     m_replaysButton.setFrontHandler(&m_onReplaysButtonFront, false);
     m_replaysButton.setSelectHandler(&m_onButtonSelect, false);
@@ -113,10 +116,9 @@ void WifiMenuTopPage::onInit() {
     insertChild(7, &m_instructionText, 0);
     m_instructionText.load();
 
-    // Worldwide and Friends are hidden (loaded with no players, so they can't be selected):
-    // online play is mogis only.
+    // Worldwide is hidden (loaded with no players, so it can't be selected); Mogi takes its
+    // place.
     m_worldWideButton.setVisible(false);
-    m_friendButton.setVisible(false);
 
     SectionManager::Instance()->currentSection()->createFriendListManager();
     setAnimSfxIds(Sound::SoundId::SE_DUMMY, Sound::SoundId::SE_DUMMY);
