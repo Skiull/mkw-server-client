@@ -118,6 +118,7 @@ void WifiMenuTopPage::onInit() {
 }
 
 void WifiMenuTopPage::onActivate() {
+    MKWServer::leftMogiRoom();
     // The Ranks setting may have just changed (Settings opens from here).
     MKWServer::sendRankSetting(Settings::getSetting<Settings::Setting::LoungeRank>() ==
             Settings::LoungeRank::Enabled);

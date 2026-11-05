@@ -5,6 +5,7 @@
 #include "game/system/SaveManager.hh"
 
 #include <sp/net/mkw_server/MKWServer.hh>
+#include <sp/net/mkw_server/packets/LoungeRanks.hh>
 
 namespace UI {
 
@@ -56,6 +57,7 @@ static void tryEndSelectionCountdown(Page *page) {
 }
 
 void Page::calc() {
+    MKWServer::mogiShowLR();
     tryEndSelectionCountdown(this);
     switch (m_state) {
     case State::State3:
