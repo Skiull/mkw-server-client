@@ -15,9 +15,9 @@ extern void relocator(const void *dol);
 extern const u8 relocator_end[];
 
 // Where the DOL is staged before launch and where the relocator runs from. Both
-// are in MEM2, away from where the DOL loads and below IOS's area (as WiiFlow does).
+// are in MEM2, away from where the DOL loads and below IOS's area at the top.
 #define STAGED_DOL ((void *)0x92000000)
-#define RELOCATOR_ADDR ((void *)0x93000000)
+#define RELOCATOR_ADDR ((void *)0x92800000)
 
 static GXRModeObj *rmode;
 static void *xfb;
@@ -103,6 +103,19 @@ static void launchGame(void) {
     // Stage the DOL in MEM2 so loading it can't overwrite its own source
     memcpy(STAGED_DOL, boot_dol, size);
     DCFlushRange(STAGED_DOL, size);
+
+    // The payload stub (common/VI.cc) only rewrites a few VI registers and tells
+    // NTSC from PAL by the format field alone, so a 60Hz PAL mode (EURGB60) comes
+    // out as garbage. Hand it a plain mode it understands: 480p stays as is, real
+    // 50Hz PAL stays PAL, every 60Hz interlaced mode becomes NTSC 480i.
+    if (!(rmode->viTVMode & VI_PROGRESSIVE) && (rmode->viTVMode >> 2) != VI_PAL) {
+        rmode = &TVNtsc480IntDf;
+        VIDEO_Configure(rmode);
+        VIDEO_SetNextFramebuffer(xfb);
+        VIDEO_Flush();
+        VIDEO_WaitVSync();
+        VIDEO_WaitVSync();
+    }
 
     // Hand over a clean IOS58, like the Homebrew Channel does
     WPAD_Shutdown();
