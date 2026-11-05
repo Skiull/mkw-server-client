@@ -200,6 +200,9 @@ def make_tmd(contents, boot_index, version):
     struct.pack_into('>H', t, 0x198, 0x3031)       # group "01"
     struct.pack_into('>H', t, 0x19C, 3)            # region free
     t[0x1B2] = 1                                    # skip drive reset, as mkw-sp does
+    # Access rights: full hardware (AHBPROT off) + DVD video, like the Homebrew
+    # Channel. libogc touches registers that are blocked otherwise.
+    struct.pack_into('>I', t, 0x1D8, 3)
     struct.pack_into('>H', t, 0x1DC, version)
     struct.pack_into('>H', t, 0x1DE, len(contents))
     struct.pack_into('>H', t, 0x1E0, boot_index)
