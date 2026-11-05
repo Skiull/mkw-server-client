@@ -1,4 +1,5 @@
 #include "CtrlRaceNameBalloon.hh"
+#include "CtrlRaceResult.hh"
 
 #include "game/net/NetManager.hh"
 #include "game/system/RaceConfig.hh"
@@ -21,24 +22,33 @@ bool isOnlineRace() {
 
 } // namespace
 
-void CtrlRaceNameBalloon::refresh(u32 playerId) {
-    REPLACED(refresh)(playerId);
-    // CPU tags (chara_name_only) have no rank pictures.
-    if (m_mainLayout.findPaneByName(RANK_PANES[0]) == nullptr) {
+// Shows player playerId's Lounge rank picture in place of the star rank (handle_text), if
+// they chose to show it. Layouts without the rank pictures (CPU tags) are left alone.
+static void showLoungeRank(LayoutUIControl &control, nw4r::lyt::Pane *firstRankPane, u32 playerId) {
+    if (firstRankPane == nullptr) {
         return;
     }
-
     s32 rank = -1;
     auto *net = Net::NetManager::Instance();
     if (net != nullptr && playerId < 12 && isOnlineRace()) {
         rank = MKWServer::loungeRankOfAid(net->aidOfPlayer(playerId));
     }
     for (u32 r = 0; r < std::size(RANK_PANES); r++) {
-        setPaneVisible(RANK_PANES[r], static_cast<s32>(r) == rank);
+        control.setPaneVisible(RANK_PANES[r], static_cast<s32>(r) == rank);
     }
     if (rank >= 0) {
-        setPaneVisible("handle_text", false);
+        control.setPaneVisible("handle_text", false);
     }
+}
+
+void CtrlRaceNameBalloon::refresh(u32 playerId) {
+    REPLACED(refresh)(playerId);
+    showLoungeRank(*this, m_mainLayout.findPaneByName(RANK_PANES[0]), playerId);
+}
+
+void CtrlRaceResult::refreshRankIconsColor(u32 rank, u32 playerId) {
+    REPLACED(refreshRankIconsColor)(rank, playerId);
+    showLoungeRank(*this, m_mainLayout.findPaneByName(RANK_PANES[0]), playerId);
 }
 
 } // namespace UI

@@ -21,13 +21,12 @@ from brlyt import unpack_brlyt  # noqa: E402
 RANK_SIZE = 34.0
 
 
-def main():
-    files = archive_files(sys.argv[1])
-    layout = unpack_brlyt(files['game_image/blyt/chara_name.brlyt'])
+def add_ranks(files, path, parent, out):
+    layout = unpack_brlyt(files[path])
     sections = {s['magic']: s for s in layout['sections'] if 'magic' in s}
     tpls, materials = sections['txl1']['tpls'], sections['mat1']['materials']
     root = next(s for s in layout['sections'] if s.get('magic') == 'pan1')
-    tag = next(c for c in root['children'] if c['name'] == 'chara_name_null')
+    tag = next(c for c in root['children'] if c['name'] == parent)
     stars = next(c for c in tag['children'] if c['name'] == 'handle_text')
     for r in RANKS:
         p = picture(f'rank_{r}', stars['translation x'], RANK_SIZE, len(materials))
@@ -35,9 +34,18 @@ def main():
         materials.append(material(f'rank_{r}', len(tpls)))
         tpls.append({'name': f'rank_{r}.tpl'})
         tag['children'].append(p)
-    with open('assets/game_image/blyt/chara_name.brlyt.json5', 'w', encoding='utf-8', newline='\n') as out:
-        json.dump(layout, out, indent=4, ensure_ascii=False)
-    print('Wrote the name tag')
+    with open(out, 'w', encoding='utf-8', newline='\n') as f:
+        json.dump(layout, f, indent=4, ensure_ascii=False)
+
+
+def main():
+    files = archive_files(sys.argv[1])
+    # The name tag over karts, and the results screen rows.
+    add_ranks(files, 'game_image/blyt/chara_name.brlyt', 'chara_name_null',
+              'assets/game_image/blyt/chara_name.brlyt.json5')
+    add_ranks(files, 'result/blyt/position_12players.brlyt', 'ranking_null',
+              'assets/result/blyt/position_12players.brlyt.json5')
+    print('Wrote the name tag and results row')
 
 
 if __name__ == '__main__':
