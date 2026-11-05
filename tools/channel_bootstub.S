@@ -2,20 +2,31 @@
 #
 # When the System Menu launches a channel, IOS loads the boot DOL and starts the
 # PPC at physical 0x3400 in real mode (Nintendo DOLs carry SDK init code there).
-# This stub maps memory with BATs like the SDK does, turns on address translation
-# and jumps to the DOL's normal entry point (patched into the last word).
+# This stub resets the CPU state the way HBC's channel stub does, maps memory with
+# BATs, turns on address translation and jumps to the DOL's normal entry point
+# (patched into the last word).
 
     .section .text
     .global _start
 _start:
-    li      0, 0
-    # Enable BATs 4-7 (HID4.SBE); the SDK keeps MEM2 mappings there
-    mfspr   3, 1011     # HID4
-    oris    3, 3, 0x0200
-    mtspr   1011, 3
+    # Put the CPU in a known state first, the way the Homebrew Channel's own
+    # channel stub does (hbc/wiipax/stub/realmode.S). On a real Wii these
+    # registers hold leftovers at this point; Dolphin starts them clean.
+
+    # HID0 = 0x00110c64: caches off and being invalidated, branch history and
+    # target caches on, data cache flush assist on
+    lis     3, 0x0011
+    ori     3, 3, 0x0c64
+    mtspr   1008, 3
     isync
 
-    # Clear all BATs first
+    # MSR = FP on, everything else off (no translation, no interrupts)
+    li      4, 0x2000
+    mtmsr   4
+    isync
+
+    # Clear all BATs
+    li      0, 0
     mtspr   528, 0      # IBAT0U
     mtspr   530, 0      # IBAT1U
     mtspr   532, 0      # IBAT2U
@@ -32,6 +43,27 @@ _start:
     mtspr   570, 0      # DBAT5U
     mtspr   572, 0      # DBAT6U
     mtspr   574, 0      # DBAT7U
+    isync
+
+    # Segment registers: 0x80000000 (direct-store, never used), so nothing
+    # outside the BATs goes through stale page tables
+    lis     0, 0x8000
+    mtsr    0, 0
+    mtsr    1, 0
+    mtsr    2, 0
+    mtsr    3, 0
+    mtsr    4, 0
+    mtsr    5, 0
+    mtsr    6, 0
+    mtsr    7, 0
+    mtsr    8, 0
+    mtsr    9, 0
+    mtsr    10, 0
+    mtsr    11, 0
+    mtsr    12, 0
+    mtsr    13, 0
+    mtsr    14, 0
+    mtsr    15, 0
     isync
 
     # 0x80000000 -> MEM1, cached (instruction + data)
@@ -98,14 +130,15 @@ _start:
     li      7, 0x80     # application type: game (not channel)
     stb     7, 0x3184(0)
 
-    # Invalidate and enable the L1 caches, like the SDK's init code does
-    mfspr   3, 1008     # HID0
-    ori     3, 3, 0x0c00 # ICFI | DCFI
+    # Caches on (they were invalidated by the HID0 write above)
+    lis     3, 0x0011
+    ori     3, 3, 0xcc64
     mtspr   1008, 3
     isync
-    ori     3, 3, 0xc000 # ICE | DCE
-    sync
-    mtspr   1008, 3
+
+    # HID4 = 0x82000000: enables BATs 4-7, which hold the MEM2 mappings
+    lis     3, 0x8200
+    mtspr   1011, 3
     isync
 
     # Jump to the entry point with IR, DR and FP enabled
@@ -113,8 +146,7 @@ _start:
 1:  mflr    3
     lwz     3, (entry - 1b)(3)
     mtsrr0  3
-    mfmsr   3
-    ori     3, 3, 0x2030
+    li      3, 0x2030   # FP, IR, DR
     mtsrr1  3
     rfi
 

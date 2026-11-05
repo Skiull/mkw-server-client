@@ -104,37 +104,26 @@ static void launchGame(void) {
     memcpy(STAGED_DOL, boot_dol, size);
     DCFlushRange(STAGED_DOL, size);
 
-    // The payload stub (common/VI.cc) only rewrites a few VI registers and keeps
-    // the rest, so the VI has to be left the way the System Menu leaves it: a plain
-    // SDK mode (480p, 50Hz PAL, or NTSC 480i for every 60Hz interlaced mode),
-    // already scanning the stub's framebuffer at 0x81600000, which we clear first
-    // so nothing stale shows. Not blacked out: the stub never undoes that.
-    GXRModeObj *handoff = rmode;
-    if (rmode->viTVMode & VI_PROGRESSIVE) {
-        handoff = &TVNtsc480Prog;
-    } else if ((rmode->viTVMode >> 2) != VI_PAL) {
-        handoff = &TVNtsc480IntDf;
-    }
-    u32 *stubXfb = (u32 *)MEM_K0_TO_K1(0x81600000);
-    for (u32 i = 0; i < 320 * 574; i++) {
-        stubXfb[i] = 0x10801080; // black
-    }
-    VIDEO_Configure(handoff);
-    VIDEO_SetNextFramebuffer(stubXfb);
-    VIDEO_SetBlack(false);
-    VIDEO_Flush();
-    VIDEO_WaitVSync();
-    VIDEO_WaitVSync();
-
-    // Hand over a clean IOS58, like the Homebrew Channel does
+    // Same hand-off as the Homebrew Channel (hbc/channel/channelapp: gfx_deinit,
+    // main() and loader_exec): black out the video, relaunch IOS58, shut libogc
+    // down, close the exception vectors, poke the clock speeds, then jump.
     WPAD_Shutdown();
-    IOS_ReloadIOS(58); // if this fails we keep the channel's own IOS58
+    VIDEO_SetBlack(true);
+    VIDEO_Flush();
+    for (int i = 0; i < 4; i++) {
+        VIDEO_WaitVSync();
+    }
+    __IOS_LaunchNewIOS(58); // if this fails we keep the channel's own IOS58
     SYS_ResetSystem(SYS_SHUTDOWN, 0, 0);
 
     u32 level;
     _CPU_ISR_Disable(level);
     (void)level;
     closeExceptions();
+
+    // "these pokes make ninty SDK dols work" (HBC)
+    *(vu32 *)0x800000F8 = 0x0E7BE2C0; // bus clock
+    *(vu32 *)0x800000FC = 0x2B73A840; // CPU clock
 
     // Copy the relocator last, once nothing else will touch memory
     u32 relocatorSize = relocator_end - (const u8 *)relocator;
