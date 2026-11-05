@@ -36,6 +36,17 @@ public:
         return s_instance;
     }
 
+    // The current license's VR, which the game copies into the user record it sends
+    // (UserHandler, 0x80662d80). Licenses are 0x93f0 bytes from 0x38, the current one's index
+    // is at 0x36, and VR is at 0x9018 in it.
+    u16 *currentLicenseVR() {
+        s16 license = *reinterpret_cast<s16 *>(reinterpret_cast<u8 *>(this) + 0x36);
+        if (license < 0 || license >= 4) {
+            return nullptr;
+        }
+        return reinterpret_cast<u16 *>(reinterpret_cast<u8 *>(this) + 0x38 + license * 0x93f0 + 0x9018);
+    }
+
 private:
     REPLACE void SaveGhostAsync(u32 /* licenseId */, u32 /* type */, u32 /* slot */,
             GhostFile /* *ghostFile */, u32 /* r8 */);

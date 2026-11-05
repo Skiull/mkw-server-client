@@ -2,6 +2,7 @@
 
 #include "game/net/NetManager.hh"
 #include "game/net/records/User.hh"
+#include "game/system/SaveManager.hh"
 
 #include <string.h>
 
@@ -33,9 +34,10 @@ static u16 s_ownVR = 0;
 
 void leftMogiRoom() {
     s_mogi = false;
-    auto *users = Net::UserHandler::Instance();
-    if (s_ownVR != 0 && users != nullptr) {
-        users->setOwnVR(s_ownVR);
+    auto *save = System::SaveManager::Instance();
+    u16 *vr = save ? save->currentLicenseVR() : nullptr;
+    if (s_ownVR != 0 && vr != nullptr) {
+        *vr = s_ownVR;
     }
     s_ownVR = 0;
 }
@@ -50,17 +52,19 @@ void mogiShowLR() {
             users->setReceivedVR(aid, s_lrs[aid]);
         }
     }
-    // Their own row reads the record they send: put their LR there too (back on leaving).
+    // Their own LR goes in their license's VR, which the game sends as their VR: capped at
+    // 9999, the most other players' games accept. Their VR is put back on leaving.
     auto *net = Net::NetManager::Instance();
-    if (net != nullptr) {
+    auto *save = System::SaveManager::Instance();
+    u16 *vr = save ? save->currentLicenseVR() : nullptr;
+    if (net != nullptr && vr != nullptr) {
         u8 me = net->ownAid();
-        // Capped at 9999: other players' games drop records with a VR above it.
         u16 lr = me < 12 ? (s_lrs[me] < 9999 ? s_lrs[me] : 9999) : 0;
-        if (lr != 0 && users->myVR() != lr) {
+        if (lr != 0 && *vr != lr) {
             if (s_ownVR == 0) {
-                s_ownVR = users->myVR();
+                s_ownVR = *vr;
             }
-            users->setOwnVR(lr);
+            *vr = lr;
         }
     }
 }

@@ -792,6 +792,7 @@
 
 0x809bd6f8 _ZN6System10HBMManager10s_instanceE
 0x809bd728 _ZN6System10RaceConfig10s_instanceE
+0x809bd748 _ZN6System11SaveManager10s_instanceE
 0x809bd730 _ZN6System11RaceManager10s_instanceE
 0x809bd738 _ZN6System15ResourceManager10s_instanceE
 0x809bd740 _ZN6System9RootScene10s_instanceE
