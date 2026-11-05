@@ -9,6 +9,7 @@
 #include <sp/net/mkw_server/packets/LocalPlayerCount.hh>
 #include <sp/net/mkw_server/packets/MKWServerInfo.hh>
 #include <sp/net/mkw_server/packets/MatchRequestHeader.hh>
+#include <sp/net/mkw_server/packets/LoungeRanks.hh>
 #include <sp/net/mkw_server/packets/Mogi.hh>
 #include <sp/net/mkw_server/packets/ReplayList.hh>
 #include <sp/net/mkw_server/packets/SearchRoomRequest.hh>
@@ -145,6 +146,9 @@ bool recvFromRoomManager() {
         case MOGI_LIST:
             packetSize = sizeof(u32) + MOGI_LIST_SIZE;
             break;
+        case LOUNGE_RANKS:
+            packetSize = sizeof(u32) + LOUNGE_RANKS_SIZE;
+            break;
         default:
             SP_LOG("Received unknown packet type with magic %x", magic);
             s_recvBufSize = 0;
@@ -175,6 +179,9 @@ bool recvFromRoomManager() {
             break;
         case MOGI_LIST:
             processMogiListPacket(s_recvBuf + 4);
+            break;
+        case LOUNGE_RANKS:
+            processLoungeRanksPacket(s_recvBuf + 4);
             break;
         }
 
@@ -242,6 +249,18 @@ bool sendSearchRoomRequest(SearchRegion region, GameMode gameMode) {
     SP_LOG("Sending SearchRoomRequest where region: %d and gameMode: %d", region,
             static_cast<u32>(gameMode));
     return sendToRoomManager(&searchRoomRequest, sizeof(searchRoomRequest));
+}
+
+bool sendRankSetting(bool showLoungeRank) {
+    if (!connectToRoomManager()) {
+        return false;
+    }
+    MatchRequestHeader request{};
+    createMatchRequestHeader(&request, MatchRequestType::RankSetting);
+    u8 packet[0x18] = {};
+    memcpy(packet, &request, sizeof(request));
+    packet[0x10] = showLoungeRank;
+    return sendToRoomManager(packet, sizeof(packet));
 }
 
 bool sendMogiListRequest() {

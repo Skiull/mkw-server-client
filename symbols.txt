@@ -805,7 +805,4 @@
 0x809c2118 _ZN3Net12GlobeHandler10s_instanceE
 0x809c3618 _ZN4Item12ItemDirector10s_instanceE
 # REL .bss end (0x809c4f90)
-
-
-
-
+0x807f0044 _ZN2UI19CtrlRaceNameBalloon7refreshEj

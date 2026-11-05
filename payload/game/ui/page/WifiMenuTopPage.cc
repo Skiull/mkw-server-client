@@ -5,7 +5,9 @@
 
 #include <sp/net/mkw_server/MKWServer.hh>
 #include <sp/net/mkw_server/RoomManager.hh>
+#include <sp/net/mkw_server/packets/LoungeRanks.hh>
 #include <sp/net/mkw_server/packets/Mogi.hh>
+#include <sp/settings/Settings.hh>
 
 namespace UI {
 
@@ -116,6 +118,9 @@ void WifiMenuTopPage::onInit() {
 }
 
 void WifiMenuTopPage::onActivate() {
+    // The Ranks setting may have just changed (Settings opens from here).
+    MKWServer::sendRankSetting(Settings::getSetting<Settings::Setting::LoungeRank>() ==
+            Settings::LoungeRank::Enabled);
     // Always select a button: coming back from a page without buttons (Replays) leaves
     // nothing selected, and the input manager then crashes on the first input.
     m_worldWideButton.selectDefault(0);

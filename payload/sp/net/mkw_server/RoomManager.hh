@@ -19,6 +19,7 @@ enum class MatchRequestType : u8 {
     ReplayList = 7,
     OpenMogi = 8, // OpenRoom for a mogi: only players with a linked Lounge profile can join.
     MogiList = 9,
+    RankSetting = 10,
 };
 
 enum class GameMode : u8 {

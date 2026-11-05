@@ -57,6 +57,10 @@ public:
         VoteUnsuspend = 0x3, // Set when private room ends
     };
 
+    u8 aidOfPlayer(u32 playerId) const {
+        return m_playerIdToAidMapping[playerId];
+    }
+
     static NetManager *Instance() {
         return s_instance;
     }
@@ -65,6 +69,7 @@ private:
     const MatchMakingInfo &currentMMInfo() const;
 
     u8 myAid() const;
+
 
     u32 numAids() const;
 

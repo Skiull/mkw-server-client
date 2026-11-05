@@ -9,11 +9,14 @@ namespace Settings {
 // Don't assign values when adding new categories to avoid conflicts and diff noise.
 enum class Category {
     Online,
+    Ranks,
 };
 
 enum class Setting {
     // Online
     Ping,
+    // Ranks
+    LoungeRank,
 };
 
 enum class Ping {
@@ -21,8 +24,19 @@ enum class Ping {
     Enabled,
 };
 
+// Show my MKW Lounge rank (instead of the star rank) on my name tag in online races.
+enum class LoungeRank {
+    Disabled,
+    Enabled,
+};
+
 template <Setting S>
 struct OptionType;
+
+template <>
+struct OptionType<Setting::LoungeRank> {
+    using Type = LoungeRank;
+};
 
 template <>
 struct OptionType<Setting::Ping> {
@@ -38,6 +52,7 @@ constexpr u32 settingCount = magic_enum::enum_count<Setting>();
 constexpr u32 categoryMessageIds[]{
         // clang-format off
         10002,
+        10030,
         // clang-format on
 };
 
@@ -71,6 +86,20 @@ inline SettingEntry settings[]{
             .valueExplanationMessageIds = (const s32[]){10006, 10007},
             .hidden = false,
             .selectedValue = static_cast<u32>(Ping::Disabled),
+        },
+        [static_cast<u32>(Setting::LoungeRank)] =
+        {
+            .category = Category::Ranks,
+            .name = magic_enum::enum_name(Setting::LoungeRank),
+            .messageId = 10031,
+            .valueOffset = 0,
+            .defaultValue = static_cast<u32>(LoungeRank::Disabled),
+            .valueCount = magic_enum::enum_count<LoungeRank>(),
+            .valueNames = magic_enum::enum_names<LoungeRank>().data(),
+            .valueMessageIds = (const s32[]){10004, 10005},
+            .valueExplanationMessageIds = (const s32[]){10032, 10033},
+            .hidden = false,
+            .selectedValue = static_cast<u32>(LoungeRank::Disabled),
         },
         // clang-format on
 };
