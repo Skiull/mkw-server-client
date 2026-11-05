@@ -56,14 +56,14 @@ void mogiShowLR() {
             users->setReceivedVR(aid, s_lrs[aid]);
         }
     }
-    // Their own LR goes in their license's VR, which the game sends as their VR: capped at
-    // 9999, the most other players' games accept. Their VR is put back on leaving.
+    // Their own LR goes in their license's VR, which the game sends as their VR (VRCap.S lets
+    // it pass 9999). Their VR is put back on leaving.
     auto *net = Net::NetManager::Instance();
     auto *save = System::SaveManager::Instance();
     u16 *vr = save ? save->currentLicenseVR() : nullptr;
     if (net != nullptr && vr != nullptr) {
         u8 me = net->ownAid();
-        u16 lr = me < 12 ? (s_lrs[me] < 9999 ? s_lrs[me] : 9999) : 0;
+        u16 lr = me < 12 ? s_lrs[me] : 0;
         if (lr != 0 && *vr != lr) {
             if (s_ownVR == 0) {
                 s_ownVR = *vr;
