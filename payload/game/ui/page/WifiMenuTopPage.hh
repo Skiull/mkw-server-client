@@ -17,6 +17,7 @@ public:
 
     void onInit() override;
     void onActivate() override;
+    void beforeCalc() override;
 
     // Needed or the game will silently not know where to transition.
     PageId getReplacement() override;
@@ -59,6 +60,12 @@ private:
 
     PushButton m_settingsButton;
     PushButton m_replaysButton;
+    // Mogi button pressed: waiting for the server to say whether the player is linked to
+    // Lounge, and the button to continue with.
+    bool m_mogiPending = false;
+    u32 m_mogiSerial = 0;
+    u32 m_mogiFrames = 0;
+    PushButton *m_mogiButton = nullptr;
     PushButton m_leaderboardButton;
     H<PushButton> m_onSettingsButtonFront{this, &WifiMenuTopPage::onSettingsButtonFront};
 };

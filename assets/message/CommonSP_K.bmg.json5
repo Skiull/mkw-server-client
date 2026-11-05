@@ -24,4 +24,9 @@
     "10022": "#{arg integer|0 0}",
     "10023": "{arg integer|0 0}{font scale|70} LR",
     "10024": "LR",
+    "10025": "Create a Mogi",
+    "10026": "Find a Mogi",
+    "10027": "Your friend code isn't registered in Lounge.",
+    "10028": "Checking Lounge...",
+    "10029": "Couldn't check Lounge. Try again.",
 }

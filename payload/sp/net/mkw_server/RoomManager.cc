@@ -9,6 +9,7 @@
 #include <sp/net/mkw_server/packets/LocalPlayerCount.hh>
 #include <sp/net/mkw_server/packets/MKWServerInfo.hh>
 #include <sp/net/mkw_server/packets/MatchRequestHeader.hh>
+#include <sp/net/mkw_server/packets/Mogi.hh>
 #include <sp/net/mkw_server/packets/ReplayList.hh>
 #include <sp/net/mkw_server/packets/SearchRoomRequest.hh>
 #include <sp/net/mkw_server/packets/SuspendRequest.hh>
@@ -141,6 +142,9 @@ bool recvFromRoomManager() {
         case REPLAY_LIST:
             packetSize = sizeof(u32) + sizeof(ReplayListPacket);
             break;
+        case MOGI_LIST:
+            packetSize = sizeof(u32) + MOGI_LIST_SIZE;
+            break;
         default:
             SP_LOG("Received unknown packet type with magic %x", magic);
             s_recvBufSize = 0;
@@ -168,6 +172,9 @@ bool recvFromRoomManager() {
             break;
         case REPLAY_LIST:
             processReplayListPacket(s_recvBuf + 4);
+            break;
+        case MOGI_LIST:
+            processMogiListPacket(s_recvBuf + 4);
             break;
         }
 
@@ -235,6 +242,17 @@ bool sendSearchRoomRequest(SearchRegion region, GameMode gameMode) {
     SP_LOG("Sending SearchRoomRequest where region: %d and gameMode: %d", region,
             static_cast<u32>(gameMode));
     return sendToRoomManager(&searchRoomRequest, sizeof(searchRoomRequest));
+}
+
+bool sendMogiListRequest() {
+    if (!connectToRoomManager()) {
+        return false;
+    }
+    MatchRequestHeader request{};
+    createMatchRequestHeader(&request, MatchRequestType::MogiList);
+    u8 packet[0x18] = {};
+    memcpy(packet, &request, sizeof(request));
+    return sendToRoomManager(packet, sizeof(packet));
 }
 
 bool sendReplayListRequest() {

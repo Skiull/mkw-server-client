@@ -4,6 +4,8 @@
 #include "game/ui/page/SettingsPage.hh"
 
 #include <sp/net/mkw_server/MKWServer.hh>
+#include <sp/net/mkw_server/RoomManager.hh>
+#include <sp/net/mkw_server/packets/Mogi.hh>
 
 namespace UI {
 
@@ -121,6 +123,26 @@ void WifiMenuTopPage::onActivate() {
     m_replacement = PageId::None;
 }
 
+void WifiMenuTopPage::beforeCalc() {
+    if (!m_mogiPending) {
+        return;
+    }
+    MKWServer::recvFromRoomManager();
+    if (MKWServer::mogiListSerial() != m_mogiSerial) {
+        m_mogiPending = false;
+        if (MKWServer::mogiLinked()) {
+            MKWServer::s_createMogi = true;
+            m_replacement = PageId::WifiFriendMenu;
+            startReplace(Anim::None, m_mogiButton ? m_mogiButton->getDelay() : 0.0f);
+        } else {
+            m_instructionText.setMessage(10027, 0); // Not registered in Lounge.
+        }
+    } else if (++m_mogiFrames > 300) {
+        m_mogiPending = false;
+        m_instructionText.setMessage(10029, 0); // Couldn't check.
+    }
+}
+
 PageId WifiMenuTopPage::getReplacement() {
     return m_replacement;
 }
@@ -151,12 +173,17 @@ void WifiMenuTopPage::onWorldWideButtonFront(PushButton *button, u32 /* localPla
 }
 
 void WifiMenuTopPage::onRegionalButtonFront(PushButton *button, u32 /* localPlayerId */) {
-    // The Regional button is Create Mogi: the friends page, where Create Room makes a room
-    // only players with a linked Lounge profile can join.
+    // The Regional button is Mogi: once the server says the player is linked to Lounge, the
+    // friends page in mogi mode (Create a Mogi makes a room only Lounge players can join).
+    if (m_mogiPending) {
+        return;
+    }
     MKWServer::s_watchReplay = false;
-    MKWServer::s_createMogi = true;
-    m_replacement = PageId::WifiFriendMenu;
-    startReplace(Anim::None, button->getDelay());
+    m_mogiSerial = MKWServer::mogiListSerial();
+    m_mogiFrames = 0;
+    m_mogiButton = button;
+    m_mogiPending = MKWServer::sendMogiListRequest();
+    m_instructionText.setMessage(m_mogiPending ? 10028 : 10029, 0);
 }
 
 void WifiMenuTopPage::onFriendButtonFront(PushButton *button, u32 /* localPlayerId */) {
