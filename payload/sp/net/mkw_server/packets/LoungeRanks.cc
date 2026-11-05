@@ -119,10 +119,10 @@ extern "C" u32 MogiRemapMessage(void *textBox, u32 messageId, const UI::MessageI
     if (!s_mogi) {
         return messageId;
     }
-    // Check Members' VR number (pane point_2, drawn in its material's orange): coloured by
+    // Check Members' VR number (pane point, or point_2 in some layouts; drawn in its material's orange): coloured by
     // rank once the message is set (MogiAfterMessage).
-    if (textBox != nullptr && info != nullptr &&
-            strcmp(reinterpret_cast<const char *>(textBox) + PANE_NAME, "point_2") == 0) {
+    const char *name = textBox ? reinterpret_cast<const char *>(textBox) + PANE_NAME : "";
+    if (info != nullptr && (strcmp(name, "point") == 0 || strcmp(name, "point_2") == 0)) {
         s_colorBox = textBox;
         s_colorLR = info->intVals[0];
     }
