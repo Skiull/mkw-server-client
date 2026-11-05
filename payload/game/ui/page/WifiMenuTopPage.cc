@@ -113,6 +113,12 @@ void WifiMenuTopPage::onInit() {
     insertChild(7, &m_instructionText, 0);
     m_instructionText.load();
 
+    // Worldwide and Friends are hidden: online play is mogis only.
+    m_worldWideButton.setVisible(false);
+    m_worldWideButton.setPlayerFlags(0x0);
+    m_friendButton.setVisible(false);
+    m_friendButton.setPlayerFlags(0x0);
+
     SectionManager::Instance()->currentSection()->createFriendListManager();
     setAnimSfxIds(Sound::SoundId::SE_DUMMY, Sound::SoundId::SE_DUMMY);
 }
@@ -124,8 +130,8 @@ void WifiMenuTopPage::onActivate() {
             Settings::LoungeRank::Enabled);
     // Always select a button: coming back from a page without buttons (Replays) leaves
     // nothing selected, and the input manager then crashes on the first input.
-    m_worldWideButton.selectDefault(0);
-    m_instructionText.setMessage(0x10d6, 0);
+    m_regionalButton.selectDefault(0);
+    m_instructionText.setMessage(10021, 0);
     m_replacement = PageId::None;
 }
 
