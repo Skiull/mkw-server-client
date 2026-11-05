@@ -37,7 +37,7 @@ Page *UIControl::getPage() {
 void LayoutUIControl::setMessage(const char *pane, u32 messageId, MessageInfo *info) {
     REPLACED(setMessage)(pane, messageId, info);
     // Check Members' VR number ("{n}"), which shows the LR in mogi rooms.
-    if (messageId == 5105 && info != nullptr && pane != nullptr && strcmp(pane, "point") == 0) {
+    if (messageId == 5105 && info != nullptr && pane != nullptr && (strcmp(pane, "point") == 0 || strcmp(pane, "point_2") == 0)) {
         MKWServer::colorPaneByLR(m_mainLayout.findPaneByName(pane), info->intVals[0]);
     }
 }
