@@ -3,6 +3,7 @@
 #include "game/net/NetManager.hh"
 #include "game/net/records/User.hh"
 #include "game/system/SaveManager.hh"
+#include "game/ui/MessageInfo.hh"
 
 #include <string.h>
 
@@ -69,12 +70,39 @@ void mogiShowLR() {
     }
 }
 
-extern "C" u32 MogiRemapMessage(u32 messageId) {
+// Lounge rank colours by LR, as on the leaderboard (wfc-server qr2/leaderboard.go).
+static const struct {
+    u16 minLR;
+    u8 r, g, b;
+} RANK_COLORS[] = {{0, 0x81, 0x78, 0x76}, {1250, 0xcf, 0x68, 0x53}, {2500, 0xcd, 0x7f, 0x32},
+        {4000, 0xb7, 0xbe, 0xc4}, {5500, 0xff, 0xd7, 0x00}, {7000, 0x3f, 0xab, 0xb8},
+        {8250, 0x87, 0xf1, 0x9b}, {9500, 0xf1, 0x38, 0x3a}, {11000, 0xb9, 0xf2, 0xff},
+        {12000, 0xe5, 0xb3, 0xc7}, {13000, 0xcf, 0xe2, 0xf3}, {14000, 0x97, 0x17, 0x17}};
+
+// nw4r::lyt::TextBox's top and bottom text colours (RGBA), at 0xdc.
+static void colorByLR(void *textBox, s32 lr) {
+    u32 i = 0;
+    while (i + 1 < sizeof(RANK_COLORS) / sizeof(RANK_COLORS[0]) && lr >= RANK_COLORS[i + 1].minLR) {
+        i++;
+    }
+    u8 *colors = reinterpret_cast<u8 *>(textBox) + 0xdc;
+    for (u32 k = 0; k < 2; k++) {
+        colors[k * 4 + 0] = RANK_COLORS[i].r;
+        colors[k * 4 + 1] = RANK_COLORS[i].g;
+        colors[k * 4 + 2] = RANK_COLORS[i].b;
+        colors[k * 4 + 3] = 255;
+    }
+}
+
+extern "C" u32 MogiRemapMessage(void *textBox, u32 messageId, const UI::MessageInfo *info) {
     if (!s_mogi) {
         return messageId;
     }
     switch (messageId) {
-    case 4202: // "{n}VR"
+    case 4202: // "{n}VR": the LR, in its rank's colour.
+        if (textBox != nullptr && info != nullptr) {
+            colorByLR(textBox, info->intVals[0]);
+        }
         return 10034;
     case 9700: // "VR"
     case 1343:

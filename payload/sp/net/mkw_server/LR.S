@@ -10,7 +10,9 @@ PATCH_B_START(TextBox_setMessage, 0x0)
     stw r4, 0xc (r1)
     stw r5, 0x10 (r1)
     stw r7, 0x14 (r1)
-    mr r3, r6
+    // MogiRemapMessage(textBox, messageId, info)
+    mr r4, r6
+    mr r5, r7
     bl MogiRemapMessage
     mr r6, r3
     lwz r3, 0x8 (r1)
