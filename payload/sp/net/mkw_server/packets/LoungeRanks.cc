@@ -3,6 +3,7 @@
 #include "game/net/NetManager.hh"
 #include "game/net/records/User.hh"
 #include "game/system/SaveManager.hh"
+#include "game/system/Mii.hh"
 #include "game/ui/MessageInfo.hh"
 
 #include <string.h>
