@@ -6,6 +6,11 @@
     .global relocator
     .global relocator_end
 relocator:
+#ifdef DIAG
+    lis     12, 0x29f0          # blue: relocator started
+    ori     12, 12, 0x296e
+    bl      diag
+#endif
     li      4, 0                # section index (7 text + 11 data)
 1:  slwi    5, 4, 2
     lwzx    6, 3, 5             # file offset
@@ -44,6 +49,12 @@ relocator:
 5:  sync
     isync
     lwz     6, 0xe0(3)          # entry point
+#ifdef DIAG
+    lis     12, 0xeb80          # white: DOL loaded, jumping
+    ori     12, 12, 0xeb80
+    bl      diag
+    lwz     6, 0xe0(3)
+#endif
     mtctr   6
     bctr
 
@@ -61,4 +72,23 @@ flush:
     sync
     isync
     blr
+#ifdef DIAG
+# Fill the diagnostic framebuffer (0xC1700000) with r12, then wait ~1.5 s.
+# Clobbers r9, r10, r11, ctr.
+diag:
+    lis     10, 0xc170
+    subi    10, 10, 4
+    lis     9, (320 * 480) >> 16
+    ori     9, 9, (320 * 480) & 0xffff
+    mtctr   9
+7:  stwu    12, 4(10)
+    bdnz    7b
+    mftbl   9
+8:  mftbl   11
+    subf    11, 9, 11
+    lis     10, 0x056c          # ~91,000,000 ticks
+    cmplw   11, 10
+    blt     8b
+    blr
+#endif
 relocator_end:

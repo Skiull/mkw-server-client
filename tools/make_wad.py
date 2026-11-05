@@ -97,7 +97,7 @@ def assemble_bootstub(devkitpro):
             return ELFFile(f).get_section_by_name('.text').data()
 
 
-def build_menu(devkitpro, boot_dol_path, root, keep_elf=None):
+def build_menu(devkitpro, boot_dol_path, root, keep_elf=None, diag=False):
     """Build channel/ (libogc menu app) with boot.dol embedded, and return the DOL."""
     gcc = os.path.join(devkitpro, 'devkitPPC', 'bin', 'powerpc-eabi-gcc')
     ogc = os.path.join(devkitpro, 'libogc')
@@ -110,7 +110,7 @@ def build_menu(devkitpro, boot_dol_path, root, keep_elf=None):
             f.write('.section .rodata\n.balign 32\n.global boot_dol\nboot_dol:\n'
                     f'.incbin "{boot}"\n.global boot_dol_end\nboot_dol_end:\n')
         elf = os.path.join(tmp, 'menu.elf')
-        subprocess.run([gcc, *arch, '-O2', '-Wall', '-DGEKKO', '-I', os.path.join(ogc, 'include'),
+        subprocess.run([gcc, *arch, '-O2', '-Wall', '-DGEKKO', *(['-DDIAG'] if diag else []), '-I', os.path.join(ogc, 'include'),
                         os.path.join(src, 'main.c'), os.path.join(src, 'relocator.S'), incbin,
                         '-L', os.path.join(ogc, 'lib', 'wii'), '-lwiiuse', '-lbte', '-logc', '-lm',
                         '-o', elf], check=True)
@@ -237,6 +237,8 @@ def main():
     p.add_argument('--cert-chain', default=os.path.join(appdata, 'Dolphin Emulator', 'Wii', 'sys',
                                                         'cert.sys'),
                    help='CA/CP/XS certificate chain (default: Dolphin NAND cert.sys)')
+    p.add_argument('--diag', action='store_true',
+                   help='diagnostic build: solid colours at each launch stage')
     p.add_argument('--name', default=CHANNEL_NAME, help='channel name in the System Menu')
     p.add_argument('--version', type=int, default=1, help='title version')
     p.add_argument('-o', '--output', help='output .wad (default: out/channel/mkw-selfhost.wad)')
@@ -252,7 +254,7 @@ def main():
     cert_chain = open(args.cert_chain, 'rb').read()
     if not args.devkitpro:
         sys.exit('Set DEVKITPRO or pass --devkitpro (needs devkitPPC and libogc).')
-    menu = build_menu(args.devkitpro, dol_path, root)
+    menu = build_menu(args.devkitpro, dol_path, root, diag=args.diag)
     dol = add_bootstub(menu, assemble_bootstub(args.devkitpro))
     banner = rename_banner(extract_banner(args.dolphin_tool, args.disc), args.name)
 

@@ -25,6 +25,32 @@ _start:
     mtmsr   4
     isync
 
+    # Save the VI (video) registers exactly as the System Menu left them, so the
+    # menu can put them back before starting boot.dol (see vi_save below).
+    # Caches are off at this point, so these real-mode accesses go straight out.
+    bl      9f
+9:  mflr    5
+    addi    5, 5, (vi_save - 9b - 2)
+    lis     6, 0x0c00
+    ori     6, 6, 0x2000 - 2
+    li      7, 64
+    mtctr   7
+10: lhzu    8, 2(6)
+    sthu    8, 2(5)
+    bdnz    10b
+
+    # Same for the OS globals at 0x00-0xFF (TV mode at 0xCC, clocks, memory
+    # size, ...), which libogc overwrites and a disc game reads (see os_save).
+    bl      11f
+11: mflr    5
+    addi    5, 5, (os_save - 11b - 4)
+    li      6, -4
+    li      7, 64
+    mtctr   7
+12: lwzu    8, 4(6)
+    stwu    8, 4(5)
+    bdnz    12b
+
     # Clear all BATs
     li      0, 0
     mtspr   528, 0      # IBAT0U
@@ -172,6 +198,16 @@ globals:
     .long   0xfc, 0x2b73a840    # CPU clock
 globals_end:
 
-    .balign 4
+    # The System Menu's VI registers (0xCC002000-0xCC00207F), saved at boot.
+    # Lives at 0x80003680; channel/main.c restores them before launching.
+    .org    0x280
+vi_save:
+    .space  0x80
+
+    # The System Menu's OS globals (0x80000000-0x800000FF), saved at boot.
+    # Lives at 0x80003700; channel/main.c restores them before launching.
+os_save:
+    .space  0x100
+
 entry:
     .long   0
