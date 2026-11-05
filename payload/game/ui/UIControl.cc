@@ -2,6 +2,10 @@
 
 #include "game/ui/ControlLoader.hh"
 
+#include <sp/net/mkw_server/packets/LoungeRanks.hh>
+
+#include <string.h>
+
 namespace UI {
 
 UIControl::~UIControl() = default;
@@ -28,6 +32,14 @@ const Page *UIControl::getPage() const {
 
 Page *UIControl::getPage() {
     return m_controlGroup->m_page;
+}
+
+void LayoutUIControl::setMessage(const char *pane, u32 messageId, MessageInfo *info) {
+    REPLACED(setMessage)(pane, messageId, info);
+    // Check Members' VR number ("{n}"), which shows the LR in mogi rooms.
+    if (messageId == 5105 && info != nullptr && pane != nullptr && strcmp(pane, "point") == 0) {
+        MKWServer::colorPaneByLR(m_mainLayout.findPaneByName(pane), info->intVals[0]);
+    }
 }
 
 LayoutUIControl::LayoutUIControl() = default;

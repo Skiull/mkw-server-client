@@ -74,7 +74,8 @@ protected:
     virtual void vf_38();
 
 public:
-    void setMessage(const char *pane, u32 messageId, MessageInfo *info = nullptr);
+    REPLACE void setMessage(const char *pane, u32 messageId, MessageInfo *info = nullptr);
+    void REPLACED(setMessage)(const char *pane, u32 messageId, MessageInfo *info);
     void setMessageAll(u32 messageId, MessageInfo *info = nullptr);
     void clearMessage(const char *pane);
     void setPicture(const char *dstPane, const char *srcPane);

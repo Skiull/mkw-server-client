@@ -4,6 +4,10 @@
 
 // Lounge ranks on name tags (wfc-server qr2/lounge_rank.go): which aids show their MKW Lounge
 // rank, and the player's own Ranks setting sent to the server.
+namespace nw4r::lyt {
+class Pane;
+}
+
 namespace MKWServer {
 #define LOUNGE_RANKS 0x524E4B53 // "RNKS"
 constexpr u32 LOUNGE_RANKS_SIZE = 12 + 2 + 12 * 2;
@@ -20,4 +24,6 @@ bool sendRankSetting(bool showLoungeRank);
 bool inMogiRoom();
 void leftMogiRoom();
 void mogiShowLR();
+// In mogi rooms, draws an LR text pane in its Lounge rank colour (Check Members, message 5105).
+void colorPaneByLR(nw4r::lyt::Pane *pane, s32 lr);
 } // namespace MKWServer

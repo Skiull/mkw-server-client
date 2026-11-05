@@ -82,8 +82,6 @@ static const struct {
         {8250, 0x87, 0xf1, 0x9b}, {9500, 0xf1, 0x38, 0x3a}, {11000, 0xb9, 0xf2, 0xff},
         {12000, 0xe5, 0xb3, 0xc7}, {13000, 0xcf, 0xe2, 0xf3}, {14000, 0x97, 0x17, 0x17}};
 
-// nw4r::lyt::Pane's name (char[17]).
-constexpr u32 PANE_NAME = 0xbc;
 
 // The text is drawn in the material's TEV colour 1, times the text colours (at 0xdc).
 static void colorByLR(void *textBox, s32 lr) {
@@ -104,27 +102,15 @@ static void colorByLR(void *textBox, s32 lr) {
     }
 }
 
-// The text box whose LR is coloured once its message is set.
-static void *s_colorBox = nullptr;
-static s32 s_colorLR = 0;
-
-extern "C" void MogiAfterMessage(void *textBox) {
-    if (textBox != nullptr && textBox == s_colorBox) {
-        colorByLR(textBox, s_colorLR);
-        s_colorBox = nullptr;
+void colorPaneByLR(nw4r::lyt::Pane *pane, s32 lr) {
+    if (s_mogi && pane != nullptr) {
+        colorByLR(pane, lr);
     }
 }
 
-extern "C" u32 MogiRemapMessage(void *textBox, u32 messageId, const UI::MessageInfo *info) {
+extern "C" u32 MogiRemapMessage(void * /* textBox */, u32 messageId, const UI::MessageInfo * /* info */) {
     if (!s_mogi) {
         return messageId;
-    }
-    // Check Members' VR number (pane point, or point_2 in some layouts; drawn in its material's orange): coloured by
-    // rank once the message is set (MogiAfterMessage).
-    const char *name = textBox ? reinterpret_cast<const char *>(textBox) + PANE_NAME : "";
-    if (info != nullptr && (strcmp(name, "point") == 0 || strcmp(name, "point_2") == 0)) {
-        s_colorBox = textBox;
-        s_colorLR = info->intVals[0];
     }
     switch (messageId) {
     case 4202: // "{n}VR"
