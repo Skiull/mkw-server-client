@@ -108,10 +108,6 @@ void Section::init(SectionId sectionId) {
 void Section::deinit() {
     // Since we zero out the arrays, we can trust REPLACED(deinit) does not double-free.
     popActivePages(0);
-    // A page can still be listed as active here (seen after a race, leaving the room and
-    // opening a replay): the game's deinit then deactivates it after we've freed it, calling
-    // through a dead vtable. Nothing is active once the section goes away.
-    m_activePageCount = 0;
     for (auto *&page : m_pages) {
         if (page == nullptr) {
             continue;
