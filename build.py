@@ -260,10 +260,6 @@ for language in LANGUAGES:
     asset_in_files[os.path.join('Scene', 'UI', f'GlobeSP_{language}.arc.lzma')] = [
         os.path.join('message', f'Common_{language}.bmg.json5'),
     ]
-    # Our messages in the multiplayer menus too, e.g. "LR" on Check Members in mogi rooms.
-    asset_in_files[os.path.join('Scene', 'UI', f'MenuMultiSP_{language}.arc.lzma')] = [
-        os.path.join('message', f'Common_{language}.bmg.json5'),
-    ]
     asset_in_files[os.path.join('Scene', 'UI', f'RaceSP_{language}.arc.lzma')] = [
         os.path.join("game_image", "timg", f'online_ping_{hud_language}.tpl'),
         # Our messages (CommonSP) in races too, e.g. "LR" on the results screens.
