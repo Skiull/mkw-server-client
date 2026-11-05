@@ -60,7 +60,7 @@ void WifiMenuTopPage::onInit() {
     m_pageTitleText.setMessage(getTitleMessageId());
 
     insertChild(1, &m_worldWideButton, 0);
-    m_worldWideButton.load("button", "WifiMenuSingleTop", "ButtonWorld", 1, 0, false);
+    m_worldWideButton.load("button", "WifiMenuSingleTop", "ButtonWorld", 0, 0, false);
     m_worldWideButton.m_index = ButtonId::WorldWide;
     m_worldWideButton.setFrontHandler(&m_onWorldWideButtonFront, false);
     m_worldWideButton.setSelectHandler(&m_onButtonSelect, false);
@@ -73,7 +73,7 @@ void WifiMenuTopPage::onInit() {
     m_regionalButton.setMessageAll(10020); // "Create Mogi"
 
     insertChild(3, &m_friendButton, 0);
-    m_friendButton.load(animInfo, "button", "WifiMenuSingleTopFriendButton", "ButtonFriend", 1, 0);
+    m_friendButton.load(animInfo, "button", "WifiMenuSingleTopFriendButton", "ButtonFriend", 0, 0);
 
     m_friendButton.setFrontHandler(&m_onFriendButtonFront, false);
     m_friendButton.setSelectHandler(&m_onButtonSelect, false);
@@ -113,11 +113,10 @@ void WifiMenuTopPage::onInit() {
     insertChild(7, &m_instructionText, 0);
     m_instructionText.load();
 
-    // Worldwide and Friends are hidden: online play is mogis only.
+    // Worldwide and Friends are hidden (loaded with no players, so they can't be selected):
+    // online play is mogis only.
     m_worldWideButton.setVisible(false);
-    m_worldWideButton.setPlayerFlags(0x0);
     m_friendButton.setVisible(false);
-    m_friendButton.setPlayerFlags(0x0);
 
     SectionManager::Instance()->currentSection()->createFriendListManager();
     setAnimSfxIds(Sound::SoundId::SE_DUMMY, Sound::SoundId::SE_DUMMY);
