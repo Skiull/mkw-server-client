@@ -1,5 +1,8 @@
 #include "LoungeRanks.hh"
 
+#include <nw4r/lyt/lyt_material.hh>
+#include <nw4r/lyt/lyt_pane.hh>
+
 #include "game/net/NetManager.hh"
 #include "game/net/records/User.hh"
 #include "game/system/SaveManager.hh"
@@ -86,12 +89,18 @@ static void colorByLR(void *textBox, s32 lr) {
     while (i + 1 < sizeof(RANK_COLORS) / sizeof(RANK_COLORS[0]) && lr >= RANK_COLORS[i + 1].minLR) {
         i++;
     }
+    // The orange comes from the material's fill colour (TEV colour 1): set that to the rank
+    // colour and the text colours to white, which they multiply with.
     u8 *colors = reinterpret_cast<u8 *>(textBox) + 0xdc;
-    for (u32 k = 0; k < 2; k++) {
-        colors[k * 4 + 0] = RANK_COLORS[i].r;
-        colors[k * 4 + 1] = RANK_COLORS[i].g;
-        colors[k * 4 + 2] = RANK_COLORS[i].b;
-        colors[k * 4 + 3] = 255;
+    for (u32 k = 0; k < 8; k++) {
+        colors[k] = 255;
+    }
+    auto *pane = reinterpret_cast<nw4r::lyt::Pane *>(textBox);
+    if (auto *material = pane->getMaterial()) {
+        material->tevColors[1].r = RANK_COLORS[i].r;
+        material->tevColors[1].g = RANK_COLORS[i].g;
+        material->tevColors[1].b = RANK_COLORS[i].b;
+        material->tevColors[1].a = 255;
     }
 }
 
