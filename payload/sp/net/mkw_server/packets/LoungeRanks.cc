@@ -54,11 +54,13 @@ void mogiShowLR() {
     auto *net = Net::NetManager::Instance();
     if (net != nullptr) {
         u8 me = net->ownAid();
-        if (me < 12 && s_lrs[me] != 0 && users->myVR() != s_lrs[me]) {
+        // Capped at 9999: other players' games drop records with a VR above it.
+        u16 lr = s_lrs[me] < 9999 ? s_lrs[me] : 9999;
+        if (me < 12 && s_lrs[me] != 0 && users->myVR() != lr) {
             if (s_ownVR == 0) {
                 s_ownVR = users->myVR();
             }
-            users->setOwnVR(s_lrs[me]);
+            users->setOwnVR(lr);
         }
     }
 }
