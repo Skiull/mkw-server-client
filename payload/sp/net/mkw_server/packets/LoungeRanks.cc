@@ -1,5 +1,7 @@
 #include "LoungeRanks.hh"
 
+#include <nw4r/lyt/lyt_pane.hh>
+
 #include "game/net/NetManager.hh"
 #include "game/net/records/User.hh"
 #include "game/system/SaveManager.hh"
@@ -71,9 +73,58 @@ void mogiShowLR() {
     }
 }
 
-extern "C" u32 MogiRemapMessage(void * /* textBox */, u32 messageId, const UI::MessageInfo * /* info */) {
+// Lounge rank colours by LR, as on the leaderboard (wfc-server qr2/leaderboard.go).
+static const struct {
+    u16 minLR;
+    u8 r, g, b;
+} RANK_COLORS[] = {{0, 0x81, 0x78, 0x76}, {1250, 0xcf, 0x68, 0x53}, {2500, 0xcd, 0x7f, 0x32},
+        {4000, 0xb7, 0xbe, 0xc4}, {5500, 0xff, 0xd7, 0x00}, {7000, 0x3f, 0xab, 0xb8},
+        {8250, 0x87, 0xf1, 0x9b}, {9500, 0xf1, 0x38, 0x3a}, {11000, 0xb9, 0xf2, 0xff},
+        {12000, 0xe5, 0xb3, 0xc7}, {13000, 0xcf, 0xe2, 0xf3}, {14000, 0x97, 0x17, 0x17}};
+
+// nw4r::lyt::Pane's name (char[17]).
+constexpr u32 PANE_NAME = 0xbc;
+
+// The text is drawn in the material's TEV colour 1, times the text colours (at 0xdc).
+static void colorByLR(void *textBox, s32 lr) {
+    u32 i = 0;
+    while (i + 1 < sizeof(RANK_COLORS) / sizeof(RANK_COLORS[0]) && lr >= RANK_COLORS[i + 1].minLR) {
+        i++;
+    }
+    u8 *colors = reinterpret_cast<u8 *>(textBox) + 0xdc;
+    for (u32 k = 0; k < 8; k++) {
+        colors[k] = 255;
+    }
+    auto *pane = reinterpret_cast<nw4r::lyt::Pane *>(textBox);
+    if (auto *material = pane->getMaterial()) {
+        material->tevColors[1].r = RANK_COLORS[i].r;
+        material->tevColors[1].g = RANK_COLORS[i].g;
+        material->tevColors[1].b = RANK_COLORS[i].b;
+        material->tevColors[1].a = 255;
+    }
+}
+
+// The text box whose LR is coloured once its message is set.
+static void *s_colorBox = nullptr;
+static s32 s_colorLR = 0;
+
+extern "C" void MogiAfterMessage(void *textBox) {
+    if (textBox != nullptr && textBox == s_colorBox) {
+        colorByLR(textBox, s_colorLR);
+        s_colorBox = nullptr;
+    }
+}
+
+extern "C" u32 MogiRemapMessage(void *textBox, u32 messageId, const UI::MessageInfo *info) {
     if (!s_mogi) {
         return messageId;
+    }
+    // Check Members' VR number (pane point_2, drawn in its material's orange): coloured by
+    // rank once the message is set (MogiAfterMessage).
+    if (textBox != nullptr && info != nullptr &&
+            strcmp(reinterpret_cast<const char *>(textBox) + PANE_NAME, "point_2") == 0) {
+        s_colorBox = textBox;
+        s_colorLR = info->intVals[0];
     }
     switch (messageId) {
     case 4202: // "{n}VR"
