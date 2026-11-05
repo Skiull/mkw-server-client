@@ -95,6 +95,17 @@ static void colorByLR(void *textBox, s32 lr) {
     }
 }
 
+// The text box whose LR is coloured once its message is set.
+static void *s_colorBox = nullptr;
+static s32 s_colorLR = 0;
+
+extern "C" void MogiAfterMessage(void *textBox) {
+    if (textBox != nullptr && textBox == s_colorBox) {
+        colorByLR(textBox, s_colorLR);
+        s_colorBox = nullptr;
+    }
+}
+
 extern "C" u32 MogiRemapMessage(void *textBox, u32 messageId, const UI::MessageInfo *info) {
     if (!s_mogi) {
         return messageId;
@@ -102,7 +113,8 @@ extern "C" u32 MogiRemapMessage(void *textBox, u32 messageId, const UI::MessageI
     switch (messageId) {
     case 4202: // "{n}VR": the LR, in its rank's colour.
         if (textBox != nullptr && info != nullptr) {
-            colorByLR(textBox, info->intVals[0]);
+            s_colorBox = textBox;
+            s_colorLR = info->intVals[0];
         }
         return 10034;
     case 9700: // "VR"
