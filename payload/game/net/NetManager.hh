@@ -57,6 +57,10 @@ public:
         VoteUnsuspend = 0x3, // Set when private room ends
     };
 
+    u8 ownAid() const {
+        return myAid();
+    }
+
     u8 aidOfPlayer(u32 playerId) const {
         return m_playerIdToAidMapping[playerId];
     }

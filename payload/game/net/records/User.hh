@@ -20,6 +20,10 @@ public:
 
     u16 myBR();
 
+    void setOwnVR(u16 vr) {
+        m_recordToSend.vr = vr;
+    }
+
     void setReceivedVR(u8 aid, u16 vr) {
         m_receivedRecords[aid].vr = vr;
     }
