@@ -83,21 +83,25 @@ static const struct {
         {12000, 0xe5, 0xb3, 0xc7}, {13000, 0xcf, 0xe2, 0xf3}, {14000, 0x97, 0x17, 0x17}};
 
 
-// The text is drawn in the material's TEV colour 1, times the text colours (at 0xdc).
 static void colorByLR(void *textBox, s32 lr) {
     u32 i = 0;
     while (i + 1 < sizeof(RANK_COLORS) / sizeof(RANK_COLORS[0]) && lr >= RANK_COLORS[i + 1].minLR) {
         i++;
     }
+    // As on the leaderboard: the rank colour in the text colours (at 0xdc), the material's
+    // fill colour (TEV colour 1, orange here) white.
     u8 *colors = reinterpret_cast<u8 *>(textBox) + 0xdc;
-    for (u32 k = 0; k < 8; k++) {
-        colors[k] = 255;
+    for (u32 k = 0; k < 2; k++) {
+        colors[k * 4 + 0] = RANK_COLORS[i].r;
+        colors[k * 4 + 1] = RANK_COLORS[i].g;
+        colors[k * 4 + 2] = RANK_COLORS[i].b;
+        colors[k * 4 + 3] = 255;
     }
     auto *pane = reinterpret_cast<nw4r::lyt::Pane *>(textBox);
     if (auto *material = pane->getMaterial()) {
-        material->tevColors[1].r = RANK_COLORS[i].r;
-        material->tevColors[1].g = RANK_COLORS[i].g;
-        material->tevColors[1].b = RANK_COLORS[i].b;
+        material->tevColors[1].r = 255;
+        material->tevColors[1].g = 255;
+        material->tevColors[1].b = 255;
         material->tevColors[1].a = 255;
     }
 }
