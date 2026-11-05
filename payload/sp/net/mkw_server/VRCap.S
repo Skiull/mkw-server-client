@@ -1,0 +1,60 @@
+#include <Common.S>
+
+// VR (and BR) are u16: the game capped them at 9999. Raise its unsigned 9999 comparisons to
+// 65535 so LRs (up to 65535) show and other players' records with them are kept (mogi rooms).
+
+PATCH_REPLACE_START(VRCap_805d3030, 0x0)
+    .long 0x2803ffff // cmplwi, 65535
+PATCH_REPLACE_END(VRCap_805d3030, 0x0)
+
+PATCH_REPLACE_START(VRCap_805d3060, 0x0)
+    .long 0x2804ffff // cmplwi, 65535
+PATCH_REPLACE_END(VRCap_805d3060, 0x0)
+
+PATCH_REPLACE_START(VRCap_8064f6d8, 0x0)
+    .long 0x2800ffff // cmplwi, 65535
+PATCH_REPLACE_END(VRCap_8064f6d8, 0x0)
+
+PATCH_REPLACE_START(VRCap_8064f768, 0x0)
+    .long 0x2800ffff // cmplwi, 65535
+PATCH_REPLACE_END(VRCap_8064f768, 0x0)
+
+PATCH_REPLACE_START(VRCap_8064f860, 0x0)
+    .long 0x2804ffff // cmplwi, 65535
+PATCH_REPLACE_END(VRCap_8064f860, 0x0)
+
+PATCH_REPLACE_START(VRCap_8064f898, 0x0)
+    .long 0x2804ffff // cmplwi, 65535
+PATCH_REPLACE_END(VRCap_8064f898, 0x0)
+
+PATCH_REPLACE_START(VRCap_80659340, 0x0)
+    .long 0x2800ffff // cmplwi, 65535
+PATCH_REPLACE_END(VRCap_80659340, 0x0)
+
+PATCH_REPLACE_START(VRCap_80659420, 0x0)
+    .long 0x2800ffff // cmplwi, 65535
+PATCH_REPLACE_END(VRCap_80659420, 0x0)
+
+PATCH_REPLACE_START(VRCap_8065a688, 0x0)
+    .long 0x2800ffff // cmplwi, 65535
+PATCH_REPLACE_END(VRCap_8065a688, 0x0)
+
+PATCH_REPLACE_START(VRCap_80673834, 0x0)
+    .long 0x2803ffff // cmplwi, 65535
+PATCH_REPLACE_END(VRCap_80673834, 0x0)
+
+PATCH_REPLACE_START(VRCap_80673858, 0x0)
+    .long 0x2803ffff // cmplwi, 65535
+PATCH_REPLACE_END(VRCap_80673858, 0x0)
+
+PATCH_REPLACE_START(VRCap_8067689c, 0x0)
+    .long 0x2803ffff // cmplwi, 65535
+PATCH_REPLACE_END(VRCap_8067689c, 0x0)
+
+PATCH_REPLACE_START(VRCap_806768b0, 0x0)
+    .long 0x2803ffff // cmplwi, 65535
+PATCH_REPLACE_END(VRCap_806768b0, 0x0)
+
+PATCH_REPLACE_START(VRCap_808336a8, 0x0)
+    .long 0x2800ffff // cmplwi, 65535
+PATCH_REPLACE_END(VRCap_808336a8, 0x0)
