@@ -1,18 +1,24 @@
 # Wii channel (.wad)
 
-`tools/make_wad.py` turns `out/<profile>/boot.dol` into an installable channel,
-`out/channel/mkw-selfhost.wad` (title `00010001-MKSH`, shown as "MKW Self-host").
-Starting the channel boots Mario Kart Wii from the disc with the payload, the same as
-launching `boot.dol` from the Homebrew Channel. For now there is no menu: the channel
-goes straight to "Launch Game".
+`tools/make_wad.py` builds an installable channel, `out/channel/mkw-selfhost.wad`
+(title `00010001-MKSH`, shown as "MKW Self-host"). The channel opens a menu (`channel/`)
+with a **Launch Game** button (A on a Wii Remote, Classic Controller or GameCube
+controller; HOME goes back to the Wii Menu). Launch Game starts the embedded
+`out/<profile>/boot.dol` the way the Homebrew Channel does, which boots Mario Kart Wii
+from the disc with the payload.
 
 ## Building
 
-Build the client first (`build.py`), then:
+Build the client first (`build.py`). The menu needs devkitPro's devkitPPC **with newlib**
+and **libogc** (the trimmed devkitPPC used for `build.py` has neither). Then:
 
 ```bash
-PYTHONPATH=<pylib with cryptography + pyelftools> DEVKITPPC=<devkitPPC> python tools/make_wad.py
+DEVKITPRO=<devkitPro folder> PYTHONPATH=<pylib with cryptography + pyelftools> python tools/make_wad.py
 ```
+
+`DEVKITPRO` must contain `devkitPPC/` and `libogc/`. On this machine they were unpacked
+from devkitPro's official packages (devkitppc-gcc, -binutils, -newlib, -crtls, -rules and
+libogc from pkg.devkitpro.org) into `%TEMP%\dkpfulloot\opt\devkitpro`.
 
 Useful options: `--profile release`, `--disc <your MKW .wbfs/.iso>`, `--common-key <file|hex|keys.bin>`,
 `--name "..."`, `--version N`, `-o out.wad`. Run with `--help` for the rest.
@@ -25,12 +31,14 @@ No Nintendo files are kept in the repo. At build time the script reads:
 
 ## How it boots
 
-IOS starts a channel's main DOL in real mode at address 0x3400, where Nintendo's DOLs keep
-their startup code. `boot.dol` has nothing there, so the script adds a small stub
-(`tools/channel_bootstub.S`) as a DOL section at 0x80003400. The stub sets up the memory
-mappings, installs the system call handler, fills in the low-memory values a disc boot
-normally sets (clock speeds, memory size), turns on the caches and jumps to `boot.dol`'s
-normal entry point. The TMD asks for IOS58, which the loader needs.
+1. IOS starts a channel's main DOL in real mode at 0x3400, where Nintendo's DOLs keep their
+   startup code. The script adds a small stub there (`tools/channel_bootstub.S`) that sets up
+   memory mappings, the low-memory values a disc boot leaves behind and the caches, then
+   jumps to the menu's normal entry point. The TMD asks for IOS58.
+2. The menu (libogc) shows the Launch Game button.
+3. On launch it copies `boot.dol` and a small relocator (`channel/relocator.S`) to MEM2,
+   shuts libogc down, reloads IOS58 (like HBC), points the exception vectors at `rfi`, and
+   the relocator loads `boot.dol` into place and jumps to it.
 
 ## Testing in Dolphin
 
@@ -54,4 +62,10 @@ Copy the .wad to the SD card, install it with the WAD manager, then start the ch
 the System Menu with your MKW disc inserted. As with any WAD install, have a BootMii NAND
 backup first. Uninstall with the same WAD manager.
 
-Not yet tested on real hardware: the boot stub was only verified in Dolphin.
+Real-hardware status: the first version (boot.dol run directly, no menu) hung at
+"Escalating privileges" on a Wii. The menu version hands over a freshly reloaded IOS58 and
+a libogc-initialised system, the same as HBC, which should fix that; it has only been
+verified in Dolphin so far.
+
+Adding menu items later: extend `items` / the `ITEM_*` enum in `channel/main.c` and handle
+the new index next to `ITEM_LAUNCH`.

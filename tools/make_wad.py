@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
 """Pack out/<profile>/boot.dol into an installable Wii channel (.wad).
 
-The channel boots straight into Mario Kart Wii from the disc with the
-mkw-server-client payload, the same way boot.dol does from the Homebrew Channel.
+The channel is a small libogc menu (channel/) with a "Launch Game" button. It
+embeds boot.dol and starts it the way the Homebrew Channel does, which boots
+Mario Kart Wii from the disc with the mkw-server-client payload.
 
 Nothing from Nintendo is stored in this repo. At build time the script takes:
   - the channel banner: opening.bnr from your own MKW disc image (via DolphinTool)
@@ -18,6 +19,7 @@ import argparse
 import hashlib
 import os
 import re
+import shutil
 import struct
 import subprocess
 import sys
@@ -84,15 +86,39 @@ def key_from_dolphin(exe_path):
 
 # --- Boot stub ------------------------------------------------------------
 
-def assemble_bootstub(devkitppc):
+def assemble_bootstub(devkitpro):
     src = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'channel_bootstub.S')
-    gcc = os.path.join(devkitppc, 'bin', 'powerpc-eabi-gcc')
+    gcc = os.path.join(devkitpro, 'devkitPPC', 'bin', 'powerpc-eabi-gcc')
     with tempfile.TemporaryDirectory() as tmp:
         obj = os.path.join(tmp, 'stub.o')
         subprocess.run([gcc, '-c', '-o', obj, src], check=True)
         from elftools.elf.elffile import ELFFile
         with open(obj, 'rb') as f:
             return ELFFile(f).get_section_by_name('.text').data()
+
+
+def build_menu(devkitpro, boot_dol_path, root, keep_elf=None):
+    """Build channel/ (libogc menu app) with boot.dol embedded, and return the DOL."""
+    gcc = os.path.join(devkitpro, 'devkitPPC', 'bin', 'powerpc-eabi-gcc')
+    ogc = os.path.join(devkitpro, 'libogc')
+    arch = ['-mrvl', '-mcpu=750', '-meabi', '-mhard-float']
+    src = os.path.join(root, 'channel')
+    with tempfile.TemporaryDirectory() as tmp:
+        incbin = os.path.join(tmp, 'bootdol.S')
+        with open(incbin, 'w') as f:
+            boot = os.path.abspath(boot_dol_path).replace(os.sep, '/')
+            f.write('.section .rodata\n.balign 32\n.global boot_dol\nboot_dol:\n'
+                    f'.incbin "{boot}"\n.global boot_dol_end\nboot_dol_end:\n')
+        elf = os.path.join(tmp, 'menu.elf')
+        subprocess.run([gcc, *arch, '-O2', '-Wall', '-DGEKKO', '-I', os.path.join(ogc, 'include'),
+                        os.path.join(src, 'main.c'), os.path.join(src, 'relocator.S'), incbin,
+                        '-L', os.path.join(ogc, 'lib', 'wii'), '-lwiiuse', '-lbte', '-logc', '-lm',
+                        '-o', elf], check=True)
+        if keep_elf:
+            shutil.copy(elf, keep_elf)
+        dol = os.path.join(tmp, 'menu.dol')
+        subprocess.run([sys.executable, os.path.join(root, 'elf2dol.py'), elf, dol], check=True)
+        return open(dol, 'rb').read()
 
 
 def add_bootstub(dol, stub):
@@ -201,8 +227,9 @@ def main():
     p.add_argument('--dolphin-tool', default=os.path.join(dolphin_dir, 'DolphinTool.exe'))
     p.add_argument('--dolphin-exe', default=os.path.join(dolphin_dir, 'Dolphin.exe'),
                    help='Dolphin.exe to read the common key from')
-    p.add_argument('--devkitppc', default=os.environ.get('DEVKITPPC'),
-                   help='devkitPPC folder, for assembling the boot stub (default: $DEVKITPPC)')
+    p.add_argument('--devkitpro', default=os.environ.get('DEVKITPRO'),
+                   help='devkitPro folder with devkitPPC and libogc, for the menu app '
+                        '(default: $DEVKITPRO)')
     p.add_argument('--common-key', help='key file, hex string, or BootMii keys.bin')
     p.add_argument('--cert-chain', default=os.path.join(appdata, 'Dolphin Emulator', 'Wii', 'sys',
                                                         'cert.sys'),
@@ -220,12 +247,14 @@ def main():
         sys.exit('Could not get the Wii common key. Pass --common-key (file, hex, or keys.bin).')
 
     cert_chain = open(args.cert_chain, 'rb').read()
-    if not args.devkitppc:
-        sys.exit('Set DEVKITPPC or pass --devkitppc.')
-    dol = add_bootstub(open(dol_path, 'rb').read(), assemble_bootstub(args.devkitppc))
+    if not args.devkitpro:
+        sys.exit('Set DEVKITPRO or pass --devkitpro (needs devkitPPC and libogc).')
+    menu = build_menu(args.devkitpro, dol_path, root)
+    dol = add_bootstub(menu, assemble_bootstub(args.devkitpro))
     banner = rename_banner(extract_banner(args.dolphin_tool, args.disc), args.name)
 
-    # Content 0: banner. Content 1: boot.dol plus the boot stub, run directly by IOS.
+    # Content 0: banner. Content 1: the menu app (with boot.dol inside) plus the boot
+    # stub, run directly by IOS.
     contents = [banner, dol]
     title_key = hashlib.sha1(b'mkw-selfhost-channel').digest()[:16]
     title_iv = struct.pack('>Q', TITLE_ID) + b'\0' * 8
