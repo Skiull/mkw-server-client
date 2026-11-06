@@ -840,3 +840,5 @@
 0x80590664 _ZNK4Kart15KartObjectProxy5isCPUEv
 0x80590678 _ZNK4Kart15KartObjectProxy7isGhostEv
 0x80590a5c _ZNK4Kart15KartObjectProxy11getPlayerIdEv
+0x805a2034 Camera_805a2034
+0x8051af84 _ZN6System9GameScene12setFramerateEb

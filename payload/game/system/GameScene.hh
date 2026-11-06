@@ -35,6 +35,9 @@ public:
     static GameScene *Instance();
 
 private:
+    void REPLACED(setFramerate)(bool is30FPS);
+    REPLACE void setFramerate(bool is30FPS);
+
     u8 _0c70[0x0c94 - 0x0c70];
 
 public:
