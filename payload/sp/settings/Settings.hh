@@ -27,11 +27,10 @@ enum class Setting {
     // Race HUD
     FOV169,
     FPSMode,
-    PlayerTags,
+    FarPlayerTags,
     HUDLabels,
     HUDTeamColors,
     MiniMap,
-    MapIcons,
     InputDisplay,
     Speedometer,
     // Sound
@@ -100,9 +99,10 @@ enum class MiniMap {
     Disable,
 };
 
-enum class MapIcons {
-    Characters,
-    Miis,
+// Show name tags of racers at any distance (in vanilla only nearby ones).
+enum class FarPlayerTags {
+    Disable,
+    Enable,
 };
 
 enum class InputDisplay {
@@ -190,11 +190,6 @@ struct OptionType<Setting::MiniMap> {
 };
 
 template <>
-struct OptionType<Setting::MapIcons> {
-    using Type = MapIcons;
-};
-
-template <>
 struct OptionType<Setting::InputDisplay> {
     using Type = InputDisplay;
 };
@@ -220,8 +215,8 @@ struct OptionType<Setting::LastLapSpeedup> {
 };
 
 template <>
-struct OptionType<Setting::PlayerTags> {
-    using Type = u32;
+struct OptionType<Setting::FarPlayerTags> {
+    using Type = FarPlayerTags;
 };
 
 template <>
@@ -365,20 +360,19 @@ inline SettingEntry settings[]{
             .hidden = false,
             .selectedValue = static_cast<u32>(FPSMode::Vanilla),
         },
-        // A number: valueNames is null, the messages get the number as an argument.
-        [static_cast<u32>(Setting::PlayerTags)] =
+        [static_cast<u32>(Setting::FarPlayerTags)] =
         {
             .category = Category::RaceHUD,
-            .name = magic_enum::enum_name(Setting::PlayerTags),
+            .name = magic_enum::enum_name(Setting::FarPlayerTags),
             .messageId = 10059,
             .valueOffset = 0,
-            .defaultValue = 3,
-            .valueCount = 13,
-            .valueNames = nullptr,
-            .valueMessageIds = (const s32[]){10060},
-            .valueExplanationMessageIds = (const s32[]){10061},
+            .defaultValue = static_cast<u32>(FarPlayerTags::Enable),
+            .valueCount = magic_enum::enum_count<FarPlayerTags>(),
+            .valueNames = magic_enum::enum_names<FarPlayerTags>().data(),
+            .valueMessageIds = (const s32[]){10004, 10005},
+            .valueExplanationMessageIds = (const s32[]){10062, 10063},
             .hidden = false,
-            .selectedValue = 3,
+            .selectedValue = static_cast<u32>(FarPlayerTags::Enable),
         },
         [static_cast<u32>(Setting::HUDLabels)] =
         {
@@ -421,20 +415,6 @@ inline SettingEntry settings[]{
             .valueExplanationMessageIds = (const s32[]){10073, 10074},
             .hidden = false,
             .selectedValue = static_cast<u32>(MiniMap::Enable),
-        },
-        [static_cast<u32>(Setting::MapIcons)] =
-        {
-            .category = Category::RaceHUD,
-            .name = magic_enum::enum_name(Setting::MapIcons),
-            .messageId = 10075,
-            .valueOffset = 0,
-            .defaultValue = static_cast<u32>(MapIcons::Miis),
-            .valueCount = magic_enum::enum_count<MapIcons>(),
-            .valueNames = magic_enum::enum_names<MapIcons>().data(),
-            .valueMessageIds = (const s32[]){10076, 10077},
-            .valueExplanationMessageIds = (const s32[]){10078, 10079},
-            .hidden = false,
-            .selectedValue = static_cast<u32>(MapIcons::Miis),
         },
         [static_cast<u32>(Setting::InputDisplay)] =
         {

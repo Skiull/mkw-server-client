@@ -15,6 +15,9 @@
 // Read by the Instant Voting hook (sp/InstantVoting.S).
 extern "C" {
 u8 s_instantVoting = 0;
+// Read by the Far Player Tags hooks (sp/FarPlayerTags.S).
+u8 s_farPlayerTags = 0;
+extern const f32 s_farTagDistance = 1.0e9f;
 }
 
 namespace SP::FastMenus {
@@ -65,6 +68,9 @@ void Calc() {
 
     s_instantVoting = Settings::getSetting<Settings::Setting::InstantVoting>() ==
             Settings::InstantVoting::Enabled;
+
+    s_farPlayerTags = Settings::getSetting<Settings::Setting::FarPlayerTags>() ==
+            Settings::FarPlayerTags::Enable;
 
     bool fast = Settings::getSetting<Settings::Setting::FastMenuTransitions>() ==
             Settings::FastMenuTransitions::Enabled;

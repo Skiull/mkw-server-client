@@ -14,8 +14,3 @@ void CtrlRace2DMap::calcSelf() {
 }
 
 } // namespace UI
-
-// Called from CtrlRace2DMap.S.
-extern "C" u32 Settings_GetMapIcons() {
-    return static_cast<u32>(Settings::getSetting<Settings::Setting::MapIcons>());
-}

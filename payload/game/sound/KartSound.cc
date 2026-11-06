@@ -5,6 +5,7 @@
 #include "game/sound/ItemMusicManager.hh"
 #include "game/sound/RaceSoundManager.hh"
 #include "game/sound/SceneSoundManager.hh"
+#include "game/system/RaceConfig.hh"
 #include "game/system/RaceManager.hh"
 #include "game/ui/page/RacePage.hh"
 
@@ -14,12 +15,14 @@ namespace Sound {
 
 // Final Lap Jingle and Final Lap Speedup settings.
 void KartSound::calcLap() {
-    if (m_proxy->isCPU()) {
+    u32 playerId = m_proxy->getPlayerId();
+    // Only our own (and ghost) laps: CPUs and other online racers are left to the game, so
+    // their lap and final-lap sounds don't play for us.
+    auto type = System::RaceConfig::Instance()->raceScenario().players[playerId].type;
+    if (m_proxy->isCPU() || type == System::RaceConfig::Player::Type::Online) {
         REPLACED(calcLap)();
         return;
     }
-
-    u32 playerId = m_proxy->getPlayerId();
 
     u8 maxLap = System::RaceManager::Instance()->player(playerId)->maxLap();
     if (maxLap != m_maxLap) {
