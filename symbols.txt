@@ -877,3 +877,5 @@
 0x80590224 _ZNK4Kart15KartObjectProxy10getLastPosEv
 0x807f17b0 FarTags_807f17b0
 0x807f181c FarTags_807f181c
+0x807f3a24 FarTags_807f3a24
+0x807f3da4 FarTags_807f3da4

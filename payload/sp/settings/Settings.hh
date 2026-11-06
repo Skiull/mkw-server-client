@@ -24,14 +24,11 @@ enum class Setting {
     // Menus
     FastMenuTransitions,
     RememberCombo,
-    InstantVoting,
     // Race HUD
     FOV169,
     FPSMode,
     FarPlayerTags,
     HUDLabels,
-    HUDTeamColors,
-    MiniMap,
     InputDisplay,
     Speedometer,
     // Sound
@@ -70,12 +67,6 @@ enum class RememberCombo {
     Enabled,
 };
 
-// Skip the course vote: go straight to the race once the host picks the course.
-enum class InstantVoting {
-    Disabled,
-    Enabled,
-};
-
 // The settings below are ported from mkw-sp (see LICENSE-mkw-sp).
 
 // Field of view in 16:9 mode.
@@ -93,16 +84,6 @@ enum class FPSMode {
 enum class HUDLabels {
     Hide,
     Show,
-};
-
-enum class HUDTeamColors {
-    Disable,
-    Enable,
-};
-
-enum class MiniMap {
-    Enable,
-    Disable,
 };
 
 // Show name tags of racers at any distance (in vanilla only nearby ones).
@@ -193,11 +174,6 @@ struct OptionType<Setting::SaveStates> {
 };
 
 template <>
-struct OptionType<Setting::InstantVoting> {
-    using Type = InstantVoting;
-};
-
-template <>
 struct OptionType<Setting::RememberCombo> {
     using Type = RememberCombo;
 };
@@ -230,16 +206,6 @@ struct OptionType<Setting::FPSMode> {
 template <>
 struct OptionType<Setting::HUDLabels> {
     using Type = HUDLabels;
-};
-
-template <>
-struct OptionType<Setting::HUDTeamColors> {
-    using Type = HUDTeamColors;
-};
-
-template <>
-struct OptionType<Setting::MiniMap> {
-    using Type = MiniMap;
 };
 
 template <>
@@ -372,20 +338,6 @@ inline SettingEntry settings[]{
             .hidden = false,
             .selectedValue = static_cast<u32>(RememberCombo::Enabled),
         },
-        [static_cast<u32>(Setting::InstantVoting)] =
-        {
-            .category = Category::Menus,
-            .name = magic_enum::enum_name(Setting::InstantVoting),
-            .messageId = 10042,
-            .valueOffset = 0,
-            .defaultValue = static_cast<u32>(InstantVoting::Enabled),
-            .valueCount = magic_enum::enum_count<InstantVoting>(),
-            .valueNames = magic_enum::enum_names<InstantVoting>().data(),
-            .valueMessageIds = (const s32[]){10004, 10005},
-            .valueExplanationMessageIds = (const s32[]){10043, 10044},
-            .hidden = false,
-            .selectedValue = static_cast<u32>(InstantVoting::Enabled),
-        },
         [static_cast<u32>(Setting::FOV169)] =
         {
             .category = Category::RaceHUD,
@@ -441,34 +393,6 @@ inline SettingEntry settings[]{
             .valueExplanationMessageIds = (const s32[]){10067, 10068},
             .hidden = false,
             .selectedValue = static_cast<u32>(HUDLabels::Show),
-        },
-        [static_cast<u32>(Setting::HUDTeamColors)] =
-        {
-            .category = Category::RaceHUD,
-            .name = magic_enum::enum_name(Setting::HUDTeamColors),
-            .messageId = 10069,
-            .valueOffset = 0,
-            .defaultValue = static_cast<u32>(HUDTeamColors::Enable),
-            .valueCount = magic_enum::enum_count<HUDTeamColors>(),
-            .valueNames = magic_enum::enum_names<HUDTeamColors>().data(),
-            .valueMessageIds = (const s32[]){10004, 10005},
-            .valueExplanationMessageIds = (const s32[]){10070, 10071},
-            .hidden = false,
-            .selectedValue = static_cast<u32>(HUDTeamColors::Enable),
-        },
-        [static_cast<u32>(Setting::MiniMap)] =
-        {
-            .category = Category::RaceHUD,
-            .name = magic_enum::enum_name(Setting::MiniMap),
-            .messageId = 10072,
-            .valueOffset = 0,
-            .defaultValue = static_cast<u32>(MiniMap::Enable),
-            .valueCount = magic_enum::enum_count<MiniMap>(),
-            .valueNames = magic_enum::enum_names<MiniMap>().data(),
-            .valueMessageIds = (const s32[]){10005, 10004},
-            .valueExplanationMessageIds = (const s32[]){10073, 10074},
-            .hidden = false,
-            .selectedValue = static_cast<u32>(MiniMap::Enable),
         },
         [static_cast<u32>(Setting::InputDisplay)] =
         {

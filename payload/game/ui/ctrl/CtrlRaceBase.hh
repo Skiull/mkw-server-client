@@ -21,12 +21,11 @@ protected:
     virtual bool vf_48();
     virtual void vf_4c();
 
-    void REPLACED(setPaneColor)(const char *pane, bool teamColors);
-    REPLACE void setPaneColor(const char *pane, bool teamColors);
 
 public:
     s8 getPlayerId() const;
     // Hides the pane if the HUD Labels setting is "Hide" (or with 3-4 local players).
+    void setPaneColor(const char *pane, bool teamColors);
     void calcLabelVisibility(const char *pane);
 
 private:

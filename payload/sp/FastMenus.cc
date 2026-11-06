@@ -12,9 +12,9 @@
 // - Two float constants set to 0 (640.0 in main.dol .sdata2, 176.0 in StaticR.rel .rodata),
 //   which drop the pages' slide-in. The StaticR one is hashed as its original value, so the
 //   game hash is the same with the setting on or off.
-// Read by the Instant Voting hook (sp/InstantVoting.S).
+// Read by the Instant Voting hook (sp/InstantVoting.S). Always on (no longer a setting).
 extern "C" {
-u8 s_instantVoting = 0;
+u8 s_instantVoting = 1;
 // Read by the Far Player Tags hooks (sp/FarPlayerTags.S).
 u8 s_farPlayerTags = 0;
 extern const f32 s_farTagDistance = 1.0e9f;
@@ -65,9 +65,6 @@ void Calc() {
             MKWServer::GameHash::HashAsOriginal(s_rel, s_relOriginal);
         }
     }
-
-    s_instantVoting = Settings::getSetting<Settings::Setting::InstantVoting>() ==
-            Settings::InstantVoting::Enabled;
 
     s_farPlayerTags = Settings::getSetting<Settings::Setting::FarPlayerTags>() ==
             Settings::FarPlayerTags::Enable;

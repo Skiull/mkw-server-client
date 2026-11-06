@@ -12,23 +12,6 @@ CtrlRaceBase::CtrlRaceBase() = default;
 
 CtrlRaceBase::~CtrlRaceBase() = default;
 
-// HUD Team Colors setting.
-void CtrlRaceBase::setPaneColor(const char *paneName, bool teamColors) {
-    auto &raceScenario = System::RaceConfig::Instance()->raceScenario();
-    if (raceScenario.localPlayerCount < 2) {
-        teamColors = true;
-    }
-
-    if (teamColors) {
-        auto setting = Settings::getSetting<Settings::Setting::HUDTeamColors>();
-        if (setting == Settings::HUDTeamColors::Disable) {
-            teamColors = false;
-        }
-    }
-
-    REPLACED(setPaneColor)(paneName, teamColors);
-}
-
 // HUD Labels setting.
 void CtrlRaceBase::calcLabelVisibility(const char *paneName) {
     bool visible = System::RaceConfig::Instance()->raceScenario().localPlayerCount <= 2;

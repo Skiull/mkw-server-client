@@ -29,3 +29,29 @@ PATCH_B_START(FarTags_807f181c, 0x0)
 1:
     b FarTags_807f181c + 0x4
 PATCH_B_END(FarTags_807f181c, 0x0)
+
+// The same distance again (7500, StaticR .data 0x808D3E18), loaded by the tag manager's own
+// visibility checks.
+PATCH_B_START(FarTags_807f3a24, 0x0)
+    lis r12, s_farPlayerTags@ha
+    lbz r12, s_farPlayerTags@l (r12)
+    cmpwi r12, 0
+    lfs f0, 0x0 (r3) // Original instruction
+    beq 1f
+    lis r12, s_farTagDistance@ha
+    lfs f0, s_farTagDistance@l (r12)
+1:
+    b FarTags_807f3a24 + 0x4
+PATCH_B_END(FarTags_807f3a24, 0x0)
+
+PATCH_B_START(FarTags_807f3da4, 0x0)
+    lis r12, s_farPlayerTags@ha
+    lbz r12, s_farPlayerTags@l (r12)
+    cmpwi r12, 0
+    lfs f0, 0x0 (r4) // Original instruction
+    beq 1f
+    lis r12, s_farTagDistance@ha
+    lfs f0, s_farTagDistance@l (r12)
+1:
+    b FarTags_807f3da4 + 0x4
+PATCH_B_END(FarTags_807f3da4, 0x0)
