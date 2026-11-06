@@ -252,6 +252,30 @@ asset_in_files = {
         os.path.join('game_image', 'ctrl', 'ping_number.brctr.json5'),
         os.path.join('game_image', 'timg', 'tt_d_number_3d_minus.tpl'),
         os.path.join('game_image', 'timg', 'tt_d_number_3d_none.tpl'),
+        # Input display, speedometer and the lap counter that moves for it (mkw-sp)
+        os.path.join('game_image', 'anim', 'game_image_lap_position.brlan.json5'),
+        os.path.join('game_image', 'anim', 'game_image_speed_texture_pattern_0_9.brlan.json5'),
+        os.path.join('game_image', 'blyt', 'game_image_lap.brlyt.json5'),
+        os.path.join('game_image', 'blyt', 'game_image_speed.brlyt.json5'),
+        os.path.join('game_image', 'blyt', 'InputDisplay.brlyt.json5'),
+        os.path.join('game_image', 'ctrl', 'InputDisplay.brctr.json5'),
+        os.path.join('game_image', 'ctrl', 'lap_number.brctr.json5'),
+        os.path.join('game_image', 'ctrl', 'speed_number.brctr.json5'),
+        os.path.join('game_image', 'timg', 'basic_accel_off.tpl'),
+        os.path.join('game_image', 'timg', 'basic_accel_on.tpl'),
+        os.path.join('game_image', 'timg', 'basic_cstick_bg.tpl'),
+        os.path.join('game_image', 'timg', 'basic_cstick_center.tpl'),
+        os.path.join('game_image', 'timg', 'basic_dpad_down.tpl'),
+        os.path.join('game_image', 'timg', 'basic_dpad_left.tpl'),
+        os.path.join('game_image', 'timg', 'basic_dpad_off.tpl'),
+        os.path.join('game_image', 'timg', 'basic_dpad_right.tpl'),
+        os.path.join('game_image', 'timg', 'basic_dpad_up.tpl'),
+        os.path.join('game_image', 'timg', 'basic_trigger_bd_off.tpl'),
+        os.path.join('game_image', 'timg', 'basic_trigger_bd_on.tpl'),
+        os.path.join('game_image', 'timg', 'basic_trigger_l_off.tpl'),
+        os.path.join('game_image', 'timg', 'basic_trigger_l_on.tpl'),
+        os.path.join('game_image', 'timg', 'basic_trigger_r_off.tpl'),
+        os.path.join('game_image', 'timg', 'basic_trigger_r_on.tpl'),
     ],
 }
 
@@ -262,6 +286,7 @@ for language in LANGUAGES:
     ]
     asset_in_files[os.path.join('Scene', 'UI', f'RaceSP_{language}.arc.lzma')] = [
         os.path.join("game_image", "timg", f'online_ping_{hud_language}.tpl'),
+        os.path.join('game_image', 'timg', f'tt_speed_{hud_language}.tpl'),
         # Our messages (CommonSP) in races too, e.g. "LR" on the results screens.
         os.path.join('message', f'Common_{language}.bmg.json5'),
     ]
@@ -327,6 +352,7 @@ for language in LANGUAGES:
     renamed[f'Race_{language}.bmg'] = 'Race.bmg'
 for hud_language in HUD_LANGUAGES.values():
     renamed[f'online_ping_{hud_language}.tpl'] = 'online_ping.tpl'
+    renamed[f'tt_speed_{hud_language}.tpl'] = 'tt_speed.tpl'
 
 for target in asset_out_files:
     target_renamed = {}
