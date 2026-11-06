@@ -60,7 +60,9 @@ public:
         GameMode gameMode;
         u8 _b54[0xb70 - 0xb54];
         u32 modeFlags; // 1: mirror, 2: teams, 4: competition
-        u8 _b74[0xbf0 - 0xb74];
+        u8 _b74[0xbec - 0xb74];
+        u8 (*ghostBuffer)[0x2800]; // Raw ghost files (RKG), one per ghost
+
     };
     static_assert(sizeof(Scenario) == 0xbf0);
 

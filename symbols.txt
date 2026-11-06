@@ -816,6 +816,7 @@
 0x809c3618 _ZN4Item12ItemDirector10s_instanceE
 # REL .bss end (0x809c4f90)
 0x807f0044 _ZN2UI19CtrlRaceNameBalloon7refreshEj
+0x807f06e8 _ZN2UI19CtrlRaceNameBalloon8calcSelfEv
 0x807f5fec _ZN2UI14CtrlRaceResult21refreshRankIconsColorEjj
 0x805d3030 VRCap_805d3030
 0x805d3060 VRCap_805d3060

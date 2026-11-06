@@ -43,6 +43,8 @@ enum class Setting {
     // Time Trials (offline only)
     YButton,
     SaveStates,
+    TAGhostTagVisibility,
+    TAGhostTagContent,
 };
 
 enum class Ping {
@@ -152,8 +154,33 @@ enum class SaveStates {
     Enabled,
 };
 
+// Which ghost name tags to show in offline Time Trials.
+enum class TAGhostTagVisibility {
+    None,
+    Watched,
+    All,
+};
+
+// What a ghost's name tag shows in offline Time Trials.
+enum class TAGhostTagContent {
+    Name,
+    Time,
+    TimeNoLeading,
+    Date,
+};
+
 template <Setting S>
 struct OptionType;
+
+template <>
+struct OptionType<Setting::TAGhostTagVisibility> {
+    using Type = TAGhostTagVisibility;
+};
+
+template <>
+struct OptionType<Setting::TAGhostTagContent> {
+    using Type = TAGhostTagContent;
+};
 
 template <>
 struct OptionType<Setting::YButton> {
@@ -570,6 +597,34 @@ inline SettingEntry settings[]{
             .valueExplanationMessageIds = (const s32[]){10126, 10127},
             .hidden = false,
             .selectedValue = static_cast<u32>(SaveStates::Enabled),
+        },
+        [static_cast<u32>(Setting::TAGhostTagVisibility)] =
+        {
+            .category = Category::TimeTrials,
+            .name = magic_enum::enum_name(Setting::TAGhostTagVisibility),
+            .messageId = 10128,
+            .valueOffset = 0,
+            .defaultValue = static_cast<u32>(TAGhostTagVisibility::All),
+            .valueCount = magic_enum::enum_count<TAGhostTagVisibility>(),
+            .valueNames = magic_enum::enum_names<TAGhostTagVisibility>().data(),
+            .valueMessageIds = (const s32[]){10129, 10130, 10131},
+            .valueExplanationMessageIds = (const s32[]){10132, 10133, 10134},
+            .hidden = false,
+            .selectedValue = static_cast<u32>(TAGhostTagVisibility::All),
+        },
+        [static_cast<u32>(Setting::TAGhostTagContent)] =
+        {
+            .category = Category::TimeTrials,
+            .name = magic_enum::enum_name(Setting::TAGhostTagContent),
+            .messageId = 10135,
+            .valueOffset = 0,
+            .defaultValue = static_cast<u32>(TAGhostTagContent::Name),
+            .valueCount = magic_enum::enum_count<TAGhostTagContent>(),
+            .valueNames = magic_enum::enum_names<TAGhostTagContent>().data(),
+            .valueMessageIds = (const s32[]){10136, 10137, 10138, 10139},
+            .valueExplanationMessageIds = (const s32[]){10140, 10141, 10142, 10143},
+            .hidden = false,
+            .selectedValue = static_cast<u32>(TAGhostTagContent::Name),
         },
         // clang-format on
 };
