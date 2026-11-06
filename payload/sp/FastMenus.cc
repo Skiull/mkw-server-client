@@ -12,6 +12,11 @@
 // - Two float constants set to 0 (640.0 in main.dol .sdata2, 176.0 in StaticR.rel .rodata),
 //   which drop the pages' slide-in. The StaticR one is hashed as its original value, so the
 //   game hash is the same with the setting on or off.
+// Read by the Instant Voting hook (sp/InstantVoting.S).
+extern "C" {
+u8 s_instantVoting = 0;
+}
+
 namespace SP::FastMenus {
 
 namespace {
@@ -57,6 +62,9 @@ void Calc() {
             MKWServer::GameHash::HashAsOriginal(s_rel, s_relOriginal);
         }
     }
+
+    s_instantVoting = Settings::getSetting<Settings::Setting::InstantVoting>() ==
+            Settings::InstantVoting::Enabled;
 
     bool fast = Settings::getSetting<Settings::Setting::FastMenuTransitions>() ==
             Settings::FastMenuTransitions::Enabled;

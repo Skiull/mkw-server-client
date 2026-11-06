@@ -21,6 +21,7 @@ enum class Setting {
     // Menus
     FastMenuTransitions,
     RememberCombo,
+    InstantVoting,
 };
 
 enum class Ping {
@@ -46,8 +47,19 @@ enum class RememberCombo {
     Enabled,
 };
 
+// Skip the course vote: go straight to the race once the host picks the course.
+enum class InstantVoting {
+    Disabled,
+    Enabled,
+};
+
 template <Setting S>
 struct OptionType;
+
+template <>
+struct OptionType<Setting::InstantVoting> {
+    using Type = InstantVoting;
+};
 
 template <>
 struct OptionType<Setting::RememberCombo> {
@@ -155,6 +167,20 @@ inline SettingEntry settings[]{
             .valueExplanationMessageIds = (const s32[]){10040, 10041},
             .hidden = false,
             .selectedValue = static_cast<u32>(RememberCombo::Enabled),
+        },
+        [static_cast<u32>(Setting::InstantVoting)] =
+        {
+            .category = Category::Menus,
+            .name = magic_enum::enum_name(Setting::InstantVoting),
+            .messageId = 10042,
+            .valueOffset = 0,
+            .defaultValue = static_cast<u32>(InstantVoting::Enabled),
+            .valueCount = magic_enum::enum_count<InstantVoting>(),
+            .valueNames = magic_enum::enum_names<InstantVoting>().data(),
+            .valueMessageIds = (const s32[]){10004, 10005},
+            .valueExplanationMessageIds = (const s32[]){10043, 10044},
+            .hidden = false,
+            .selectedValue = static_cast<u32>(InstantVoting::Enabled),
         },
         // clang-format on
 };
