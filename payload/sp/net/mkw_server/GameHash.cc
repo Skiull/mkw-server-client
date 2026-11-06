@@ -28,6 +28,18 @@ struct Region {
 
 static Region s_regions[3];
 
+static const u32 *s_maskedWord = nullptr;
+static u32 s_maskedOriginal = 0;
+
+void HashAsOriginal(const u32 *word, u32 original) {
+    s_maskedWord = word;
+    s_maskedOriginal = original;
+}
+
+static inline u32 hashedWord(const u32 *p) {
+    return p == s_maskedWord ? s_maskedOriginal : *p;
+}
+
 // StaticR.rel .data blocks (see SnapshotRelData).
 static constexpr u32 DATA_BLOCK_WORDS = 256 / sizeof(u32);
 static constexpr u32 MAX_DATA_BLOCKS = 1024;
@@ -125,7 +137,7 @@ u64 ComputeNow() {
     u64 hash = FNV_OFFSET;
     for (const Region &r : s_regions) {
         for (const u32 *p = r.start; p < r.end; p++) {
-            hash = (hash ^ *p) * FNV_PRIME;
+            hash = (hash ^ hashedWord(p)) * FNV_PRIME;
         }
     }
     s_loginHash = hash;
@@ -143,7 +155,8 @@ void Calc() {
     while (budget > 0) {
         const Region &r = s_regions[s_region];
         while (budget > 0 && s_cursor < r.end) {
-            s_hash = (s_hash ^ *s_cursor++) * FNV_PRIME;
+            s_hash = (s_hash ^ hashedWord(s_cursor)) * FNV_PRIME;
+            s_cursor++;
             budget--;
         }
         if (s_cursor < r.end) {

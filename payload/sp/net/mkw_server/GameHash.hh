@@ -15,4 +15,8 @@ u64 ComputeNow();
 // never changes in normal play (cheat codes) show up.
 void SnapshotRelData(const void *start, u32 size);
 
+// Hash this word as `original` whatever it holds: for a constant one of our settings
+// changes (Fast Menu Transitions), so the hash doesn't depend on the setting.
+void HashAsOriginal(const u32 *word, u32 original);
+
 } // namespace MKWServer::GameHash
