@@ -1,6 +1,6 @@
 #include "ItemInventory.hh"
 
-#include "game/system/RaceConfig.hh"
+#include <sp/TimeTrialCheats.hh>
 
 extern "C" {
 #include <revolution.h>
@@ -9,15 +9,15 @@ extern "C" {
 namespace Item {
 
 void ItemInventory::resetItem() {
-    auto *raceConfig = System::RaceConfig::Instance();
-    if (raceConfig->raceScenario().gameMode != System::RaceConfig::GameMode::TimeAttack) {
+    // Items are kept (not used up) only with the item wheel, in offline Time Trials.
+    if (!SP::ItemWheelAllowed()) {
         REPLACED(resetItem)();
     }
 }
 
 void ItemInventory::resetHeldItem() {
-    auto *raceConfig = System::RaceConfig::Instance();
-    if (raceConfig->raceScenario().gameMode != System::RaceConfig::GameMode::TimeAttack) {
+    // Items are kept (not used up) only with the item wheel, in offline Time Trials.
+    if (!SP::ItemWheelAllowed()) {
         REPLACED(resetHeldItem)();
     }
 }

@@ -118,4 +118,13 @@
     "10116": "Use the \"_N\" BRSTM on the final lap.",
     "10117": "Use the \"_F\" BRSTM on the final lap.",
     "10118": "Generate final lap music from the \"_N\" BRSTM.",
+    "10119": "Time Trials",
+    "10120": "Item Wheel",
+    "10121": "Disabled",
+    "10122": "Enabled",
+    "10123": "The item wheel button does nothing.",
+    "10124": "In offline Time Trials, press Y (GameCube) or ZL (Classic) to cycle items. Items are not used up.",
+    "10125": "Save States",
+    "10126": "Save states are disabled.",
+    "10127": "In offline Time Trials, Z (GameCube) or ZR (Classic): tap to reload, hold over half a second to save.",
 }

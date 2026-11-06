@@ -13,6 +13,7 @@ enum class Category {
     Menus,
     RaceHUD,
     Sound,
+    TimeTrials,
 };
 
 enum class Setting {
@@ -39,6 +40,9 @@ enum class Setting {
     ItemMusic,
     LastLapJingle,
     LastLapSpeedup,
+    // Time Trials (offline only)
+    YButton,
+    SaveStates,
 };
 
 enum class Ping {
@@ -136,8 +140,30 @@ enum class LastLapSpeedup {
     Dynamic,
 };
 
+// Y / ZL / D-pad down (see RaceManager.cc) in offline Time Trials.
+enum class YButton {
+    None,
+    ItemWheel,
+};
+
+// Save and reload the kart's state in offline Time Trials.
+enum class SaveStates {
+    Disabled,
+    Enabled,
+};
+
 template <Setting S>
 struct OptionType;
+
+template <>
+struct OptionType<Setting::YButton> {
+    using Type = YButton;
+};
+
+template <>
+struct OptionType<Setting::SaveStates> {
+    using Type = SaveStates;
+};
 
 template <>
 struct OptionType<Setting::InstantVoting> {
@@ -242,6 +268,7 @@ constexpr u32 categoryMessageIds[]{
         10035,
         10045,
         10046,
+        10119,
         // clang-format on
 };
 
@@ -515,6 +542,34 @@ inline SettingEntry settings[]{
             .valueExplanationMessageIds = (const s32[]){10116, 10117, 10118},
             .hidden = false,
             .selectedValue = static_cast<u32>(LastLapSpeedup::Static),
+        },
+        [static_cast<u32>(Setting::YButton)] =
+        {
+            .category = Category::TimeTrials,
+            .name = magic_enum::enum_name(Setting::YButton),
+            .messageId = 10120,
+            .valueOffset = 0,
+            .defaultValue = static_cast<u32>(YButton::ItemWheel),
+            .valueCount = magic_enum::enum_count<YButton>(),
+            .valueNames = magic_enum::enum_names<YButton>().data(),
+            .valueMessageIds = (const s32[]){10121, 10122},
+            .valueExplanationMessageIds = (const s32[]){10123, 10124},
+            .hidden = false,
+            .selectedValue = static_cast<u32>(YButton::ItemWheel),
+        },
+        [static_cast<u32>(Setting::SaveStates)] =
+        {
+            .category = Category::TimeTrials,
+            .name = magic_enum::enum_name(Setting::SaveStates),
+            .messageId = 10125,
+            .valueOffset = 0,
+            .defaultValue = static_cast<u32>(SaveStates::Enabled),
+            .valueCount = magic_enum::enum_count<SaveStates>(),
+            .valueNames = magic_enum::enum_names<SaveStates>().data(),
+            .valueMessageIds = (const s32[]){10004, 10005},
+            .valueExplanationMessageIds = (const s32[]){10126, 10127},
+            .hidden = false,
+            .selectedValue = static_cast<u32>(SaveStates::Enabled),
         },
         // clang-format on
 };

@@ -4,6 +4,7 @@
 #include "game/system/RaceConfig.hh"
 
 #include <sp/SaveStateManager.hh>
+#include <sp/TimeTrialCheats.hh>
 
 extern "C" {
 #include <revolution.h>
@@ -20,7 +21,8 @@ void RaceManager::Player::calc() {
     auto gameMode = raceConfig->raceScenario().gameMode;
     // These settings are exclusive to TTs. We check for playerId to prevent unintended behavior
     // from ghosts.
-    if (gameMode == System::RaceConfig::GameMode::TimeAttack && m_playerId == 0) {
+    if (gameMode == System::RaceConfig::GameMode::TimeAttack && m_playerId == 0 &&
+            SP::IsOfflineTimeTrial()) {
         auto *playerPadProxy = m_padProxy;
         auto buttons = playerPadProxy->currentRaceInputState().rawButtons;
         auto controller = playerPadProxy->pad()->getControllerId();
@@ -49,11 +51,13 @@ void RaceManager::Player::calc() {
             return;
         }
 
-        if (auto *itemDirector = Item::ItemDirector::Instance()) {
+        auto *itemDirector = Item::ItemDirector::Instance();
+        if (itemDirector && SP::ItemWheelAllowed()) {
             itemDirector->processInput(shouldUpdateItem);
         }
 
-        if (auto *saveStateManager = SP::SaveStateManager::Instance()) {
+        auto *saveStateManager = SP::SaveStateManager::Instance();
+        if (saveStateManager && SP::SaveStatesAllowed()) {
             saveStateManager->processInput(isLoadButtonPressed);
         }
     }

@@ -1,6 +1,7 @@
 #include "RaceScene.hh"
 
 #include <sp/SaveStateManager.hh>
+#include <sp/TimeTrialCheats.hh>
 
 namespace Scene {
 
@@ -11,7 +12,10 @@ void RaceScene::destroySubsystems() {
 
 void RaceScene::createSubsystems() {
     REPLACED(createSubsystems)();
-    SP::SaveStateManager::CreateInstance();
+    // Only offline Time Trials get save states (the /store and /reload commands need it too).
+    if (SP::SaveStatesAllowed()) {
+        SP::SaveStateManager::CreateInstance();
+    }
 }
 
 } // namespace Scene

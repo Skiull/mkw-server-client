@@ -7,6 +7,8 @@ extern "C" {
 
 #include "game/item/ItemDirector.hh"
 
+#include "sp/TimeTrialCheats.hh"
+
 namespace SP {
 
 SaveStateManager *SaveStateManager::s_instance = nullptr;
@@ -39,11 +41,17 @@ auto SaveStateManager::GetKartState() {
 }
 
 void SaveStateManager::save() {
+    if (!SaveStatesAllowed()) {
+        return;
+    }
     auto [accessor, physics, item] = GetKartState();
     m_kartSaveState.emplace(accessor, physics, item);
 }
 
 void SaveStateManager::reload() {
+    if (!SaveStatesAllowed()) {
+        return;
+    }
     if (m_kartSaveState.has_value()) {
         auto [accessor, physics, item] = GetKartState();
         (*m_kartSaveState).reload(accessor, physics, item);
