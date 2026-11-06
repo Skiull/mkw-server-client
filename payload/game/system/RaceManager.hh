@@ -22,13 +22,27 @@ public:
             return m_padProxy;
         }
 
+        u8 maxLap() const {
+            return m_maxLap;
+        }
+
+        bool hasFinished() const {
+            return m_hasFinished;
+        }
+
     private:
         REPLACE void calc();
         void REPLACED(calc)();
 
         u8 _00[0x08 - 0x00];
         u8 m_playerId;
-        u8 _09[0x48 - 0x09];
+        u8 _09[0x26 - 0x09];
+        u8 m_maxLap;
+        u8 _27[0x38 - 0x27];
+        u32 _pad0 : 30;
+        bool m_hasFinished : 1;
+        u32 _pad1 : 1;
+        u8 _3c[0x48 - 0x3c];
         PadProxy *m_padProxy;
         u8 _4c[0x54 - 0x4c];
     };
@@ -49,6 +63,8 @@ public:
     void startCountdown() {
         m_canCountdownStart = true;
     }
+
+    static u8 GetLapCount();
 
     static RaceManager *Instance() {
         return s_instance;
