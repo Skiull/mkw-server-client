@@ -60,6 +60,11 @@ u8 RacePage::getControlCount(u32 controls) const {
     }
     count += localPlayerCount(); // CtrlRaceInputDisplay
 
+    // Player Tags setting: RacePage.S makes vanilla load 12 name tags.
+    if (getNameBalloonCount() != 0) {
+        count += 12 - getNameBalloonCount();
+    }
+
     return count;
 }
 
