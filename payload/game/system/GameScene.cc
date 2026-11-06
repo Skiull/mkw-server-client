@@ -1,7 +1,6 @@
 #include "GameScene.hh"
 
 #include "sp/FastMenus.hh"
-#include "sp/FavoriteCombo.hh"
 #include "sp/TestCheats.hh"
 #include "sp/net/mkw_server/GameHash.hh"
 
@@ -13,7 +12,6 @@ void GameScene::calc() {
     g_frameCount++;
     SP::TestCheats::RunFrame();
     MKWServer::GameHash::Calc();
-    SP::FavoriteCombo::Calc();
     SP::FastMenus::Calc();
     REPLACED(calc)();
 }

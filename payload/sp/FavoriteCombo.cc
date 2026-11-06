@@ -1,88 +1,96 @@
 #include "FavoriteCombo.hh"
 
-#include "game/ui/SectionManager.hh"
-#include "game/ui/page/PageId.hh"
+#include "game/system/SaveManager.hh"
 
 #include <sp/settings/Settings.hh>
 
-// Remember Combo: character, vehicle and drift select start on the player's last picks (like
-// CTGP and Retro Rewind). The picks live in the menu context (mkw-sp's GlobalContext), which
-// the game resets between some sections; we keep a copy and put it back while the pickers
-// aren't open, so they open on it.
+// Favorite Combo (hooks in sp/FavoriteCombo.S): the most-played character and vehicle of the
+// first license in the save (rksys.dat layout: https://wiki.tockdom.com/wiki/Rksys.dat),
+// as in Bully, CLF78 and Kazuki's code.
 namespace SP::FavoriteCombo {
 
 namespace {
 
-// GlobalContext offsets (mkw-sp GlobalContext.hh).
-constexpr u32 VEHICLE_RESTRICTION = 0x74; // 0: karts only, 1: bikes only, 2: all
-constexpr u32 CHARACTERS = 0x12c;          // u32[4]
-constexpr u32 VEHICLES = 0x13c;            // u32[4]
-constexpr u32 DRIFT_MODES = 0x164;         // u32[4]
+constexpr u32 LICENSE_SIZE = 0x8CC0;
+constexpr u32 RKPD = 0x524B5044;
+constexpr u32 CHARACTER_COUNTS = 0xF4; // u16 per character (24, no Miis), from the save start
+constexpr u32 VEHICLE_COUNTS = CHARACTER_COUNTS + 0x32; // u16 per vehicle, 3 per row
+constexpr u32 CHARACTER_COUNT = 24;
+constexpr u32 VEHICLES_PER_WEIGHT = 12;
 
-// Vehicle ids 0-17 are karts, 18-35 bikes. Character ids go up to the Miis (0x2f).
-constexpr u32 FIRST_BIKE = 18;
-constexpr u32 VEHICLE_COUNT = 36;
-constexpr u32 CHARACTER_COUNT = 0x30;
+// Weight class (0 light, 1 medium, 2 heavy) of each character, by id.
+constexpr u8 WEIGHTS[CHARACTER_COUNT] = {1, 0, 2, 2, 0, 0, 0, 1, 0, 2, 1, 2, 0, 0, 0, 1, 1, 1,
+        1, 2, 1, 2, 2, 2};
 
-struct Combo {
-    bool has = false;
-    u32 character, vehicle, drift;
-};
-Combo s_combos[4];
-
-u32 &field(u8 *context, u32 offset, u32 player) {
-    return reinterpret_cast<u32 *>(context + offset)[player];
+bool enabled() {
+    return Settings::getSetting<Settings::Setting::RememberCombo>() ==
+            Settings::RememberCombo::Enabled;
 }
 
-bool vehicleAllowed(u8 *context, u32 vehicle) {
-    switch (*reinterpret_cast<u32 *>(context + VEHICLE_RESTRICTION)) {
-    case 0:
-        return vehicle < FIRST_BIKE;
-    case 1:
-        return vehicle >= FIRST_BIKE && vehicle < VEHICLE_COUNT;
-    default:
-        return vehicle < VEHICLE_COUNT;
+// The first license in the save, or nullptr.
+const u8 *license() {
+    auto *save = System::SaveManager::Instance();
+    if (!save) {
+        return nullptr;
     }
+    auto *rksys = *reinterpret_cast<const u8 *const *>(reinterpret_cast<const u8 *>(save) + 0x14);
+    if (!rksys) {
+        return nullptr;
+    }
+    for (u32 i = 0; i < 4; i++) {
+        const u8 *l = rksys + 8 + i * LICENSE_SIZE;
+        if (*reinterpret_cast<const u32 *>(l) == RKPD) {
+            return rksys + i * LICENSE_SIZE;
+        }
+    }
+    return nullptr;
+}
+
+u16 count(const u8 *base, u32 offset, u32 index) {
+    return reinterpret_cast<const u16 *>(base + offset)[index];
+}
+
+// Most-played character id, or -1 if none (or the save has no plays).
+s32 favoriteCharacter(const u8 *l) {
+    s32 best = -1;
+    u16 bestCount = 0;
+    for (u32 c = 0; c < CHARACTER_COUNT; c++) {
+        if (count(l, CHARACTER_COUNTS, c) > bestCount) {
+            bestCount = count(l, CHARACTER_COUNTS, c);
+            best = c;
+        }
+    }
+    return best;
 }
 
 } // namespace
 
-void Calc() {
-    if (Settings::getSetting<Settings::Setting::RememberCombo>() !=
-            Settings::RememberCombo::Enabled) {
-        return;
-    }
-    auto *sectionManager = UI::SectionManager::Instance();
-    if (!sectionManager || !sectionManager->currentSection()) {
-        return;
-    }
-    auto *section = sectionManager->currentSection();
-    auto *context = reinterpret_cast<u8 *>(sectionManager->sectionParams());
-    if (!context || !section->page(UI::PageId::CharacterSelect)) {
-        return; // Not a section with the pickers.
-    }
+} // namespace SP::FavoriteCombo
 
-    bool picking = section->isPageActive(UI::PageId::CharacterSelect) ||
-            section->isPageActive(UI::PageId::VehicleSelect) ||
-            section->isPageActive(UI::PageId::DriftSelect);
-    for (u32 i = 0; i < 4; i++) {
-        auto &combo = s_combos[i];
-        u32 &character = field(context, CHARACTERS, i);
-        u32 &vehicle = field(context, VEHICLES, i);
-        u32 &drift = field(context, DRIFT_MODES, i);
-        if (picking) {
-            // The player's picks, as the pickers write them.
-            if (character < CHARACTER_COUNT && vehicle < VEHICLE_COUNT && drift < 2) {
-                combo = {true, character, vehicle, drift};
-            }
-        } else if (combo.has) {
-            character = combo.character;
-            if (vehicleAllowed(context, combo.vehicle)) {
-                vehicle = combo.vehicle;
-            }
-            drift = combo.drift;
-        }
-    }
+extern "C" s32 FavoriteCombo_character() {
+    using namespace SP::FavoriteCombo;
+    const u8 *l = enabled() ? license() : nullptr;
+    s32 c = l ? favoriteCharacter(l) : -1;
+    return c < 0 ? 0 : c; // Original: Mario
 }
 
-} // namespace SP::FavoriteCombo
+extern "C" s32 FavoriteCombo_vehicle(s32 original) {
+    using namespace SP::FavoriteCombo;
+    const u8 *l = enabled() ? license() : nullptr;
+    s32 c = l ? favoriteCharacter(l) : -1;
+    if (c < 0) {
+        return original;
+    }
+    // The most-played vehicle of that character's weight class.
+    u32 weight = WEIGHTS[c];
+    s32 best = -1;
+    u16 bestCount = 0;
+    for (u32 v = 0; v < VEHICLES_PER_WEIGHT; v++) {
+        u16 n = count(l, VEHICLE_COUNTS, v * 3 + weight);
+        if (n > bestCount) {
+            bestCount = n;
+            best = v * 3 + weight;
+        }
+    }
+    return best < 0 ? original : best;
+}

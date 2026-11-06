@@ -2,9 +2,4 @@
 
 #include <Common.hh>
 
-namespace SP::FavoriteCombo {
-
-// Called every frame (GameScene::calc).
-void Calc();
-
-} // namespace SP::FavoriteCombo
+// Favorite Combo: see sp/FavoriteCombo.cc and sp/FavoriteCombo.S.

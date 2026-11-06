@@ -41,7 +41,7 @@ enum class FastMenuTransitions {
     Enabled,
 };
 
-// Start character, vehicle and drift select on the player's last combo.
+// Start character and vehicle select on the license's most-played combo (like CTGP).
 enum class RememberCombo {
     Disabled,
     Enabled,
