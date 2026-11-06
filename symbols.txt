@@ -842,3 +842,7 @@
 0x80590a5c _ZNK4Kart15KartObjectProxy11getPlayerIdEv
 0x805a2034 Camera_805a2034
 0x8051af84 _ZN6System9GameScene12setFramerateEb
+0x807f7ec0 _ZN2UI12CtrlRaceTime8calcSelfEv
+0x807eab3c _ZN2UI13CtrlRace2DMap8calcSelfEv
+0x807eaecc CtrlRace2DMapCharacter_initSelf
+0x809bd728 s_raceConfig
