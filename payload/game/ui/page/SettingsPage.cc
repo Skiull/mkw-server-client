@@ -2,6 +2,8 @@
 
 #include "SettingsPage.hh"
 
+#include "game/ui/page/RaceMenuPage.hh"
+
 #include "game/ui/SectionManager.hh"
 
 #include <sp/settings/Settings.hh>
@@ -300,6 +302,8 @@ void MenuSettingsPage::onInit() {
 
 void MenuSettingsPage::onActivate() {
     SettingsPage::onActivate();
+
+    RaceMenuPage::OnSettingsActivated();
 }
 
 LayoutUIControl *MenuSettingsPage::instructionText() {

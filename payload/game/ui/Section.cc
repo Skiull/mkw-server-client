@@ -77,6 +77,23 @@ void Section::addPages(SectionId id) {
             {SectionId::WifiMultiFriend, PageId::MenuSettings},
             {SectionId::WifiMultiFriend, PageId::MenuLeaderboard},
             {SectionId::WifiMultiFriend, PageId::MenuReplayList},
+            // Offline races, for the pause menu's Settings button (RaceMenuPage.cc). Not the
+            // online race sections: their pause menus keep the game's buttons.
+            {SectionId::TA, PageId::MenuSettings},
+            {SectionId::VS1P, PageId::MenuSettings},
+            {SectionId::VS2P, PageId::MenuSettings},
+            {SectionId::VS3P, PageId::MenuSettings},
+            {SectionId::VS4P, PageId::MenuSettings},
+            {SectionId::TeamVS1P, PageId::MenuSettings},
+            {SectionId::TeamVS2P, PageId::MenuSettings},
+            {SectionId::TeamVS3P, PageId::MenuSettings},
+            {SectionId::TeamVS4P, PageId::MenuSettings},
+            {SectionId::Battle1P, PageId::MenuSettings},
+            {SectionId::Battle2P, PageId::MenuSettings},
+            {SectionId::Battle3P, PageId::MenuSettings},
+            {SectionId::Battle4P, PageId::MenuSettings},
+            {SectionId::GhostTA, PageId::MenuSettings},
+            {SectionId::GhostTAOnline, PageId::MenuSettings},
             // clang-format on
     };
     for (const auto &addition : additions) {
