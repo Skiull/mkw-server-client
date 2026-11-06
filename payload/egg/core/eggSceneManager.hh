@@ -1,15 +1,12 @@
 #pragma once
 
-#include "egg/core/eggScene.hh"
+#include <Common.hh>
 
 namespace EGG {
 
 class SceneManager {
 public:
     void changeSiblingScene(int sceneId);
-
-    void REPLACED(createScene)(s32 sceneId, Scene *parent);
-    void REPLACE createScene(s32 sceneId, Scene *parent);
 
 private:
     u8 _00[0x04 - 0x00];

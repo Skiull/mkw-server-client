@@ -5,7 +5,6 @@
 #include <egg/core/eggExpHeap.hh>
 #include <egg/core/eggTaskThread.hh>
 
-#include "game/host_system/Scene.hh"
 #include "game/system/MultiDvdArchive.hh"
 
 #include "game/util/Registry.hh"
@@ -38,12 +37,6 @@ public:
     static_assert(sizeof(CourseCache) == 0x24);
 
     static ResourceManager *Instance();
-    static REPLACE ResourceManager *CreateInstance();
-
-    // Lazy globe loading (ported from mkw-sp): the globe heap only exists in the Globe scene.
-    void initGlobeHeap();
-    void deinitGlobeHeap();
-    static void OnCreateScene(SceneId sceneId);
 
     DvdArchive *getMenuArchive(size_t idx);
     REPLACE u16 getMenuArchiveCount() const;
@@ -72,9 +65,6 @@ private:
 
     static void DoLoadTask(void *contextId);
 
-    void loadGlobe(u8 **dst);
-    REPLACE static void LoadGlobeTask(void *arg);
-
     u8 _000[0x004 - 0x000];
     MultiDvdArchive **m_archives;
     u8 _008[0x338 - 0x008];
@@ -86,8 +76,7 @@ private:
     u8 _60d[0x614 - 0x60d];
     EGG::Heap *m_globeHeap;
     u8 _618[0x61c - 0x618];
-    u8 *m_globe;
 };
-static_assert(sizeof(ResourceManager) == 0x61c + sizeof(u8 *));
+static_assert(sizeof(ResourceManager) == 0x61c);
 
 } // namespace System
