@@ -15,9 +15,10 @@
 // Read by the Instant Voting hook (sp/InstantVoting.S). Always on (no longer a setting).
 extern "C" {
 u8 s_instantVoting = 1;
-// Read by the Far Player Tags hooks (sp/FarPlayerTags.S).
-u8 s_farPlayerTags = 0;
-extern const f32 s_farTagDistance = 1.0e9f;
+// The name tag distance in StaticR .data (mkw-sp's playerTagRenderDistance; the game sets it
+// to 7500 at race start). Far Player Tags writes it every frame as mkw-sp does: 10x. Its
+// data block (530 PAL/J/K, 521 NTSC-U) is in the server's -mutable-data-blocks list.
+extern f32 playerTagRenderDistance;
 }
 
 namespace SP::FastMenus {
@@ -66,8 +67,9 @@ void Calc() {
         }
     }
 
-    s_farPlayerTags = Settings::getSetting<Settings::Setting::FarPlayerTags>() ==
+    bool far = Settings::getSetting<Settings::Setting::FarPlayerTags>() ==
             Settings::FarPlayerTags::Enable;
+    playerTagRenderDistance = 7500.0f * (far ? 10 : 1);
 
     bool fast = Settings::getSetting<Settings::Setting::FastMenuTransitions>() ==
             Settings::FastMenuTransitions::Enabled;
