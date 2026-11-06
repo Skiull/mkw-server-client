@@ -57,12 +57,26 @@ void Section::addPages(SectionId id) {
 
     std::pair<SectionId, PageId> additions[] = {
             // clang-format off
+            // Every section with the online menu (after a race, the room is left to the
+            // Friend/DC ones), else its buttons open missing pages.
             {SectionId::WifiSingle, PageId::MenuSettings},
-            {SectionId::WifiMulti, PageId::MenuSettings},
             {SectionId::WifiSingle, PageId::MenuLeaderboard},
-            {SectionId::WifiMulti, PageId::MenuLeaderboard},
             {SectionId::WifiSingle, PageId::MenuReplayList},
+            {SectionId::WifiSingleDC, PageId::MenuSettings},
+            {SectionId::WifiSingleDC, PageId::MenuLeaderboard},
+            {SectionId::WifiSingleDC, PageId::MenuReplayList},
+            {SectionId::WifiSingleFriend, PageId::MenuSettings},
+            {SectionId::WifiSingleFriend, PageId::MenuLeaderboard},
+            {SectionId::WifiSingleFriend, PageId::MenuReplayList},
+            {SectionId::WifiMulti, PageId::MenuSettings},
+            {SectionId::WifiMulti, PageId::MenuLeaderboard},
             {SectionId::WifiMulti, PageId::MenuReplayList},
+            {SectionId::WifiMultiDC, PageId::MenuSettings},
+            {SectionId::WifiMultiDC, PageId::MenuLeaderboard},
+            {SectionId::WifiMultiDC, PageId::MenuReplayList},
+            {SectionId::WifiMultiFriend, PageId::MenuSettings},
+            {SectionId::WifiMultiFriend, PageId::MenuLeaderboard},
+            {SectionId::WifiMultiFriend, PageId::MenuReplayList},
             // clang-format on
     };
     for (const auto &addition : additions) {
