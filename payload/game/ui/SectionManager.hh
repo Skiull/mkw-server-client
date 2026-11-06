@@ -28,6 +28,12 @@ public:
         return m_sectionParams;
     }
 
+    // Frames left before a requested section change starts (Fast Menu Transitions sets it
+    // to 1: the "Faster Menu Navigation" code's li r0, 0 at PAL 0x80635670).
+    u32 &changeTimer() {
+        return m_changeTimer;
+    }
+
     static SectionManager *Instance() {
         return s_instance;
     }

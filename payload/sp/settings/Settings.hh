@@ -10,6 +10,7 @@ namespace Settings {
 enum class Category {
     Online,
     Ranks,
+    Menus,
 };
 
 enum class Setting {
@@ -17,6 +18,9 @@ enum class Setting {
     Ping,
     // Ranks
     LoungeRank,
+    // Menus
+    FastMenuTransitions,
+    RememberCombo,
 };
 
 enum class Ping {
@@ -30,8 +34,30 @@ enum class LoungeRank {
     Enabled,
 };
 
+// Skip the wait before the game changes to another section of menus.
+enum class FastMenuTransitions {
+    Disabled,
+    Enabled,
+};
+
+// Start character, vehicle and drift select on the player's last combo.
+enum class RememberCombo {
+    Disabled,
+    Enabled,
+};
+
 template <Setting S>
 struct OptionType;
+
+template <>
+struct OptionType<Setting::RememberCombo> {
+    using Type = RememberCombo;
+};
+
+template <>
+struct OptionType<Setting::FastMenuTransitions> {
+    using Type = FastMenuTransitions;
+};
 
 template <>
 struct OptionType<Setting::LoungeRank> {
@@ -53,6 +79,7 @@ constexpr u32 categoryMessageIds[]{
         // clang-format off
         10002,
         10030,
+        10035,
         // clang-format on
 };
 
@@ -100,6 +127,34 @@ inline SettingEntry settings[]{
             .valueExplanationMessageIds = (const s32[]){10032, 10033},
             .hidden = false,
             .selectedValue = static_cast<u32>(LoungeRank::Enabled),
+        },
+        [static_cast<u32>(Setting::FastMenuTransitions)] =
+        {
+            .category = Category::Menus,
+            .name = magic_enum::enum_name(Setting::FastMenuTransitions),
+            .messageId = 10036,
+            .valueOffset = 0,
+            .defaultValue = static_cast<u32>(FastMenuTransitions::Enabled),
+            .valueCount = magic_enum::enum_count<FastMenuTransitions>(),
+            .valueNames = magic_enum::enum_names<FastMenuTransitions>().data(),
+            .valueMessageIds = (const s32[]){10004, 10005},
+            .valueExplanationMessageIds = (const s32[]){10037, 10038},
+            .hidden = false,
+            .selectedValue = static_cast<u32>(FastMenuTransitions::Enabled),
+        },
+        [static_cast<u32>(Setting::RememberCombo)] =
+        {
+            .category = Category::Menus,
+            .name = magic_enum::enum_name(Setting::RememberCombo),
+            .messageId = 10039,
+            .valueOffset = 0,
+            .defaultValue = static_cast<u32>(RememberCombo::Enabled),
+            .valueCount = magic_enum::enum_count<RememberCombo>(),
+            .valueNames = magic_enum::enum_names<RememberCombo>().data(),
+            .valueMessageIds = (const s32[]){10004, 10005},
+            .valueExplanationMessageIds = (const s32[]){10040, 10041},
+            .hidden = false,
+            .selectedValue = static_cast<u32>(RememberCombo::Enabled),
         },
         // clang-format on
 };
