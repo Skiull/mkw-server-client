@@ -170,9 +170,16 @@ void Calc() {
         if (hasMKWServerAddress()) {
             send(s_hash);
             if (s_loginHash != 0) {
-                u8 packet[10] = {'G', 'L'};
+                // 'G' 'L' + login hash (u64) + build number (u32, see build.py).
+                static constexpr u32 BUILD_ID =
+#include <BuildId.inc>
+                        ;
+                u8 packet[14] = {'G', 'L'};
                 for (u32 i = 0; i < 8; i++) {
                     packet[2 + i] = s_loginHash >> (56 - 8 * i);
+                }
+                for (u32 i = 0; i < 4; i++) {
+                    packet[10 + i] = BUILD_ID >> (24 - 8 * i);
                 }
                 trySendRacePacketToMKWServer(packet, sizeof(packet));
             }

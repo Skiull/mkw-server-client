@@ -593,6 +593,19 @@ _cheat_inc = "".join(w + ",\n" for w in _cheat_words)
 _cheat_path = os.path.join("build", "TestCheatsCodes.inc")
 if not os.path.exists(_cheat_path) or open(_cheat_path).read() != _cheat_inc:
     open(_cheat_path, "w").write(_cheat_inc)
+# Build number reported to mkw-server (payload/sp/net/mkw_server/GameHash.cc): the commit
+# time of HEAD, so every build of the same commit (boot.dol, channel, both regions) shares it
+# and a later commit is always higher. The server only accepts the newest build it learned.
+import subprocess
+try:
+    _build_id = int(subprocess.run(["git", "log", "-1", "--format=%ct"], capture_output=True,
+            text=True, check=True).stdout.strip())
+except (OSError, subprocess.CalledProcessError, ValueError):
+    _build_id = 0
+_build_inc = f"{_build_id}\n"
+_build_path = os.path.join("build", "BuildId.inc")
+if not os.path.exists(_build_path) or open(_build_path).read() != _build_inc:
+    open(_build_path, "w").write(_build_inc)
 if args.test_mkw_server:
     common_cflags.append("-DTEST_MKW_SERVER")
     common_ccflags.append("-DTEST_MKW_SERVER")
