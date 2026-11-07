@@ -90,6 +90,7 @@ void SettingsPage::onBack(u32 /* localPlayerId */) {
         m_handler->handle(this, nullptr);
     }
 
+    Settings::Save();
     startReplace(Anim::Prev, 0.0f);
 }
 
@@ -196,6 +197,7 @@ void SettingsPage::onBackButtonFront(PushButton *button, u32 /* localPlayerId */
         m_handler->handle(this, button);
     }
 
+    Settings::Save();
     f32 delay = button->getDelay();
     startReplace(Anim::Prev, delay);
 }

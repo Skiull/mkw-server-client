@@ -571,4 +571,8 @@ inline u32 getSetting(u32 index) {
     return settings[index].selectedValue;
 }
 
+// Persistence in /mkw-selfhost/settings.ini on the SD card or USB drive (see Settings.cc).
+void Load();
+void Save();
+
 } // namespace Settings

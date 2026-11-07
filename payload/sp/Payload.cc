@@ -12,6 +12,7 @@ extern "C" {
 #include "sp/storage/DecompLoader.hh"
 #include "sp/storage/LogFile.hh"
 #include "sp/storage/Storage.hh"
+#include "sp/settings/Settings.hh"
 
 #include <common/Console.hh>
 #include <common/VI.hh>
@@ -99,6 +100,7 @@ static void Run() {
     for (void (**ctor)(void) = &payload_ctors_start; ctor < &payload_ctors_end; ctor++) {
         (*ctor)();
     }
+    ::Settings::Load();
     Patcher_patch(PATCHER_BINARY_DOL);
 }
 
