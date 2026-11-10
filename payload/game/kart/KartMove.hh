@@ -23,6 +23,10 @@ public:
     void activateBoost(u8 type, s16 duration);
     void activateMega();
 
+    // A Thunder Cloud strike (timer = how long the kart stays shrunk).
+    REPLACE bool applyLightningEffect(s32 timer, s32 r5, s32 r6);
+    bool REPLACED(applyLightningEffect)(s32 timer, s32 r5, s32 r6);
+
 private:
     u8 _010[0x020 - 0x010];
     f32 m_internalSpeed;

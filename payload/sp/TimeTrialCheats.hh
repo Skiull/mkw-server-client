@@ -35,4 +35,31 @@ inline bool SaveStatesAllowed() {
             Settings::getSetting<Settings::Setting::SaveStates>() == Settings::SaveStates::Enabled;
 }
 
+inline bool ItemBoxesAllowed() {
+    return IsOfflineTimeTrial() &&
+            Settings::getSetting<Settings::Setting::TAItemBoxes>() == Settings::TAItemBoxes::Enabled;
+}
+
+inline bool LongerTCsAllowed() {
+    return IsOfflineTimeTrial() &&
+            Settings::getSetting<Settings::Setting::TALongerTCs>() == Settings::TALongerTCs::Enabled;
+}
+
+inline bool HopDodgePracticeAllowed() {
+    return IsOfflineTimeTrial() &&
+            Settings::getSetting<Settings::Setting::TAHopDodgePractice>() ==
+            Settings::TAHopDodgePractice::Enabled;
+}
+
+// Like mkw-sp: a run that used a practice tool (item wheel, save states, item boxes, longer
+// Thunder Clouds, hop dodge practice) can't save its ghost. Reset when a race scene is created.
+void ResetPracticeUsed();
+void MarkPracticeUsed();
+bool PracticeUsed();
+
 } // namespace SP
+
+extern "C" {
+// Read by the item box patches (game/item/ItemBoxes.S), set when a race scene is created.
+extern u8 TimeTrialCheats_itemBoxes;
+}

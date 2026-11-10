@@ -5,6 +5,8 @@
 
 #include "game/util/Registry.hh"
 
+#include <sp/TimeTrialCheats.hh>
+
 #include <algorithm>
 
 extern "C" {
@@ -33,6 +35,7 @@ void KartItem::calcItemWheel(bool isPressed) {
     } else if (!m_inventory.getItemWheelPressed()) {
         m_inventory.setItem(nextItem());
         m_inventory.setItemWheelPressed(true);
+        SP::MarkPracticeUsed();
     }
 }
 

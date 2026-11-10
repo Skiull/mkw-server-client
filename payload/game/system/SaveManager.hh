@@ -48,8 +48,10 @@ public:
     }
 
 private:
-    REPLACE void SaveGhostAsync(u32 /* licenseId */, u32 /* type */, u32 /* slot */,
-            GhostFile /* *ghostFile */, u32 /* r8 */);
+    // The game passes the ghost by pointer (a by-value class is passed as a pointer to it).
+    // Skipped when the run used a practice tool (sp/TimeTrialCheats.hh).
+    REPLACE void SaveGhostAsync(u32 licenseId, u32 type, u32 slot, GhostFile *ghostFile, u32 r8);
+    void REPLACED(SaveGhostAsync)(u32 licenseId, u32 type, u32 slot, GhostFile *ghostFile, u32 r8);
 
     u8 _00000[0x00014 - 0x00000];
     RawSave *m_rawSave;

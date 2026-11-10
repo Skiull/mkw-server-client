@@ -55,6 +55,7 @@ void SaveStateManager::reload() {
     if (m_kartSaveState.has_value()) {
         auto [accessor, physics, item] = GetKartState();
         (*m_kartSaveState).reload(accessor, physics, item);
+        MarkPracticeUsed();
     } else {
         SP_LOG("SaveStateManager: Reload requested without save!");
     }

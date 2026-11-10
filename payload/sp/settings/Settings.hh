@@ -42,6 +42,9 @@ enum class Setting {
     SaveStates,
     TAGhostTagVisibility,
     TAGhostTagContent,
+    TAItemBoxes,
+    TALongerTCs,
+    TAHopDodgePractice,
 };
 
 enum class Ping {
@@ -150,8 +153,44 @@ enum class TAGhostTagContent {
     Date,
 };
 
+// Practice tools ported from the henrymkw/mkw-sp fork (ui-rework-with-practice-features).
+// Offline Time Trials only (see sp/TimeTrialCheats.hh); a run that uses one can't save its ghost.
+
+// Item boxes on the course in offline Time Trials.
+enum class TAItemBoxes {
+    Disabled,
+    Enabled,
+};
+
+// A Thunder Cloud strike keeps you shrunk for much longer in offline Time Trials.
+enum class TALongerTCs {
+    Disabled,
+    Enabled,
+};
+
+// Press X (GameCube / Classic) or D-pad left/right (Wii Remote) to set off a POW Block on yourself.
+enum class TAHopDodgePractice {
+    Disabled,
+    Enabled,
+};
+
 template <Setting S>
 struct OptionType;
+
+template <>
+struct OptionType<Setting::TAItemBoxes> {
+    using Type = TAItemBoxes;
+};
+
+template <>
+struct OptionType<Setting::TALongerTCs> {
+    using Type = TALongerTCs;
+};
+
+template <>
+struct OptionType<Setting::TAHopDodgePractice> {
+    using Type = TAHopDodgePractice;
+};
 
 template <>
 struct OptionType<Setting::TAGhostTagVisibility> {
@@ -549,6 +588,48 @@ inline SettingEntry settings[]{
             .valueExplanationMessageIds = (const s32[]){10140, 10141, 10142, 10143},
             .hidden = false,
             .selectedValue = static_cast<u32>(TAGhostTagContent::Name),
+        },
+        [static_cast<u32>(Setting::TAItemBoxes)] =
+        {
+            .category = Category::TimeTrials,
+            .name = magic_enum::enum_name(Setting::TAItemBoxes),
+            .messageId = 10149,
+            .valueOffset = 0,
+            .defaultValue = static_cast<u32>(TAItemBoxes::Disabled),
+            .valueCount = magic_enum::enum_count<TAItemBoxes>(),
+            .valueNames = magic_enum::enum_names<TAItemBoxes>().data(),
+            .valueMessageIds = (const s32[]){10004, 10005},
+            .valueExplanationMessageIds = (const s32[]){10150, 10151},
+            .hidden = false,
+            .selectedValue = static_cast<u32>(TAItemBoxes::Disabled),
+        },
+        [static_cast<u32>(Setting::TALongerTCs)] =
+        {
+            .category = Category::TimeTrials,
+            .name = magic_enum::enum_name(Setting::TALongerTCs),
+            .messageId = 10152,
+            .valueOffset = 0,
+            .defaultValue = static_cast<u32>(TALongerTCs::Disabled),
+            .valueCount = magic_enum::enum_count<TALongerTCs>(),
+            .valueNames = magic_enum::enum_names<TALongerTCs>().data(),
+            .valueMessageIds = (const s32[]){10004, 10005},
+            .valueExplanationMessageIds = (const s32[]){10153, 10154},
+            .hidden = false,
+            .selectedValue = static_cast<u32>(TALongerTCs::Disabled),
+        },
+        [static_cast<u32>(Setting::TAHopDodgePractice)] =
+        {
+            .category = Category::TimeTrials,
+            .name = magic_enum::enum_name(Setting::TAHopDodgePractice),
+            .messageId = 10155,
+            .valueOffset = 0,
+            .defaultValue = static_cast<u32>(TAHopDodgePractice::Disabled),
+            .valueCount = magic_enum::enum_count<TAHopDodgePractice>(),
+            .valueNames = magic_enum::enum_names<TAHopDodgePractice>().data(),
+            .valueMessageIds = (const s32[]){10004, 10005},
+            .valueExplanationMessageIds = (const s32[]){10156, 10157},
+            .hidden = false,
+            .selectedValue = static_cast<u32>(TAHopDodgePractice::Disabled),
         },
         // clang-format on
 };
