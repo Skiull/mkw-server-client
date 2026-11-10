@@ -19,6 +19,11 @@ public:
     // Starts a POW Block used by playerIndex (who is normally not affected by it).
     void beginPow(u32 playerIndex);
 
+    // Counts down while a POW Block is going off. It hits at 45 (from the henrymkw/mkw-sp fork).
+    u32 powTimer() const {
+        return m_powTimer;
+    }
+
     void setAffected(u32 playerIndex, bool affected) {
         if (playerIndex < 12) {
             m_playerAffected[playerIndex] = affected;

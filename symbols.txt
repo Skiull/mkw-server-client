@@ -786,6 +786,7 @@
 0x808572d4 _ZN2UI8RacePage5vf_74Ev
 0x8085732c _ZN2UI8RacePage5vf_7cEv
 0x808573ac _ZN2UI8RacePage5vf_78Ev
+0x808574b8 _ZN2UI8RacePage9afterCalcEv
 0x80857b08 _ZNK2UI8RacePage15getControlCountEj
 0x80857cc0 _ZN2UI8RacePage12initControlsEj
 # REL .text end (0x8088F400)
