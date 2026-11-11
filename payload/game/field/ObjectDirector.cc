@@ -7,7 +7,8 @@ namespace System {
 // Just enough of the course map to reach the KMP GOBJ entries (layout from mkw-sp / Kinoko).
 struct RawGeoObj {
     u16 id;
-    u8 _02[0x38 - 0x02];
+    u8 _02[0x28 - 0x02];
+    u16 settings[8];
     u16 presenceFlag; // Bit 0: present in single player races
     u8 _3a[0x3c - 0x3a];
 };
@@ -46,41 +47,45 @@ static_assert(sizeof(CourseMap) == 0x54);
 
 namespace Field {
 
-// Grumble Volcano's falling rocks (VolcanoBall1, the fireball launchers).
-static constexpr u16 VolcanoBallId = 0x0d6;
+// Grumble Volcano's road pieces that shake and fall (VolcanoPiece). settings[1] is how many
+// seconds a piece rests before it starts shaking, counted from the race start (see Kinoko's
+// ObjectVolcanoPiece); it never repeats.
+static constexpr u16 VolcanoPieceId = 0x1fc;
+static constexpr u16 NeverFallSeconds = 0x7fff; // About 9 hours
 
-// No falling rocks (TANoVolcanoRocks), offline Time Trials only: hide the rock launchers from
-// the object builder, then put the KMP data back as it was (the course file stays cached).
+// No falling road (TANoFallingRoad), offline Time Trials only: the pieces read their timing
+// when they are built, so give them a very long rest just for that, then put the KMP data back
+// (the course file stays cached between races).
 void ObjectDirector::createObjects() {
     auto *courseMap = System::CourseMap::Instance();
     auto *geoObj = courseMap ? courseMap->geoObj() : nullptr;
-    if (!geoObj || !SP::NoVolcanoRocksAllowed()) {
+    if (!geoObj || !SP::NoFallingRoadAllowed()) {
         REPLACED(createObjects)();
         return;
     }
 
-    constexpr u32 MaxHidden = 64;
-    System::RawGeoObj *hidden[MaxHidden];
-    u16 flags[MaxHidden];
-    u32 hiddenCount = 0;
-    for (u32 i = 0; i < geoObj->m_numEntries && hiddenCount < MaxHidden; i++) {
+    constexpr u32 MaxChanged = 64;
+    System::RawGeoObj *changed[MaxChanged];
+    u16 restSeconds[MaxChanged];
+    u32 changedCount = 0;
+    for (u32 i = 0; i < geoObj->m_numEntries && changedCount < MaxChanged; i++) {
         System::RawGeoObj *data = geoObj->m_entryAccessors[i]->m_data;
-        if (data->id != VolcanoBallId || data->presenceFlag == 0) {
+        if (data->id != VolcanoPieceId) {
             continue;
         }
-        hidden[hiddenCount] = data;
-        flags[hiddenCount] = data->presenceFlag;
-        hiddenCount++;
-        data->presenceFlag = 0;
+        changed[changedCount] = data;
+        restSeconds[changedCount] = data->settings[1];
+        changedCount++;
+        data->settings[1] = NeverFallSeconds;
     }
-    if (hiddenCount > 0) {
+    if (changedCount > 0) {
         SP::MarkPracticeUsed();
     }
 
     REPLACED(createObjects)();
 
-    for (u32 i = 0; i < hiddenCount; i++) {
-        hidden[i]->presenceFlag = flags[i];
+    for (u32 i = 0; i < changedCount; i++) {
+        changed[i]->settings[1] = restSeconds[i];
     }
 }
 
