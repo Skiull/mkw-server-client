@@ -2,10 +2,17 @@
 
 #include <sp/TimeTrialCheats.hh>
 
+// Set when a race's objects are built: Grumble Volcano's road never falls (TANoFallingRoad).
+// Also read by the patches in VolcanoPiece.S.
+extern "C" {
+u8 Field_noFallingRoad = 0;
+}
+
 namespace Field {
 
-// Set when a race's objects are built: Grumble Volcano's road never falls (TANoFallingRoad).
-bool g_noFallingRoad = false;
+static bool &g_noFallingRoad = reinterpret_cast<bool &>(Field_noFallingRoad);
+
+
 
 void ObjectDirector::createObjects() {
     g_noFallingRoad = SP::NoFallingRoadAllowed();
