@@ -166,4 +166,7 @@
     "10164": "Starting Spots Layout",
     "10165": "Lay out the starting grid like a {arg integer|0 0}-player race (1 is the normal Time Trial start). Ghosts can't be saved.",
     "10166": "{arg integer|0 0}",
+    "10167": "Grumble Volcano Rocks",
+    "10168": "The rocks fall on Grumble Volcano as usual.",
+    "10169": "No falling rocks on Grumble Volcano in offline Time Trials. Ghosts can't be saved.",
 }

@@ -51,6 +51,12 @@ inline bool HopDodgePracticeAllowed() {
             Settings::TAHopDodgePractice::Enabled;
 }
 
+inline bool NoVolcanoRocksAllowed() {
+    return IsOfflineTimeTrial() &&
+            Settings::getSetting<Settings::Setting::TANoVolcanoRocks>() ==
+            Settings::TANoVolcanoRocks::Enabled;
+}
+
 // Grid spot and grid size for the player's start, or false for the normal Time Trial start.
 inline bool StartingSpotChanged(u32 *spot, u32 *layout) {
     if (!IsOfflineTimeTrial()) {

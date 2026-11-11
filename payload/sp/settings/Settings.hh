@@ -47,6 +47,7 @@ enum class Setting {
     TAHopDodgePractice,
     TAStartingSpot,
     TAStartingSpotsLayout,
+    TANoVolcanoRocks,
 };
 
 enum class Ping {
@@ -189,6 +190,17 @@ struct OptionType<Setting::TAStartingSpot> {
 template <>
 struct OptionType<Setting::TAStartingSpotsLayout> {
     using Type = u32;
+};
+
+// No falling rocks on Grumble Volcano in offline Time Trials.
+enum class TANoVolcanoRocks {
+    Disabled,
+    Enabled,
+};
+
+template <>
+struct OptionType<Setting::TANoVolcanoRocks> {
+    using Type = TANoVolcanoRocks;
 };
 
 template <>
@@ -674,6 +686,20 @@ inline SettingEntry settings[]{
             .valueExplanationMessageIds = (const s32[]){10165},
             .hidden = false,
             .selectedValue = 1,
+        },
+        [static_cast<u32>(Setting::TANoVolcanoRocks)] =
+        {
+            .category = Category::TimeTrials,
+            .name = magic_enum::enum_name(Setting::TANoVolcanoRocks),
+            .messageId = 10167,
+            .valueOffset = 0,
+            .defaultValue = static_cast<u32>(TANoVolcanoRocks::Disabled),
+            .valueCount = magic_enum::enum_count<TANoVolcanoRocks>(),
+            .valueNames = magic_enum::enum_names<TANoVolcanoRocks>().data(),
+            .valueMessageIds = (const s32[]){10004, 10005},
+            .valueExplanationMessageIds = (const s32[]){10168, 10169},
+            .hidden = false,
+            .selectedValue = static_cast<u32>(TANoVolcanoRocks::Disabled),
         },
         // clang-format on
 };

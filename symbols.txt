@@ -883,4 +883,6 @@
 0x807b22f8 _ZN4Item10PowManager4calcEv
 0x807b9fb0 ItemRoulette_start
 0x8082a38c ObjManager_ct
+0x80826e8c _ZN5Field14ObjectDirector13createObjectsEv
+0x809bd6e8 _ZN6System9CourseMap10s_instanceE
 0x808D3E14 playerTagRenderDistance
