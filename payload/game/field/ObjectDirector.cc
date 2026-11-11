@@ -2,104 +2,36 @@
 
 #include <sp/TimeTrialCheats.hh>
 
-namespace System {
-
-// Just enough of the course map to reach the KMP GOBJ entries (layout from mkw-sp / Kinoko).
-struct RawGeoObj {
-    u16 id;
-    u8 _02[0x28 - 0x02];
-    u16 settings[8];
-    u16 presenceFlag; // Bit 0: present in single player races
-    u8 _3a[0x3c - 0x3a];
-};
-static_assert(sizeof(RawGeoObj) == 0x3c);
-
-struct MapdataGeoObj {
-    RawGeoObj *m_data;
-};
-
-struct MapdataGeoObjAccessor {
-    MapdataGeoObj **m_entryAccessors;
-    u16 m_numEntries;
-};
-
-class CourseMap {
-public:
-    static CourseMap *Instance() {
-        return s_instance;
-    }
-
-    MapdataGeoObjAccessor *geoObj() const {
-        return m_geoObj;
-    }
-
-private:
-    void *m_vtable;
-    u8 _04[0x28 - 0x04];
-    MapdataGeoObjAccessor *m_geoObj;
-    u8 _2c[0x54 - 0x2c];
-
-    static CourseMap *s_instance;
-};
-static_assert(sizeof(CourseMap) == 0x54);
-
-} // namespace System
-
 namespace Field {
 
-// Grumble Volcano's road pieces that shake and fall (VolcanoPiece). settings[1] is how many
-// seconds a piece rests before it starts shaking, counted from the race start (see Kinoko's
-// ObjectVolcanoPiece); it never repeats.
-static constexpr u16 VolcanoPieceId = 0x1fc;
-// The game's piece timers are signed 16-bit frame counts: 0x7fff s and 900 s both overflowed and
-// made every piece vanish at the start. So the whole cycle (rest + shake + quake + the 900-frame
-// fall) has to stay under 32767 frames: about 7 minutes of rest, more than a Time Trial needs.
-static constexpr s32 MaxCycleFrames = 32000;
-static constexpr s32 FallFrames = 900;
+// Set when a race's objects are built: Grumble Volcano's road never falls (TANoFallingRoad).
+bool g_noFallingRoad = false;
 
-static u16 LongestRestSeconds(const System::RawGeoObj *data) {
-    s32 shakeFrames = data->settings[2] * 60;
-    s32 quakeFrames = data->settings[7] + 1;
-    s32 restFrames = MaxCycleFrames - FallFrames - shakeFrames - quakeFrames;
-    s32 restSeconds = restFrames / 60;
-    // Never shorter than the course's own rest time.
-    return restSeconds > data->settings[1] ? restSeconds : data->settings[1];
-}
-
-// No falling road (TANoFallingRoad), offline Time Trials only: the pieces read their timing
-// when they are built, so give them a very long rest just for that, then put the KMP data back
-// (the course file stays cached between races).
 void ObjectDirector::createObjects() {
-    auto *courseMap = System::CourseMap::Instance();
-    auto *geoObj = courseMap ? courseMap->geoObj() : nullptr;
-    if (!geoObj || !SP::NoFallingRoadAllowed()) {
-        REPLACED(createObjects)();
-        return;
-    }
-
-    constexpr u32 MaxChanged = 64;
-    System::RawGeoObj *changed[MaxChanged];
-    u16 restSeconds[MaxChanged];
-    u32 changedCount = 0;
-    for (u32 i = 0; i < geoObj->m_numEntries && changedCount < MaxChanged; i++) {
-        System::RawGeoObj *data = geoObj->m_entryAccessors[i]->m_data;
-        if (data->id != VolcanoPieceId) {
-            continue;
-        }
-        changed[changedCount] = data;
-        restSeconds[changedCount] = data->settings[1];
-        changedCount++;
-        data->settings[1] = LongestRestSeconds(data);
-    }
-    if (changedCount > 0) {
+    g_noFallingRoad = SP::NoFallingRoadAllowed();
+    if (g_noFallingRoad) {
         SP::MarkPracticeUsed();
     }
-
     REPLACED(createObjects)();
+}
 
-    for (u32 i = 0; i < changedCount; i++) {
-        changed[i]->settings[1] = restSeconds[i];
-    }
+// Grumble Volcano's shaking and falling road pieces (VolcanoPiece, Kinoko's ObjectVolcanoPiece).
+// Their state comes from the race frame: rest, shake, quake, fall, gone. With the setting on,
+// they always see frame 0, so they stay at rest.
+class ObjectVolcanoPiece {
+private:
+    REPLACE u32 calcState(u32 frame) const;
+    u32 REPLACED(calcState)(u32 frame) const;
+    REPLACE f32 calcT(u32 frame) const;
+    f32 REPLACED(calcT)(u32 frame) const;
+};
+
+u32 ObjectVolcanoPiece::calcState(u32 frame) const {
+    return REPLACED(calcState)(g_noFallingRoad ? 0 : frame);
+}
+
+f32 ObjectVolcanoPiece::calcT(u32 frame) const {
+    return REPLACED(calcT)(g_noFallingRoad ? 0 : frame);
 }
 
 } // namespace Field
