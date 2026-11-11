@@ -51,7 +51,10 @@ namespace Field {
 // seconds a piece rests before it starts shaking, counted from the race start (see Kinoko's
 // ObjectVolcanoPiece); it never repeats.
 static constexpr u16 VolcanoPieceId = 0x1fc;
-static constexpr u16 NeverFallSeconds = 0x7fff; // About 9 hours
+// 15 minutes, longer than any Time Trial. The game keeps these timers in 16 bits (0x7fff
+// seconds made every piece vanish at the start), so the rest plus the shake time must stay
+// under 65535 frames.
+static constexpr u16 NeverFallSeconds = 900;
 
 // No falling road (TANoFallingRoad), offline Time Trials only: the pieces read their timing
 // when they are built, so give them a very long rest just for that, then put the KMP data back
