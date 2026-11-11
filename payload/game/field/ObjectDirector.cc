@@ -24,6 +24,11 @@ private:
     // piece stays where it was built.
     REPLACE void calc();
     void REPLACED(calc)();
+    // Move and shrink the collision (called from the collision checks). Skipped too.
+    REPLACE void update(u32 timeOffset);
+    void REPLACED(update)(u32 timeOffset);
+    REPLACE void calcScale(u32 timeOffset);
+    void REPLACED(calcScale)(u32 timeOffset);
 
     REPLACE u32 calcState(u32 frame) const;
     u32 REPLACED(calcState)(u32 frame) const;
@@ -36,6 +41,20 @@ void ObjectVolcanoPiece::calc() {
         return;
     }
     REPLACED(calc)();
+}
+
+void ObjectVolcanoPiece::update(u32 timeOffset) {
+    if (g_noFallingRoad) {
+        return;
+    }
+    REPLACED(update)(timeOffset);
+}
+
+void ObjectVolcanoPiece::calcScale(u32 timeOffset) {
+    if (g_noFallingRoad) {
+        return;
+    }
+    REPLACED(calcScale)(timeOffset);
 }
 
 u32 ObjectVolcanoPiece::calcState(u32 frame) const {
