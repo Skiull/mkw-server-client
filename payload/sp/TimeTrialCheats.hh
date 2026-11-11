@@ -51,6 +51,21 @@ inline bool HopDodgePracticeAllowed() {
             Settings::TAHopDodgePractice::Enabled;
 }
 
+// Grid spot and grid size for the player's start, or false for the normal Time Trial start.
+inline bool StartingSpotChanged(u32 *spot, u32 *layout) {
+    if (!IsOfflineTimeTrial()) {
+        return false;
+    }
+    u32 s = Settings::getSetting<Settings::Setting::TAStartingSpot>();
+    u32 l = Settings::getSetting<Settings::Setting::TAStartingSpotsLayout>();
+    if (s <= 1 && l <= 1) {
+        return false;
+    }
+    *spot = s < 1 ? 1 : s;
+    *layout = l < *spot ? *spot : l; // The spot has to exist in the grid
+    return true;
+}
+
 // Like mkw-sp: a run that used a practice tool (item wheel, save states, item boxes, longer
 // Thunder Clouds, hop dodge practice) can't save its ghost. Reset when a race scene is created.
 void ResetPracticeUsed();

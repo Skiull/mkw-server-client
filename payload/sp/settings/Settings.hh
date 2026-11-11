@@ -45,6 +45,8 @@ enum class Setting {
     TAItemBoxes,
     TALongerTCs,
     TAHopDodgePractice,
+    TAStartingSpot,
+    TAStartingSpotsLayout,
 };
 
 enum class Ping {
@@ -176,6 +178,18 @@ enum class TAHopDodgePractice {
 
 template <Setting S>
 struct OptionType;
+
+// Start a Time Trial from grid spot N (1 = the normal Time Trial spot) of a grid laid out like an
+// M-player room (from the henrymkw/mkw-sp fork). Numbers, 1 to 12.
+template <>
+struct OptionType<Setting::TAStartingSpot> {
+    using Type = u32;
+};
+
+template <>
+struct OptionType<Setting::TAStartingSpotsLayout> {
+    using Type = u32;
+};
 
 template <>
 struct OptionType<Setting::TAItemBoxes> {
@@ -630,6 +644,36 @@ inline SettingEntry settings[]{
             .valueExplanationMessageIds = (const s32[]){10156, 10157},
             .hidden = false,
             .selectedValue = static_cast<u32>(TAHopDodgePractice::Disabled),
+        },
+        // A number (1-12): valueNames is null, the messages get the number as an argument.
+        [static_cast<u32>(Setting::TAStartingSpot)] =
+        {
+            .category = Category::TimeTrials,
+            .name = magic_enum::enum_name(Setting::TAStartingSpot),
+            .messageId = 10162,
+            .valueOffset = 1,
+            .defaultValue = 1,
+            .valueCount = 12,
+            .valueNames = nullptr,
+            .valueMessageIds = (const s32[]){10166},
+            .valueExplanationMessageIds = (const s32[]){10163},
+            .hidden = false,
+            .selectedValue = 1,
+        },
+        // A number (1-12): valueNames is null, the messages get the number as an argument.
+        [static_cast<u32>(Setting::TAStartingSpotsLayout)] =
+        {
+            .category = Category::TimeTrials,
+            .name = magic_enum::enum_name(Setting::TAStartingSpotsLayout),
+            .messageId = 10164,
+            .valueOffset = 1,
+            .defaultValue = 1,
+            .valueCount = 12,
+            .valueNames = nullptr,
+            .valueMessageIds = (const s32[]){10166},
+            .valueExplanationMessageIds = (const s32[]){10165},
+            .hidden = false,
+            .selectedValue = 1,
         },
         // clang-format on
 };

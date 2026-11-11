@@ -161,4 +161,9 @@
     "10159": "Hop dodge: {arg integer|0 0} frame(s) too early",
     "10160": "Hop dodge: {arg integer|0 0} frame(s) too late",
     "10161": "Hop dodge: no hop",
+    "10162": "Starting Spot",
+    "10163": "Start offline Time Trials from grid spot {arg integer|0 0} (1 is the normal Time Trial spot). Ghosts can't be saved.",
+    "10164": "Starting Spots Layout",
+    "10165": "Lay out the starting grid like a {arg integer|0 0}-player race (1 is the normal Time Trial start). Ghosts can't be saved.",
+    "10166": "{arg integer|0 0}",
 }
