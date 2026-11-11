@@ -51,10 +51,20 @@ namespace Field {
 // seconds a piece rests before it starts shaking, counted from the race start (see Kinoko's
 // ObjectVolcanoPiece); it never repeats.
 static constexpr u16 VolcanoPieceId = 0x1fc;
-// 15 minutes, longer than any Time Trial. The game keeps these timers in 16 bits (0x7fff
-// seconds made every piece vanish at the start), so the rest plus the shake time must stay
-// under 65535 frames.
-static constexpr u16 NeverFallSeconds = 900;
+// The game's piece timers are signed 16-bit frame counts: 0x7fff s and 900 s both overflowed and
+// made every piece vanish at the start. So the whole cycle (rest + shake + quake + the 900-frame
+// fall) has to stay under 32767 frames: about 7 minutes of rest, more than a Time Trial needs.
+static constexpr s32 MaxCycleFrames = 32000;
+static constexpr s32 FallFrames = 900;
+
+static u16 LongestRestSeconds(const System::RawGeoObj *data) {
+    s32 shakeFrames = data->settings[2] * 60;
+    s32 quakeFrames = data->settings[7] + 1;
+    s32 restFrames = MaxCycleFrames - FallFrames - shakeFrames - quakeFrames;
+    s32 restSeconds = restFrames / 60;
+    // Never shorter than the course's own rest time.
+    return restSeconds > data->settings[1] ? restSeconds : data->settings[1];
+}
 
 // No falling road (TANoFallingRoad), offline Time Trials only: the pieces read their timing
 // when they are built, so give them a very long rest just for that, then put the KMP data back
@@ -79,7 +89,7 @@ void ObjectDirector::createObjects() {
         changed[changedCount] = data;
         restSeconds[changedCount] = data->settings[1];
         changedCount++;
-        data->settings[1] = NeverFallSeconds;
+        data->settings[1] = LongestRestSeconds(data);
     }
     if (changedCount > 0) {
         SP::MarkPracticeUsed();
