@@ -16,17 +16,20 @@ PATCH_B_START(ObjManager_ct, 0x12c)
     b ObjManager_ct + 0x130
 PATCH_B_END(ObjManager_ct, 0x12c)
 
-// The item roulette gives nothing in Time Trials: act as if it isn't one.
-PATCH_B_START(ItemRoulette_start, 0x50)
-    lbz r0, 0x38bc(r3) // Original instruction (the Time Trial flag)
+// The item roulette gives nothing in Time Trials: act as if it isn't one. At +0x4c/+0x50 the
+// game loads the Time Trial flag into r0 (lis r4 / lbz r0, flag@l(r4), filled in when StaticR
+// is linked), so the patch goes on the cmpwi after it, which has no relocation. Patching the
+// lbz itself with a guessed copy read a random byte online and could block every item.
+PATCH_B_START(ItemRoulette_start, 0x54)
     lis r12, TimeTrialCheats_itemBoxes@ha
     lbz r12, TimeTrialCheats_itemBoxes@l(r12)
     cmpwi r12, 0x0
     beq 1f
     li r0, 0x0
 1:
-    b ItemRoulette_start + 0x54
-PATCH_B_END(ItemRoulette_start, 0x50)
+    cmpwi r0, 0x0 // Original instruction; the bne after it uses cr0
+    b ItemRoulette_start + 0x58
+PATCH_B_END(ItemRoulette_start, 0x54)
 
 // Items collide with karts in Time Trials too (upstream nops the early return for Time Trials;
 // only Time Trials take it, and they have no items unless a practice tool adds them).
