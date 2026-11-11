@@ -20,11 +20,23 @@ void ObjectDirector::createObjects() {
 // they always see frame 0, so they stay at rest.
 class ObjectVolcanoPiece {
 private:
+    // Moves the piece every frame (shake, then fall). Skipped while the setting is on, so the
+    // piece stays where it was built.
+    REPLACE void calc();
+    void REPLACED(calc)();
+
     REPLACE u32 calcState(u32 frame) const;
     u32 REPLACED(calcState)(u32 frame) const;
     REPLACE f32 calcT(u32 frame) const;
     f32 REPLACED(calcT)(u32 frame) const;
 };
+
+void ObjectVolcanoPiece::calc() {
+    if (g_noFallingRoad) {
+        return;
+    }
+    REPLACED(calc)();
+}
 
 u32 ObjectVolcanoPiece::calcState(u32 frame) const {
     return REPLACED(calcState)(g_noFallingRoad ? 0 : frame);
