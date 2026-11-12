@@ -14,6 +14,10 @@ namespace System {
 void SaveManager::SaveGhostAsync(u32 licenseId, u32 type, u32 slot, GhostFile *ghostFile, u32 r8) {
     if (SP::PracticeUsed()) {
         SP_LOG("SaveManager: not saving the ghost, a practice tool was used in this run");
+        // Same as the game's own "saving disabled" path: not busy, result OK. Returning
+        // without this left an old result behind, which the game reported as a corrupt save.
+        m_isBusy = false;
+        m_result = 0;
         return;
     }
     REPLACED(SaveGhostAsync)(licenseId, type, slot, ghostFile, r8);

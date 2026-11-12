@@ -59,7 +59,11 @@ private:
 
     u8 _00000[0x00014 - 0x00000];
     RawSave *m_rawSave;
-    u8 _00018[0x25008 - 0x00018];
+    u8 _00018[0x25000 - 0x00018];
+    // Set by the async save requests; the game reads them when the request ends.
+    bool m_isBusy;
+    u8 _25001[0x25004 - 0x25001];
+    u32 m_result; // 0 = OK
 
     static SaveManager *s_instance;
 };
