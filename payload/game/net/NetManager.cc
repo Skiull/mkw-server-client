@@ -23,7 +23,7 @@ static void reportDisconnect(char kind, u32 type, s32 code, void *caller) {
     u32 callerAddr = reinterpret_cast<u32>(caller);
     memcpy(packet + 4, &code, 4);
     memcpy(packet + 8, &callerAddr, 4);
-    trySendRacePacketToMKWServer(packet, sizeof(packet));
+    MKWServer::trySendRacePacketToMKWServer(packet, sizeof(packet));
 }
 
 const MatchMakingInfo &NetManager::currentMMInfo() const {
