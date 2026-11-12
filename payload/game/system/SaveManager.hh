@@ -26,6 +26,10 @@ public:
     static_assert(sizeof(RawLicense) == 0x8cc0);
 
     struct RawSave {
+        // Every license starts with everything unlocked (sp: SaveManager.cc).
+        REPLACE void ReadUnlockFlags(UnlockFlags *flags, u32 licenseId);
+        void REPLACED(ReadUnlockFlags)(UnlockFlags *flags, u32 licenseId);
+
         u8 _00000[0x00008 - 0x00000];
         RawLicense licenses[4];
         u8 _23308[0x28000 - 0x23308];

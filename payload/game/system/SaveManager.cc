@@ -19,4 +19,14 @@ void SaveManager::SaveGhostAsync(u32 licenseId, u32 type, u32 slot, GhostFile *g
     REPLACED(SaveGhostAsync)(licenseId, type, slot, ghostFile, r8);
 }
 
+// Every character, vehicle, cup (mirror included) and other unlockable is available on every
+// license, new or existing. The game reads a license's unlock flags through here when it loads
+// the license, so nothing is written to the save itself.
+void SaveManager::RawSave::ReadUnlockFlags(UnlockFlags *flags, u32 licenseId) {
+    REPLACED(ReadUnlockFlags)(flags, licenseId);
+    flags->flag0 = 0xffffffff;
+    flags->flag1 = 0xffffffff;
+    flags->flag2 = 0xffffffff;
+}
+
 } // namespace System
