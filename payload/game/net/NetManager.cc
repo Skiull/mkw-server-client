@@ -154,14 +154,6 @@ void NetManager::createRacePacket() {
             header.setRecordSize(i, size);
         }
 
-        // Try to lookup the outgoing packet. its unique if -1 is returned
-        s32 uniquePacketIdx = m_outgoingUniquePackets.lookup(headerSizes);
-        if (uniquePacketIdx != -1) {
-            // add this aid as a recipient of this packet, move on to the next aid
-            m_outgoingUniquePackets.setRecipient(uniquePacketIdx, aid);
-            continue;
-        }
-
         // copy the header to the buffer that actually gets sent
         sendBuffer->header()->copy(&header, sizeof(Header));
 
@@ -177,7 +169,16 @@ void NetManager::createRacePacket() {
             }
         }
 
-        // We found a unique packet, so push it to be sent
+        // Send one packet to several aids only when its contents are the same. Matching record
+        // sizes isn't enough: each aid's buffer is filled on its own frames, so sharing by size
+        // sent some aids another aid's older records (a race timer going back a frame), which
+        // the game treats as a desync and disconnects over in 3+ player races.
+        s32 uniquePacketIdx = m_outgoingUniquePackets.lookup(outgoing);
+        if (uniquePacketIdx != -1) {
+            m_outgoingUniquePackets.setRecipient(uniquePacketIdx, aid);
+            continue;
+        }
+
         if (!m_outgoingUniquePackets.push(outgoing, headerSizes, aid, myAid())) {
             SP_LOG("Pushing a new packet failed!");
         }

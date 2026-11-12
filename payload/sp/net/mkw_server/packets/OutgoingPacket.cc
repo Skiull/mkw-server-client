@@ -1,5 +1,7 @@
 #include "OutgoingPacket.hh"
 
+#include <cstring>
+
 extern "C" {
 #include <revolution.h>
 }
@@ -28,9 +30,21 @@ bool OutgoingRacePackets::push(Net::RecordHolder<Net::Header> *data, u32 headerS
     return true;
 }
 
-s32 OutgoingRacePackets::lookup(u32 sizesMask) {
+s32 OutgoingRacePackets::lookup(Net::RecordHolder<Net::Header> *data) {
+    // Bytes 0-7 of the header (magic, sender aid, recipients, crc32) are filled in per packet.
+    constexpr u32 skip = 8;
+    u32 size = data->recordSize();
+    if (size < skip) {
+        return -1;
+    }
+    const u8 *bytes = reinterpret_cast<const u8 *>(data->record());
     for (u8 i = 0; i < m_count; i++) {
-        if (m_outgoingPackets[i].headerSizes == sizesMask) {
+        auto *other = m_outgoingPackets[i].data;
+        if (other->recordSize() != size) {
+            continue;
+        }
+        const u8 *otherBytes = reinterpret_cast<const u8 *>(other->record());
+        if (memcmp(bytes + skip, otherBytes + skip, size - skip) == 0) {
             return i;
         }
     }

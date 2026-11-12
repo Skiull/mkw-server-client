@@ -29,7 +29,9 @@ class OutgoingRacePackets {
 public:
     bool push(Net::RecordHolder<Net::Header> *data, u32 headerSizes, u8 aid, u8 myAid);
 
-    s32 lookup(u32 sizesMask);
+    // Index of a packet with the same contents as data (the per-recipient start of the header,
+    // magic, aids and crc32, aside), or -1.
+    s32 lookup(Net::RecordHolder<Net::Header> *data);
 
     void setRecipient(s32 idx, u8 aid);
 
