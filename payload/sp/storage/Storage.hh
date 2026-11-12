@@ -137,6 +137,9 @@ struct BenchmarkStatus {
 
 bool Init();
 
+// Whether a writable storage (FAT on SD or USB) is mounted.
+bool HasWritable();
+
 IStorage *GetStorage(StorageType type);
 
 std::optional<FileHandle> FastOpen(NodeId id);

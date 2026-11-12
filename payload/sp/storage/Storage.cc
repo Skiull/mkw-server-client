@@ -99,6 +99,10 @@ bool Init() {
     return true;
 }
 
+bool HasWritable() {
+    return fatStorage.has_value();
+}
+
 IStorage *GetStorage(StorageType type) {
     switch (type) {
     case StorageType::FAT:

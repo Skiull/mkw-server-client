@@ -36,6 +36,11 @@ public:
         return s_instance;
     }
 
+    // Current license index (0..3), or -1 if none. Licenses start at +0x38, index at +0x36.
+    s16 currentLicenseIndex() const {
+        return *reinterpret_cast<const s16 *>(reinterpret_cast<const u8 *>(this) + 0x36);
+    }
+
 private:
     REPLACE void SaveGhostAsync(u32 /* licenseId */, u32 /* type */, u32 /* slot */,
             GhostFile /* *ghostFile */, u32 /* r8 */);
