@@ -6,11 +6,25 @@
 
 #include <sp/net/mkw_server/MKWServer.hh>
 
+#include <cstring>
+
 extern "C" {
 #include <revolution.h>
 }
 
 namespace Net {
+
+// Tells mkw-server why this game is about to disconnect, so drops on real consoles (where the
+// log above can't be read) show up in the server's log: "DC" for setDisconnectInfo and "DS" for
+// scheduleShutdown, then the disconnect type and code and the address of the function that
+// asked. Layout: 'D' kind type 0 code(4) caller(4), big endian.
+static void reportDisconnect(char kind, u32 type, s32 code, void *caller) {
+    u8 packet[12] = {'D', static_cast<u8>(kind), static_cast<u8>(type), 0};
+    u32 callerAddr = reinterpret_cast<u32>(caller);
+    memcpy(packet + 4, &code, 4);
+    memcpy(packet + 8, &callerAddr, 4);
+    trySendRacePacketToMKWServer(packet, sizeof(packet));
+}
 
 const MatchMakingInfo &NetManager::currentMMInfo() const {
     return m_matchMakingInfos[m_currMMInfo];
@@ -67,6 +81,7 @@ void NetManager::init(u8 localPlayerCount) {
 void NetManager::setDisconnectInfo(DisconnectType type, s32 code) {
     SP_LOG("setDisconnectInfo(type %d, code %d) called from %p", type, code,
             __builtin_return_address(0));
+    reportDisconnect('C', type, code, __builtin_return_address(0));
     REPLACED(setDisconnectInfo)(type, code);
 }
 
@@ -74,6 +89,7 @@ void NetManager::scheduleShutdown() {
     // Logs who asked for the disconnect, to find unexplained drops mid-race.
     SP_LOG("scheduleShutdown called from %p (disconnect type %d, code %d)", __builtin_return_address(0),
             m_disconnectInfo.type, m_disconnectInfo.code);
+    reportDisconnect('S', m_disconnectInfo.type, m_disconnectInfo.code, __builtin_return_address(0));
     m_shutdownScheduled = true;
 
     MKWServer::resetRoomManagerConnection();
