@@ -77,6 +77,10 @@ inline bool StartingSpotChanged(u32 *spot, u32 *layout) {
 void ResetPracticeUsed();
 void MarkPracticeUsed();
 bool PracticeUsed();
+// Copy of the current license taken when an offline Time Trial starts. If a practice tool was
+// used, it's copied back when the race ends, so the run's best time doesn't stay in the license.
+void SnapshotLicense();
+void RestoreLicenseIfPracticeUsed();
 
 } // namespace SP
 

@@ -9,7 +9,9 @@ private:
     REPLACE void calc();
     void REPLACED(calc)();
 
-    u8 _00[0x008 - 0x000];
+    // Pending requests, handled one per calc: [0] save licenses, [1] save ghost, ...
+    bool m_requests[6];
+    u8 _06[0x008 - 0x006];
     s32 m_lastRequestId;
     u8 _0C[0x014 - 0x00C];
     bool m_disableSaving;

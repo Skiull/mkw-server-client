@@ -51,6 +51,16 @@ public:
         return reinterpret_cast<u16 *>(reinterpret_cast<u8 *>(this) + 0x38 + license * 0x93f0 + 0x9018);
     }
 
+    // The current license as the game keeps it in memory (0x93f0 bytes), or nullptr.
+    u8 *currentLicense() {
+        s16 license = *reinterpret_cast<s16 *>(reinterpret_cast<u8 *>(this) + 0x36);
+        if (license < 0 || license >= 4) {
+            return nullptr;
+        }
+        return reinterpret_cast<u8 *>(this) + 0x38 + license * 0x93f0;
+    }
+    static constexpr u32 LicenseSize = 0x93f0;
+
 private:
     // The game passes the ghost by pointer (a by-value class is passed as a pointer to it).
     // Skipped when the run used a practice tool (sp/TimeTrialCheats.hh).
