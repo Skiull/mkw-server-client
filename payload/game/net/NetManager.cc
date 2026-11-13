@@ -1,9 +1,14 @@
 #include "NetManager.hh"
 
+#include "game/host_system/SystemManager.hh"
 #include "game/net/GlobeHandler.hh"
 #include "game/net/records/Room.hh"
+#include "game/system/SaveManager.hh"
 #include "game/ui/SectionManager.hh"
 
+#include <revolution/dwc/DWCFriendsMatch.hh>
+#include <revolution/dwc/DWCMain.h>
+#include <sp/net/ExtendedFriends.hh>
 #include <sp/net/mkw_server/MKWServer.hh>
 
 #include <cstring>
@@ -76,6 +81,20 @@ void NetManager::init(u8 localPlayerCount) {
 
     // initialize the unique packets buffer
     m_outgoingUniquePackets.reset();
+
+    // Extended roster (slots 30..63): load from SD for this license. Missing file is fine —
+    // rksys.dat's 30 friends stay as they are. See docs/design_docs/ExtendedFriendRoster.md.
+    memset(m_extraFriends, 0, sizeof(m_extraFriends));
+    if (auto *save = System::SaveManager::Instance()) {
+        s16 license = save->currentLicenseIndex();
+        if (license >= 0 && license < 4) {
+            SP::ExtendedFriends::Load(static_cast<u32>(license));
+        } else {
+            SP::ExtendedFriends::Clear();
+        }
+    } else {
+        SP::ExtendedFriends::Clear();
+    }
 }
 
 void NetManager::setDisconnectInfo(DisconnectType type, s32 code) {
@@ -280,6 +299,144 @@ void NetManager::connectToAnybodyAsync() {
     }
 }
 
+void NetManager::resetFriendData(u32 friendIdx) {
+    if (friendIdx >= MAX_FRIEND_COUNT) {
+        return;
+    }
+    FriendInfo &info = friendAt(friendIdx);
+    info.statusData.roomId = 0;
+    info.statusData.regionId = 0;
+    info.statusData.status = 0;
+    info.statusData.playerCount = 0;
+    info.statusData.currRace = 0;
+    info.dwcFriendStatus = 0;
+    info.addedBack = true;
+}
+
+void NetManager::resetFriends() {
+    for (u32 i = 0; i < MAX_FRIEND_COUNT; i++) {
+        resetFriendData(i);
+    }
+}
+
+void NetManager::setFriendsAddedBack(u32 *pidsThatHaveAddedBack, u32 countOfPids) {
+    // Vanilla only walks 0..29.
+    REPLACED(setFriendsAddedBack)(pidsThatHaveAddedBack, countOfPids);
+
+    for (u32 i = VANILLA_FRIEND_COUNT; i < MAX_FRIEND_COUNT; i++) {
+        FriendInfo &info = friendAt(i);
+        info.addedBack = false;
+
+        if (!SP::ExtendedFriends::s_slots[i - VANILLA_FRIEND_COUNT].occupied()) {
+            info.addedBack = true;
+            continue;
+        }
+
+        s32 pid = DWCi_GetProfileIDFromList(static_cast<s32>(i));
+        if (pid <= 0 || !pidsThatHaveAddedBack) {
+            continue;
+        }
+        for (u32 j = 0; j < countOfPids; j++) {
+            if (pidsThatHaveAddedBack[j] == static_cast<u32>(pid)) {
+                info.addedBack = true;
+                break;
+            }
+        }
+    }
+}
+
+void NetManager::updateStatusDatas() {
+    // Vanilla loops DWC friendListLen into m_friends[30]. Clamp to 30 for that pass, then
+    // fill extended slots ourselves so indices 30..63 stay in sync with s_dwcList.
+    int savedLen = -1;
+    if (s_dwcControl) {
+        savedLen = s_dwcControl->friendControl.friendListLen;
+        s_dwcControl->friendControl.friendListLen = VANILLA_FRIEND_COUNT;
+    }
+    REPLACED(updateStatusDatas)();
+    if (s_dwcControl && savedLen >= 0) {
+        s_dwcControl->friendControl.friendListLen = savedLen;
+    }
+
+    for (u32 i = VANILLA_FRIEND_COUNT; i < MAX_FRIEND_COUNT; i++) {
+        FriendInfo &info = friendAt(i);
+        if (!SP::ExtendedFriends::s_slots[i - VANILLA_FRIEND_COUNT].occupied()) {
+            info.dwcFriendStatus = 0;
+            memset(&info.statusData, 0, sizeof(info.statusData));
+            continue;
+        }
+
+        int size = static_cast<int>(sizeof(StatusData));
+        StatusData data{};
+        u8 dwcStatus = DWC_GetFriendStatusData(&SP::ExtendedFriends::s_dwcList[i],
+                reinterpret_cast<char *>(&data), &size);
+        info.dwcFriendStatus = dwcStatus;
+        if (size > 0) {
+            u32 copy = static_cast<u32>(size);
+            if (copy > sizeof(StatusData)) {
+                copy = sizeof(StatusData);
+            }
+            memcpy(&info.statusData, &data, copy);
+        }
+    }
+}
+
+FriendJoinableStatus NetManager::getFriendJoinableStatus(u32 friendId) const {
+    if (friendId >= MAX_FRIEND_COUNT) {
+        return FriendJoinableStatus::Offline;
+    }
+
+    const FriendInfo &info = friendAt(friendId);
+    if (!info.addedBack || info.dwcFriendStatus == 0) {
+        return FriendJoinableStatus::Offline;
+    }
+
+    auto friendStatus = static_cast<FriendStatus>(info.statusData.status);
+
+    if (friendStatus != FriendStatus::Idle) {
+        switch (friendStatus) {
+        case FriendStatus::PlayingPublicVS:
+            if (m_disconnectPenalty != 0) {
+                return FriendJoinableStatus::Online;
+            }
+            if (info.statusData.regionId != -1) {
+                if (info.statusData.regionId ==
+                        static_cast<s8>(System::SystemManager::Instance()->matchingArea())) {
+                    return FriendJoinableStatus::JoinableRegionalVS;
+                }
+                return FriendJoinableStatus::UnjoinableRegionalVS;
+            }
+            return FriendJoinableStatus::WorldWideVersus;
+
+        case FriendStatus::PlayingPublicBattle:
+            if (m_disconnectPenalty != 0) {
+                return FriendJoinableStatus::Online;
+            }
+            if (info.statusData.regionId != -1) {
+                if (info.statusData.regionId ==
+                        static_cast<s8>(System::SystemManager::Instance()->matchingArea())) {
+                    return FriendJoinableStatus::JoinableRegionalBattle;
+                }
+                return FriendJoinableStatus::UnjoinableRegionalBattle;
+            }
+            return FriendJoinableStatus::WorldWideBattle;
+
+        case FriendStatus::HostingVS:
+        case FriendStatus::HostingBattle:
+        case FriendStatus::GuestInVSFriendRoom:
+        case FriendStatus::GuestInBattleFriendRoom:
+        case FriendStatus::Online:
+        case FriendStatus::OpenRoom:
+        case FriendStatus::PlayingWithFriends:
+            return static_cast<FriendJoinableStatus>(friendStatus);
+
+        default:
+            return static_cast<FriendJoinableStatus>(friendStatus);
+        }
+    }
+    return FriendJoinableStatus::Online;
+}
+
 void NetManager::connectToGameServerFromGroupId() {
     u32 friendId = currentMMInfo().hostFriendId;
     FriendJoinableStatus status = getFriendJoinableStatus(friendId);
@@ -337,6 +494,14 @@ void NetManager::processRacePacket(u8 aid, u8 *packet, u32 size) {
 
 void NetManager::updateAddedFriendsCallback(void *r3, void *r4, void *r5) {
     REPLACED(updateAddedFriendsCallback)(r3, r4, r5);
+
+    // Persist extended slots whenever the roster changes. No-op until extras are occupied.
+    if (auto *save = System::SaveManager::Instance()) {
+        s16 license = save->currentLicenseIndex();
+        if (license >= 0 && license < 4 && SP::ExtendedFriends::OccupiedCount() > 0) {
+            SP::ExtendedFriends::Save(static_cast<u32>(license));
+        }
+    }
 
     if (!MKWServer::connectToRoomManager()) {
         SP_LOG("Failed to connect to room manager!");

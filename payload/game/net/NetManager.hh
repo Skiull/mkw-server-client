@@ -4,6 +4,7 @@
 
 #include "game/net/DisconnectInfo.hh"
 #include "game/net/FriendInfo.hh"
+#include "game/net/FriendLimits.hh"
 #include "game/net/MatchMakingInfo.hh"
 #include "game/net/RacePacketHolder.hh"
 
@@ -13,7 +14,6 @@
 #include <sp/net/mkw_server/RoomManager.hh>
 #include <sp/net/mkw_server/packets/OutgoingPacket.hh>
 
-#define MAX_FRIEND_COUNT 30
 #define MAX_PLAYER_COUNT 12
 
 namespace Net {
@@ -68,6 +68,9 @@ public:
     static NetManager *Instance() {
         return s_instance;
     }
+
+    // 0x80659fa4 — online / joinable status for roster index 0..63
+    REPLACE FriendJoinableStatus getFriendJoinableStatus(u32 friendId) const;
 
 private:
     const MatchMakingInfo &currentMMInfo() const;
@@ -143,8 +146,19 @@ private:
     // 0x80659a84
     REPLACE void processRacePacket(u8 aid, u8 *header, u32 size);
 
-    // 0x80659fa4
-    FriendJoinableStatus getFriendJoinableStatus(u32 friendId);
+    // 0x80656d6c — clear one FriendInfo slot
+    REPLACE void resetFriendData(u32 friendIdx);
+
+    // 0x80658f80 — clear all FriendInfo slots
+    REPLACE void resetFriends();
+
+    // 0x80656ca0 — mark mutual friends from a PID list
+    REPLACE void setFriendsAddedBack(u32 *pidsThatHaveAddedBack, u32 countOfPids);
+    void REPLACED(setFriendsAddedBack)(u32 *pidsThatHaveAddedBack, u32 countOfPids);
+
+    // 0x8065a0b4 — pull GP/DWC status into FriendInfo (own + every roster index)
+    REPLACE void updateStatusDatas();
+    void REPLACED(updateStatusDatas)();
 
     // 0x8065a8d4
     // Callback thats evoked to update whether or not your friends have added you back. Hooked to
@@ -181,8 +195,10 @@ private:
     u8 m_aidLastSentTo;                                   // Aid of last player we sent to / 0x360
     u8 m_recvRacePacketBuffer[MAX_PLAYER_COUNT][0x2e0];   // 0x361
     u8 _25e1[0x25e4 - 0x25e1];                            // padding
-    StatusData m_myStatusData;                            // 0x25e4
-    FriendInfo m_friends[MAX_FRIEND_COUNT];
+    StatusData m_myStatusData; // 0x25e4
+    // Keep exactly VANILLA_FRIEND_COUNT here. Growing this array would shift every field
+    // below and break vanilla code that uses hardcoded NetManager offsets.
+    FriendInfo m_friends[VANILLA_FRIEND_COUNT];
     bool m_friendRosterChanged;      // set when a friend adds back 0x2753
     bool m_shutdownScheduled;        // set when logging off // 0x2755
     bool m_shouldUpdateFriendStatus; // 0x2756
@@ -213,10 +229,29 @@ private:
 
     MKWServer::OutgoingRacePackets
             m_outgoingUniquePackets; // added. TODO: Replace m_outgoingRacePacket
+
+    // Extended roster slots 30..63. Appended after all vanilla / existing fields so
+    // offsets through 0x29c8 stay identical to stock.
+    FriendInfo m_extraFriends[EXTRA_FRIEND_COUNT];
+
     static NetManager *s_instance;
+
+    FriendInfo &friendAt(u32 index) {
+        if (index < VANILLA_FRIEND_COUNT) {
+            return m_friends[index];
+        }
+        return m_extraFriends[index - VANILLA_FRIEND_COUNT];
+    }
+
+    const FriendInfo &friendAt(u32 index) const {
+        if (index < VANILLA_FRIEND_COUNT) {
+            return m_friends[index];
+        }
+        return m_extraFriends[index - VANILLA_FRIEND_COUNT];
+    }
 };
 // TODO: Idk why the + sizeof(u32) is needed, but it is
-static_assert(
-        sizeof(NetManager) == (0x29c8 + sizeof(MKWServer::OutgoingRacePackets) + sizeof(size_t)));
+static_assert(sizeof(NetManager) == (0x29c8 + sizeof(MKWServer::OutgoingRacePackets) +
+        sizeof(size_t) + sizeof(FriendInfo) * EXTRA_FRIEND_COUNT));
 
 } // namespace Net

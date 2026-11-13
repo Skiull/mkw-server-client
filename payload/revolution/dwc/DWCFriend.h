@@ -7,6 +7,8 @@
 
 #include <revolution/gamespy/gp/gp.h>
 
+#include <stddef.h>
+
 typedef struct {
     u32 flags;
     u8 _4[0xc - 0x4];
@@ -44,6 +46,11 @@ static_assert(sizeof(DWCFriendData) == 0xc);
 typedef struct {
     u8 _00[0x04 - 0x00];
     GPConnection *gpConnection;
-    u8 _08[0x60 - 0x08];
+    u8 _08[0x18 - 0x08];
+    int friendListLen; // 0x18
+    DWCFriendData *friendList; // 0x1c
+    u8 _20[0x60 - 0x20];
 } DWCFriendControl;
 static_assert(sizeof(DWCFriendControl) == 0x60);
+static_assert(offsetof(DWCFriendControl, friendListLen) == 0x18);
+static_assert(offsetof(DWCFriendControl, friendList) == 0x1c);

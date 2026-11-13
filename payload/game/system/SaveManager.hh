@@ -61,6 +61,11 @@ public:
     }
     static constexpr u32 LicenseSize = 0x93f0;
 
+    // Current license index (0..3), or -1 if none. Licenses start at +0x38, index at +0x36.
+    s16 currentLicenseIndex() const {
+        return *reinterpret_cast<const s16 *>(reinterpret_cast<const u8 *>(this) + 0x36);
+    }
+
 private:
     // The game passes the ghost by pointer (a by-value class is passed as a pointer to it).
     // Skipped when the run used a practice tool (sp/TimeTrialCheats.hh).
