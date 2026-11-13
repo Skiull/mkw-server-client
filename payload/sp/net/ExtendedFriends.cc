@@ -184,7 +184,7 @@ bool Load(u32 licenseIndex) {
 
     wchar_t path[64];
     pathForLicense(licenseIndex, path, std::size(path));
-    auto file = Storage::Open(path, "rb");
+    auto file = Storage::Open(path, "r");
     if (!file) {
         return true; // No extras yet: vanilla 30-friend save is fine.
     }
