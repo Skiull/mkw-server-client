@@ -254,4 +254,7 @@ private:
 static_assert(sizeof(NetManager) == (0x29c8 + sizeof(MKWServer::OutgoingRacePackets) +
         sizeof(size_t) + sizeof(FriendInfo) * EXTRA_FRIEND_COUNT));
 
+// NetManager.S allocates this many bytes for the NetManager; keep the two in sync.
+static_assert(sizeof(NetManager) == 0x2bf8);
+
 } // namespace Net
