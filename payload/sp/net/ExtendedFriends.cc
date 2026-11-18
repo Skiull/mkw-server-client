@@ -251,7 +251,8 @@ bool Save(u32 licenseIndex) {
     header.slotCount = EXTRA_COUNT;
     header.reserved = 0;
 
-    u8 buffer[sizeof(FileHeader) + sizeof(s_slots)];
+    // ~15 KiB: static, not on the stack (this runs on the network thread, whose stack overflowed).
+    static u8 buffer[sizeof(FileHeader) + sizeof(s_slots)] __attribute__((aligned(32)));
     memcpy(buffer, &header, sizeof(header));
     memcpy(buffer + sizeof(header), s_slots, sizeof(s_slots));
 
