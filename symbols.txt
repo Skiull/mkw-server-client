@@ -124,6 +124,7 @@
 0x800ec764 DWC_CreateFriendKeyToken
 0x800ed6e8 DWCi_Auth_SendRequest
 0x800fb874 gpProcess
+0x800ff014 gpiAppendStringToBuffer
 0x80109c1c gti2ReceivedCallback
 0x8010a3c0 gti2AcceptConnection
 0x8010a464 gti2RejectConnection

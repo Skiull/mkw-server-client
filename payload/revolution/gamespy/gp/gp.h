@@ -76,3 +76,4 @@ static_assert(offsetof(GPIConnection, cmSocket) == 0x1f0);
 typedef GPIConnection *GPConnection;
 
 u32 gpProcess(GPIConnection *connection);
+int gpiAppendStringToBuffer(GPConnection *connection, GPBuffer *buffer, const char *string);

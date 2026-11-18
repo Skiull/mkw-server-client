@@ -19,6 +19,7 @@ enum class Category {
 enum class Setting {
     // Online
     Ping,
+    OpenHost,
     // Ranks
     LoungeRank,
     // Menus
@@ -51,6 +52,13 @@ enum class Setting {
 };
 
 enum class Ping {
+    Disabled,
+    Enabled,
+};
+
+// Let players who added your friend code join your friend room without you adding them back
+// (sent to the server as "wl:oh", see sp/net/OpenHost.cc).
+enum class OpenHost {
     Disabled,
     Enabled,
 };
@@ -259,6 +267,11 @@ struct OptionType<Setting::Ping> {
 };
 
 template <>
+struct OptionType<Setting::OpenHost> {
+    using Type = OpenHost;
+};
+
+template <>
 struct OptionType<Setting::FOV169> {
     using Type = FOV169;
 };
@@ -360,6 +373,20 @@ inline SettingEntry settings[]{
             .valueExplanationMessageIds = (const s32[]){10006, 10007},
             .hidden = false,
             .selectedValue = static_cast<u32>(Ping::Disabled),
+        },
+        [static_cast<u32>(Setting::OpenHost)] =
+        {
+            .category = Category::Online,
+            .name = magic_enum::enum_name(Setting::OpenHost),
+            .messageId = 10170,
+            .valueOffset = 0,
+            .defaultValue = static_cast<u32>(OpenHost::Disabled),
+            .valueCount = magic_enum::enum_count<OpenHost>(),
+            .valueNames = magic_enum::enum_names<OpenHost>().data(),
+            .valueMessageIds = (const s32[]){10004, 10005},
+            .valueExplanationMessageIds = (const s32[]){10171, 10172},
+            .hidden = false,
+            .selectedValue = static_cast<u32>(OpenHost::Disabled),
         },
         [static_cast<u32>(Setting::LoungeRank)] =
         {

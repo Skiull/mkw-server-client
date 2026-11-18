@@ -2,6 +2,7 @@
 
 #include "sp/FastMenus.hh"
 #include "sp/TestCheats.hh"
+#include "sp/net/OpenHost.hh"
 #include "sp/net/mkw_server/GameHash.hh"
 #include "sp/settings/Settings.hh"
 
@@ -13,6 +14,7 @@ void GameScene::calc() {
     g_frameCount++;
     SP::TestCheats::RunFrame();
     MKWServer::GameHash::Calc();
+    SP::OpenHost::Calc();
     SP::FastMenus::Calc();
     REPLACED(calc)();
 }
