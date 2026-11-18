@@ -23,6 +23,12 @@ void RaceHandler::init() {
     m_readyAcked = false;
 }
 
+void RaceHandler::processRecvRaceInfoRecords() {
+    REPLACED(processRecvRaceInfoRecords)();
+    // The only place the game sets this (init clears it).
+    m_scheduleDisconnect = false;
+}
+
 void RaceHandler::trySendReady() {
     if (m_readyRetryCooldown > 0) {
         m_readyRetryCooldown--;

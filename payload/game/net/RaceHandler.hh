@@ -57,7 +57,11 @@ private:
     // 0x806554a0
     // Unpacks and processes received Race Info records. Updates m_aidsLoadedIntoRace and time of
     // other players. Also checks if we're out of sync of other players and disconnects us if so.
-    void processRecvRaceInfoRecords();
+    // Hooked to never disconnect: with every packet relayed through mkw-server, a peer's
+    // records can arrive late, and the game dropped whoever noticed first. A player who is
+    // really gone is removed by the server instead.
+    REPLACE void processRecvRaceInfoRecords();
+    void REPLACED(processRecvRaceInfoRecords)();
 
     // 0x80654038
     // Returns true when all players have loaded into the race
