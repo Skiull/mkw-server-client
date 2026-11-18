@@ -5,6 +5,7 @@ extern "C" {
 #include <revolution/gamespy/gp/gp.h>
 }
 
+#include <sp/net/mkw_server/RoomManager.hh>
 #include <sp/settings/Settings.hh>
 
 namespace SP::OpenHost {
@@ -18,10 +19,15 @@ GPConnection *s_sentConnection = nullptr;
 } // namespace
 
 void Calc() {
-    // DWC's match control starts with the GameSpy connection (the WFC payload reads it the
-    // same way for its own Open Host prompt).
-    GPConnection *connection =
-            s_dwcMatch ? *reinterpret_cast<GPConnection **>(s_dwcMatch) : nullptr;
+    // Only once logged in: before that, s_dwcMatch can be stale from an earlier session and
+    // writing through it corrupted memory (crash when connecting). The room manager connects
+    // after the WFC login.
+    GPConnection *connection = nullptr;
+    if (MKWServer::isRoomManagerConnected() && s_dwcMatch) {
+        // DWC's match control starts with the GameSpy connection (the WFC payload reads it
+        // the same way for its own Open Host prompt).
+        connection = *reinterpret_cast<GPConnection **>(s_dwcMatch);
+    }
     if (!connection || !*connection) {
         s_sent = -1;
         s_sentConnection = nullptr;

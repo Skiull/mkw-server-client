@@ -22,6 +22,10 @@ static s32 connection = -1;
 static u8 s_recvBuf[2048];
 static s32 s_recvBufSize = 0;
 
+bool isRoomManagerConnected() {
+    return connection == 0 && g_matchMakingSocket != -1;
+}
+
 bool connectToRoomManager() {
     if (connection == 0) {
         // Already connected

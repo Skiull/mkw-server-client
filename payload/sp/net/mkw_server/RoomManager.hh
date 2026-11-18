@@ -31,6 +31,9 @@ enum class GameMode : u8 {
 // opens up a tcp connection, called when player wants to create or join a room
 EXTERN_C bool connectToRoomManager();
 
+// True while the room manager connection is up (the game has logged in to WFC by then).
+bool isRoomManagerConnected();
+
 // closes the tcp connection. called upon match making state exit.
 void resetRoomManagerConnection();
 
