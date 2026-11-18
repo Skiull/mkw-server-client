@@ -180,7 +180,7 @@ u32 FriendList::GetFriendStatus(u32 idx) const {
         return 0xffffffffu;
     }
     if (!SP::ExtendedFriends::s_slots[extra].occupied()) {
-        return 0;
+        return 0xffffffffu; // Empty, like the stock slots.
     }
     syncExtraEntry(extra, this);
     return s_extraEntries[extra].friendStatus;

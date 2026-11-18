@@ -22,8 +22,9 @@ bool vanillaSlotOccupied(System::FriendList *list, u32 idx) {
     if (!list || idx >= VANILLA_FRIEND_COUNT) {
         return false;
     }
-    u32 status = list->GetFriendStatus(idx);
-    return status != 0 && status != 0xffffffffu;
+    // Stock GetFriendStatus returns -1 for an empty slot; 0 is a real friend (e.g. one who
+    // hasn't added you back yet).
+    return list->GetFriendStatus(idx) != 0xffffffffu;
 }
 
 } // namespace
