@@ -211,6 +211,23 @@ bool Load(u32 licenseIndex) {
         return false;
     }
 
+    // A slot written without its DWC friend key (all-zero secondary block) gets one from its
+    // friend code, like AddFriendCode does.
+    for (u32 i = 0; i < EXTRA_COUNT; i++) {
+        Slot &slot = s_slots[i];
+        if (!slot.occupied()) {
+            continue;
+        }
+        bool empty = true;
+        for (u32 j = 0; j < SECONDARY_SIZE; j++) {
+            empty = empty && slot.secondary[j] == 0;
+        }
+        if (empty) {
+            DWC_CreateFriendKeyToken(reinterpret_cast<DWCFriendData *>(slot.secondary), 0,
+                    slot.friendCode());
+        }
+    }
+
     SP_LOG("ExtendedFriends: loaded %u extra friends for license %u", OccupiedCount(),
             licenseIndex);
     RebuildDwcList(Net::FriendRosterManager::Instance());
