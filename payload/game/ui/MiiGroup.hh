@@ -16,6 +16,7 @@ public:
     void REPLACED(insertFromId)(size_t index, const System::MiiId *id);
     void insertFromRaw(u32 index, const System::RawMii *raw);
     System::Mii *get(size_t index);
+    void remove(u32 index);
     void copy(const MiiGroup *srcGroup, size_t srcIndex, size_t index);
     void swap(u32 i0, u32 i1);
 

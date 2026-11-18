@@ -183,6 +183,15 @@ void FriendListPage::updateMiiGroup() {
 
     for (u32 i = 0; i < s_sortedCount; i++) {
         u32 friendIdx = s_sortedFriendsIdx[i];
+        // Like the stock function: only friends who added you back (status above 0) get a Mii;
+        // the others show "?".
+        u32 status = list->GetFriendStatus(friendIdx);
+        if (status == 0 || status == 0xffffffffu) {
+            if (group->get(friendIdx)) {
+                group->remove(friendIdx);
+            }
+            continue;
+        }
         const System::FriendListEntry *entry = list->GetFriendEntry(friendIdx);
         if (!entry) {
             continue;
