@@ -717,6 +717,9 @@ with open(args.out_path, 'w') as out_file:
     out_file.write('    payload_rodata_end = payload_rodata_start + SIZEOF(.rodata);\n')
     out_file.write('    payload_data_start = ADDR(.data);\n')
     out_file.write('    payload_data_end = payload_data_start + SIZEOF(.data);\n')
+    # The loader lives at 0x80b00000 (build.py loader_base); a payload running into it
+    # overwrites the loader and crashes when connecting.
+    out_file.write('    payload_end_check = ASSERT(payload_data_end <= 0x80b00000, "payload overlaps the loader at 0x80b00000");\n')
     out_file.write('\n')
 
     if args.base:
