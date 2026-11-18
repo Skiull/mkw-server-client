@@ -148,6 +148,9 @@ std::optional<FileHandle> OpenRO(const char *path);
 std::optional<u32> FastReadFile(NodeId id, void *dst, u32 size);
 std::optional<u32> ReadFile(const wchar_t *path, void *dst, u32 size);
 bool WriteFile(const wchar_t *path, const void *src, u32 size, bool overwrite);
+// Same, writing src then src2 (so callers don't need one big buffer).
+bool WriteFile(const wchar_t *path, const void *src, u32 size, const void *src2, u32 size2,
+        bool overwrite);
 
 bool CreateDir(const wchar_t *path, bool allowNop);
 std::optional<DirHandle> FastOpenDir(NodeId id);

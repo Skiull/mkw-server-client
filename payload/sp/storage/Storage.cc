@@ -186,6 +186,11 @@ std::optional<u32> ReadFile(const wchar_t *path, void *dst, u32 size) {
 }
 
 bool WriteFile(const wchar_t *path, const void *src, u32 size, bool overwrite) {
+    return WriteFile(path, src, size, nullptr, 0, overwrite);
+}
+
+bool WriteFile(const wchar_t *path, const void *src, u32 size, const void *src2, u32 size2,
+        bool overwrite) {
     if (overwrite) {
         wchar_t newPath[256];
         swprintf(newPath, std::size(newPath), L"%ls.new", path);
@@ -197,7 +202,8 @@ bool WriteFile(const wchar_t *path, const void *src, u32 size, bool overwrite) {
             if (!file) {
                 return false;
             }
-            if (!file->write(src, size, 0)) {
+            if (!file->write(src, size, 0) ||
+                    (size2 != 0 && !file->write(src2, size2, size))) {
                 SP_LOG("Failed to write to %ls", newPath);
                 return false;
             }
@@ -225,7 +231,7 @@ bool WriteFile(const wchar_t *path, const void *src, u32 size, bool overwrite) {
         if (!file) {
             return false;
         }
-        return file->write(src, size, 0);
+        return file->write(src, size, 0) && (size2 == 0 || file->write(src2, size2, size));
     }
 }
 

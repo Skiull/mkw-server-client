@@ -251,14 +251,9 @@ bool Save(u32 licenseIndex) {
     header.slotCount = EXTRA_COUNT;
     header.reserved = 0;
 
-    // ~15 KiB: static, not on the stack (this runs on the network thread, whose stack overflowed).
-    static u8 buffer[sizeof(FileHeader) + sizeof(s_slots)] __attribute__((aligned(32)));
-    memcpy(buffer, &header, sizeof(header));
-    memcpy(buffer + sizeof(header), s_slots, sizeof(s_slots));
-
     wchar_t path[64];
     pathForLicense(licenseIndex, path, std::size(path));
-    if (!Storage::WriteFile(path, buffer, sizeof(buffer), true)) {
+    if (!Storage::WriteFile(path, &header, sizeof(header), s_slots, sizeof(s_slots), true)) {
         SP_LOG("ExtendedFriends: failed to write %ls", path);
         return false;
     }
