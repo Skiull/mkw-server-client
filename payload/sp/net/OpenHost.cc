@@ -37,7 +37,7 @@ void Calc() {
         return;
     }
     // GameSpy sends the updatepro buffer on its next process.
-    if (gpiAppendStringToBuffer(connection, &(*connection)->updateproBuffer, "\wl:oh\\") != 0 ||
+    if (gpiAppendStringToBuffer(connection, &(*connection)->updateproBuffer, "\\wl:oh\\") != 0 ||
             gpiAppendStringToBuffer(connection, &(*connection)->updateproBuffer,
                     want ? "1" : "0") != 0) {
         return; // Try again next frame.
