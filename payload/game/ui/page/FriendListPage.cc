@@ -100,7 +100,7 @@ void FriendListPage::rebuildRosterView() {
     }
 
     updateMiiGroup();
-    updatePageCounter();
+    updatePageCounter(curPageIdx());
     refreshFriendButtons();
 }
 
@@ -136,7 +136,7 @@ void FriendListPage::onRightArrowPress(void * /*control*/, u32 /*hudSlotId*/) {
         return;
     }
     curPageIdx() = (curPageIdx() + 1) % pages;
-    updatePageCounter();
+    updatePageCounter(curPageIdx());
     refreshFriendButtons();
 }
 
@@ -146,7 +146,7 @@ void FriendListPage::onLeftArrowPress(void * /*control*/, u32 /*hudSlotId*/) {
         return;
     }
     curPageIdx() = curPageIdx() == 0 ? pages - 1 : curPageIdx() - 1;
-    updatePageCounter();
+    updatePageCounter(curPageIdx());
     refreshFriendButtons();
 }
 
@@ -159,10 +159,17 @@ void FriendListPage::addNewFriend(u32 idx) {
     rebuildRosterView();
 }
 
-void FriendListPage::updatePageCounter() {
+void FriendListPage::updatePageCounter(u32 /*page*/) {
     // Stock counter uses GetFriendCount() for total pages — report the real roster size.
+    // Our page index is the one shown; the stock body only fills buttons for list positions
+    // under 30, and refreshFriendButtons() sets them all afterwards.
+    u32 page = curPageIdx();
+    if (page >= pageCount()) {
+        page = 0;
+        curPageIdx() = 0;
+    }
     SP::ExtendedFriends::SetReportRealRosterCount(true);
-    REPLACED(updatePageCounter)();
+    REPLACED(updatePageCounter)(page);
     SP::ExtendedFriends::SetReportRealRosterCount(false);
 }
 

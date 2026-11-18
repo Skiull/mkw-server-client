@@ -56,9 +56,11 @@ public:
     REPLACE void addNewFriend(u32 idx);
     void REPLACED(addNewFriend)(u32 idx);
 
-    // 0x805d5330
-    REPLACE void updatePageCounter();
-    void REPLACED(updatePageCounter)();
+    // 0x805d5330. Takes the page to show: it points the 5 buttons at that page's friends and
+    // writes "page+1/pages". Calling it without the page left r4 as garbage (negative page,
+    // buttons loaded from out-of-range indices).
+    REPLACE void updatePageCounter(u32 page);
+    void REPLACED(updatePageCounter)(u32 page);
 
     // 0x805d53f8
     REPLACE void updateMiiGroup();
