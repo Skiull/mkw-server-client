@@ -24,6 +24,10 @@ void RaceScene::createSubsystems() {
     if (TimeTrialCheats_itemBoxes) {
         SP::MarkPracticeUsed();
     }
+    TimeTrialCheats_noLapIncrease = SP::NoLapIncreaseAllowed();
+    if (TimeTrialCheats_noLapIncrease) {
+        SP::MarkPracticeUsed();
+    }
 
     REPLACED(createSubsystems)();
     // Only offline Time Trials get save states (the /store and /reload commands need it too).

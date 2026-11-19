@@ -171,5 +171,8 @@
     "10169": "The road on Grumble Volcano never shakes or falls in offline Time Trials. Ghosts can't be saved.",
     "10170": "Open Host",
     "10171": "Only players you have added back can join your friend room.",
+    "10173": "No Lap Increase",
+    "10174": "Crossing the finish line counts laps as usual.",
+    "10175": "In offline Time Trials, crossing the finish line never adds a lap, so you can drive laps forever. Ghosts can't be saved.",
     "10172": "Anyone who has added your friend code can join your friend room, even if you haven't added them back.",
 }

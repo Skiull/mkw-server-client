@@ -430,6 +430,7 @@
 0x8052bff8 NandManager_init
 0x805327a0 _ZN6System11RaceManagerC1Ev
 0x805331b4 _ZN6System11RaceManager4calcEv
+0x805349b8 RaceManagerPlayer_updateLap
 0x80535304 _ZN6System11RaceManager6Player4calcEv
 0x8053fc4c _ZN6System15ResourceManager14CreateInstanceEv
 0x8053fcec _ZN6System15ResourceManagerC1Ev

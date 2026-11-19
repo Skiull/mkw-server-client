@@ -57,6 +57,12 @@ inline bool NoFallingRoadAllowed() {
             Settings::TANoFallingRoad::Enabled;
 }
 
+inline bool NoLapIncreaseAllowed() {
+    return IsOfflineTimeTrial() &&
+            Settings::getSetting<Settings::Setting::TANoLapIncrease>() ==
+            Settings::TANoLapIncrease::Enabled;
+}
+
 // Grid spot and grid size for the player's start, or false for the normal Time Trial start.
 inline bool StartingSpotChanged(u32 *spot, u32 *layout) {
     if (!IsOfflineTimeTrial()) {
@@ -87,4 +93,6 @@ void RestoreLicenseIfPracticeUsed();
 extern "C" {
 // Read by the item box patches (game/item/ItemBoxes.S), set when a race scene is created.
 extern u8 TimeTrialCheats_itemBoxes;
+// Read by game/system/LapCount.S, set when a race scene is created.
+extern u8 TimeTrialCheats_noLapIncrease;
 }

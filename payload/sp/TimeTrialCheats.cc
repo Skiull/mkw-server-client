@@ -10,6 +10,7 @@ extern "C" {
 
 extern "C" {
 u8 TimeTrialCheats_itemBoxes = 0;
+u8 TimeTrialCheats_noLapIncrease = 0;
 }
 
 namespace SP {

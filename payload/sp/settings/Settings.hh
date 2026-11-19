@@ -49,6 +49,7 @@ enum class Setting {
     TAStartingSpot,
     TAStartingSpotsLayout,
     TANoFallingRoad,
+    TANoLapIncrease,
 };
 
 enum class Ping {
@@ -209,6 +210,18 @@ enum class TANoFallingRoad {
 template <>
 struct OptionType<Setting::TANoFallingRoad> {
     using Type = TANoFallingRoad;
+};
+
+// Crossing the finish line never adds a lap in offline Time Trials (Vega's "Lap Count
+// Increased Modifier" with 0).
+enum class TANoLapIncrease {
+    Disabled,
+    Enabled,
+};
+
+template <>
+struct OptionType<Setting::TANoLapIncrease> {
+    using Type = TANoLapIncrease;
 };
 
 template <>
@@ -727,6 +740,20 @@ inline SettingEntry settings[]{
             .valueExplanationMessageIds = (const s32[]){10168, 10169},
             .hidden = false,
             .selectedValue = static_cast<u32>(TANoFallingRoad::Disabled),
+        },
+        [static_cast<u32>(Setting::TANoLapIncrease)] =
+        {
+            .category = Category::TimeTrials,
+            .name = magic_enum::enum_name(Setting::TANoLapIncrease),
+            .messageId = 10173,
+            .valueOffset = 0,
+            .defaultValue = static_cast<u32>(TANoLapIncrease::Disabled),
+            .valueCount = magic_enum::enum_count<TANoLapIncrease>(),
+            .valueNames = magic_enum::enum_names<TANoLapIncrease>().data(),
+            .valueMessageIds = (const s32[]){10004, 10005},
+            .valueExplanationMessageIds = (const s32[]){10174, 10175},
+            .hidden = false,
+            .selectedValue = static_cast<u32>(TANoLapIncrease::Disabled),
         },
         // clang-format on
 };
