@@ -16,7 +16,12 @@
 
 extern "C" {
 #include <revolution/kpad.h>
+#include <revolution/pad.h>
+#include <revolution/wpad.h>
 }
+
+#include <sp/net/mkw_server/RoomManager.hh>
+#include "game/ui/SectionManager.hh"
 
 namespace UI {
 
@@ -148,9 +153,58 @@ static bool HopButtonPressed() {
 
 } // namespace HopDodge
 
+namespace ReplayQuit {
+
+static u32 s_heldFrames = 0;
+static bool s_quitting = false;
+
+// + on a Wii Remote or Classic Controller, or Start on a GameCube controller, read straight
+// from the hardware: a watcher has no kart, so no race input.
+static bool QuitButtonHeld() {
+    WPADCLStatus status{};
+    KPADGetUnifiedWpadStatus(0, &status, 1);
+    if (*reinterpret_cast<u16 *>(&status) & 0x0010 /* WPAD_BUTTON_PLUS */) {
+        return true;
+    }
+    u32 type;
+    if (WPADProbe(0, &type) == 0 && type == 2 /* Classic */ && (status.buttons & WPAD_CL_BUTTON_PLUS)) {
+        return true;
+    }
+    PADStatus gc[4]{};
+    PADRead(gc);
+    return (gc[0].buttons & PAD_BUTTON_START);
+}
+
+} // namespace ReplayQuit
+
 void RacePage::afterCalc() {
     REPLACED(afterCalc)();
     calcHopDodgeFeedback();
+    calcReplayQuit();
+}
+
+// Watching a replay: hold + (Start on GameCube) for a second to leave. The server closes the
+// replay room once its only real player has left.
+void RacePage::calcReplayQuit() {
+    using namespace ReplayQuit;
+    if (!MKWServer::s_watchReplay) {
+        s_heldFrames = 0;
+        s_quitting = false;
+        return;
+    }
+    if (s_quitting) {
+        return;
+    }
+    s_heldFrames = QuitButtonHeld() ? s_heldFrames + 1 : 0;
+    if (s_heldFrames < 60) {
+        return;
+    }
+    s_quitting = true;
+    SP_LOG("Replay: quit by the watcher");
+    MKWServer::s_watchReplay = false;
+    MKWServer::sendLeaveRoomRequest();
+    auto players = SectionManager::Instance()->getLocalPlayerCount();
+    changeSection(players > 1 ? SectionId::WifiMulti : SectionId::WifiSingle, Anim::Prev, 0.0f);
 }
 
 void RacePage::calcHopDodgeFeedback() {

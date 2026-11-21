@@ -28,6 +28,7 @@ protected:
 
     void REPLACED(afterCalc)();
     REPLACE void afterCalc() override;
+    void calcReplayQuit();
 
 private:
     u8 REPLACED(getControlCount)(u32 controls) const;
