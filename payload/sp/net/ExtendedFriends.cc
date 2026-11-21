@@ -175,6 +175,9 @@ bool ReportRealRosterCount() {
 
 bool Load(u32 licenseIndex) {
     Clear();
+    if (!EXTENDED_FRIENDS) {
+        return true; // Disabled: no extra friends.
+    }
     if (licenseIndex >= 4) {
         return false;
     }
@@ -235,6 +238,9 @@ bool Load(u32 licenseIndex) {
 }
 
 bool Save(u32 licenseIndex) {
+    if (!EXTENDED_FRIENDS) {
+        return false;
+    }
     if (licenseIndex >= 4) {
         return false;
     }

@@ -106,12 +106,20 @@ void FriendListPage::rebuildRosterView() {
 }
 
 void FriendListPage::onInit() {
+    if (!EXTENDED_FRIENDS) {
+        REPLACED(onInit)();
+        return;
+    }
     REPLACED(onInit)();
     // Stock inits MiiGroup for 30. Expand so indices 30..63 have mii slots.
     miiGroup()->init(MAX_FRIEND_COUNT, 0x1, nullptr);
 }
 
 void FriendListPage::onActivate() {
+    if (!EXTENDED_FRIENDS) {
+        REPLACED(onActivate)();
+        return;
+    }
     SP::ExtendedFriends::SetUiSafeMode(true);
     REPLACED(onActivate)();
     SP::ExtendedFriends::SetUiSafeMode(false);
@@ -121,6 +129,10 @@ void FriendListPage::onActivate() {
 }
 
 void FriendListPage::afterCalc() {
+    if (!EXTENDED_FRIENDS) {
+        REPLACED(afterCalc)();
+        return;
+    }
     u32 &freq = updateFrequency();
     if (freq == 0) {
         freq = 300;
@@ -131,7 +143,11 @@ void FriendListPage::afterCalc() {
     }
 }
 
-void FriendListPage::onRightArrowPress(void * /*control*/, u32 /*hudSlotId*/) {
+void FriendListPage::onRightArrowPress(void *control, u32 hudSlotId) {
+    if (!EXTENDED_FRIENDS) {
+        REPLACED(onRightArrowPress)(control, hudSlotId);
+        return;
+    }
     u32 pages = pageCount();
     if (pages == 0) {
         return;
@@ -141,7 +157,11 @@ void FriendListPage::onRightArrowPress(void * /*control*/, u32 /*hudSlotId*/) {
     refreshFriendButtons();
 }
 
-void FriendListPage::onLeftArrowPress(void * /*control*/, u32 /*hudSlotId*/) {
+void FriendListPage::onLeftArrowPress(void *control, u32 hudSlotId) {
+    if (!EXTENDED_FRIENDS) {
+        REPLACED(onLeftArrowPress)(control, hudSlotId);
+        return;
+    }
     u32 pages = pageCount();
     if (pages == 0) {
         return;
@@ -152,6 +172,10 @@ void FriendListPage::onLeftArrowPress(void * /*control*/, u32 /*hudSlotId*/) {
 }
 
 void FriendListPage::addNewFriend(u32 idx) {
+    if (!EXTENDED_FRIENDS) {
+        REPLACED(addNewFriend)(idx);
+        return;
+    }
     if (idx < VANILLA_FRIEND_COUNT) {
         SP::ExtendedFriends::SetUiSafeMode(true);
         REPLACED(addNewFriend)(idx);
@@ -160,11 +184,15 @@ void FriendListPage::addNewFriend(u32 idx) {
     rebuildRosterView();
 }
 
-void FriendListPage::updatePageCounter(u32 /*page*/) {
+void FriendListPage::updatePageCounter(u32 page) {
+    if (!EXTENDED_FRIENDS) {
+        REPLACED(updatePageCounter)(page);
+        return;
+    }
     // Stock counter uses GetFriendCount() for total pages — report the real roster size.
     // Our page index is the one shown; the stock body only fills buttons for list positions
     // under 30, and refreshFriendButtons() sets them all afterwards.
-    u32 page = curPageIdx();
+    page = curPageIdx();
     if (page >= pageCount()) {
         page = 0;
         curPageIdx() = 0;
@@ -175,6 +203,10 @@ void FriendListPage::updatePageCounter(u32 /*page*/) {
 }
 
 void FriendListPage::updateMiiGroup() {
+    if (!EXTENDED_FRIENDS) {
+        REPLACED(updateMiiGroup)();
+        return;
+    }
     auto *list = friendList();
     auto *group = miiGroup();
     if (!list || !group) {

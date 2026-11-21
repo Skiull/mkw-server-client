@@ -5,6 +5,10 @@
 void DWC_InitFriendsMatch(void *unused, DWCAccUserData *userdata, int productID,
         const char *gameName, const char *secretKey, int sendBufSize, int recvBufSize,
         DWCFriendData friendList[], int friendListLen) {
+    if (!EXTENDED_FRIENDS) {
+        REPLACED(DWC_InitFriendsMatch)(unused, userdata, productID, gameName, secretKey, sendBufSize, recvBufSize, friendList, friendListLen);
+        return;
+    }
     SP::ExtendedFriends::RebuildDwcList(friendList, friendListLen);
     REPLACED(DWC_InitFriendsMatch)(unused, userdata, productID, gameName, secretKey, sendBufSize,
             recvBufSize, SP::ExtendedFriends::s_dwcList,

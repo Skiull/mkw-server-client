@@ -320,6 +320,10 @@ void NetManager::resetFriends() {
 }
 
 void NetManager::setFriendsAddedBack(u32 *pidsThatHaveAddedBack, u32 countOfPids) {
+    if (!EXTENDED_FRIENDS) {
+        REPLACED(setFriendsAddedBack)(pidsThatHaveAddedBack, countOfPids);
+        return;
+    }
     // Vanilla only walks 0..29.
     REPLACED(setFriendsAddedBack)(pidsThatHaveAddedBack, countOfPids);
 
@@ -346,6 +350,10 @@ void NetManager::setFriendsAddedBack(u32 *pidsThatHaveAddedBack, u32 countOfPids
 }
 
 void NetManager::updateStatusDatas() {
+    if (!EXTENDED_FRIENDS) {
+        REPLACED(updateStatusDatas)();
+        return;
+    }
     // Vanilla loops DWC friendListLen into m_friends[30]. Clamp to 30 for that pass, then
     // fill extended slots ourselves so indices 30..63 stay in sync with s_dwcList.
     int savedLen = -1;
@@ -493,6 +501,10 @@ void NetManager::processRacePacket(u8 aid, u8 *packet, u32 size) {
 }
 
 void NetManager::updateAddedFriendsCallback(void *r3, void *r4, void *r5) {
+    if (!EXTENDED_FRIENDS) {
+        REPLACED(updateAddedFriendsCallback)(r3, r4, r5);
+        return;
+    }
     REPLACED(updateAddedFriendsCallback)(r3, r4, r5);
 
     // Persist extended slots whenever the roster changes. No-op until extras are occupied.

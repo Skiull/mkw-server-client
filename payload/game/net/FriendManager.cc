@@ -5,6 +5,9 @@
 namespace Net {
 
 s32 FriendRosterManager::GetFirstFreeFriendIdx() const {
+    if (!EXTENDED_FRIENDS) {
+        return REPLACED(GetFirstFreeFriendIdx)();
+    }
     s_instance = const_cast<FriendRosterManager *>(this);
     s32 vanilla = REPLACED(GetFirstFreeFriendIdx)();
     if (vanilla >= 0) {
@@ -19,6 +22,10 @@ s32 FriendRosterManager::GetFirstFreeFriendIdx() const {
 }
 
 void FriendRosterManager::ReadDataFromRKSYS() {
+    if (!EXTENDED_FRIENDS) {
+        REPLACED(ReadDataFromRKSYS)();
+        return;
+    }
     s_instance = this;
     REPLACED(ReadDataFromRKSYS)();
     // Extras should be on SD (Loaded from NetManager::init / license select).

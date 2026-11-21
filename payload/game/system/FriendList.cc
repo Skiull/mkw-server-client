@@ -50,6 +50,9 @@ void syncExtraEntry(u32 extraIndex, const FriendList *list) {
 } // namespace
 
 int FriendList::GetFriendCount() const {
+    if (!EXTENDED_FRIENDS) {
+        return REPLACED(GetFriendCount)();
+    }
     const int vanilla = REPLACED(GetFriendCount)();
     const int extra = static_cast<int>(SP::ExtendedFriends::OccupiedCount());
 
@@ -75,6 +78,9 @@ int FriendList::GetFriendCount() const {
 }
 
 u32 FriendList::AddFriend(const u64 &friendCode) {
+    if (!EXTENDED_FRIENDS) {
+        return REPLACED(AddFriend)(friendCode);
+    }
     u32 existing = GetFriendIdx(friendCode);
     if (existing != 0xffffffffu) {
         return existing;
@@ -116,6 +122,10 @@ u32 FriendList::AddFriend(const u64 &friendCode) {
 }
 
 void FriendList::RemoveFriend(u32 idx) {
+    if (!EXTENDED_FRIENDS) {
+        REPLACED(RemoveFriend)(idx);
+        return;
+    }
     if (idx < VANILLA_FRIEND_COUNT) {
         REPLACED(RemoveFriend)(idx);
         if (auto *mgr = Net::FriendRosterManager::Instance()) {
@@ -145,6 +155,9 @@ void FriendList::RemoveFriend(u32 idx) {
 }
 
 u32 FriendList::GetFriendIdx(const u64 &friendCode) {
+    if (!EXTENDED_FRIENDS) {
+        return REPLACED(GetFriendIdx)(friendCode);
+    }
     u32 vanilla = REPLACED(GetFriendIdx)(friendCode);
     if (vanilla != 0xffffffffu) {
         return vanilla;
@@ -158,6 +171,9 @@ u32 FriendList::GetFriendIdx(const u64 &friendCode) {
 }
 
 const FriendListEntry *FriendList::GetFriendEntry(u32 idx) const {
+    if (!EXTENDED_FRIENDS) {
+        return REPLACED(GetFriendEntry)(idx);
+    }
     if (idx < VANILLA_FRIEND_COUNT) {
         return REPLACED(GetFriendEntry)(idx);
     }
@@ -171,6 +187,9 @@ const FriendListEntry *FriendList::GetFriendEntry(u32 idx) const {
 }
 
 const u8 *FriendList::GetFriendData(u32 idx) const {
+    if (!EXTENDED_FRIENDS) {
+        return REPLACED(GetFriendData)(idx);
+    }
     if (idx < VANILLA_FRIEND_COUNT) {
         return REPLACED(GetFriendData)(idx);
     }
@@ -184,6 +203,9 @@ const u8 *FriendList::GetFriendData(u32 idx) const {
 }
 
 u32 FriendList::GetFriendStatus(u32 idx) const {
+    if (!EXTENDED_FRIENDS) {
+        return REPLACED(GetFriendStatus)(idx);
+    }
     if (idx < VANILLA_FRIEND_COUNT) {
         return REPLACED(GetFriendStatus)(idx);
     }
@@ -200,6 +222,10 @@ u32 FriendList::GetFriendStatus(u32 idx) const {
 }
 
 void FriendList::UpdateStatuses() {
+    if (!EXTENDED_FRIENDS) {
+        REPLACED(UpdateStatuses)();
+        return;
+    }
     REPLACED(UpdateStatuses)();
 
     auto *net = Net::NetManager::Instance();
