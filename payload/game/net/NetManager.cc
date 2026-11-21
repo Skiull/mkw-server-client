@@ -300,6 +300,10 @@ void NetManager::connectToAnybodyAsync() {
 }
 
 void NetManager::resetFriendData(u32 friendIdx) {
+    if (!EXTENDED_FRIENDS) {
+        REPLACED(resetFriendData)(friendIdx);
+        return;
+    }
     if (friendIdx >= MAX_FRIEND_COUNT) {
         return;
     }
@@ -314,6 +318,10 @@ void NetManager::resetFriendData(u32 friendIdx) {
 }
 
 void NetManager::resetFriends() {
+    if (!EXTENDED_FRIENDS) {
+        REPLACED(resetFriends)();
+        return;
+    }
     for (u32 i = 0; i < MAX_FRIEND_COUNT; i++) {
         resetFriendData(i);
     }
@@ -390,6 +398,9 @@ void NetManager::updateStatusDatas() {
 }
 
 FriendJoinableStatus NetManager::getFriendJoinableStatus(u32 friendId) const {
+    if (!EXTENDED_FRIENDS) {
+        return REPLACED(getFriendJoinableStatus)(friendId);
+    }
     if (friendId >= MAX_FRIEND_COUNT) {
         return FriendJoinableStatus::Offline;
     }

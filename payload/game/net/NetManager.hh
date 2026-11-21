@@ -71,6 +71,7 @@ public:
 
     // 0x80659fa4 — online / joinable status for roster index 0..63
     REPLACE FriendJoinableStatus getFriendJoinableStatus(u32 friendId) const;
+    FriendJoinableStatus REPLACED(getFriendJoinableStatus)(u32 friendId) const;
 
 private:
     const MatchMakingInfo &currentMMInfo() const;
@@ -148,9 +149,11 @@ private:
 
     // 0x80656d6c — clear one FriendInfo slot
     REPLACE void resetFriendData(u32 friendIdx);
+    void REPLACED(resetFriendData)(u32 friendIdx);
 
     // 0x80658f80 — clear all FriendInfo slots
     REPLACE void resetFriends();
+    void REPLACED(resetFriends)();
 
     // 0x80656ca0 — mark mutual friends from a PID list
     REPLACE void setFriendsAddedBack(u32 *pidsThatHaveAddedBack, u32 countOfPids);
