@@ -43,6 +43,11 @@ public:
     const FriendListEntry *REPLACED(GetFriendEntry)(u32 idx) const;
 
     // 0x805d28c8 — -1 none, 0 open, else status bitfield.
+    // 0x805d2890: the friend's Friend object (FriendListEntry::friendInfo), or null for an
+    // empty slot. Stock only knows slots 0..29; the globe on the friend pages reads it.
+    REPLACE const u8 *GetFriendData(u32 idx) const;
+    const u8 *REPLACED(GetFriendData)(u32 idx) const;
+
     REPLACE u32 GetFriendStatus(u32 idx) const;
     u32 REPLACED(GetFriendStatus)(u32 idx) const;
 

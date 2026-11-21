@@ -170,6 +170,19 @@ const FriendListEntry *FriendList::GetFriendEntry(u32 idx) const {
     return &s_extraEntries[extra];
 }
 
+const u8 *FriendList::GetFriendData(u32 idx) const {
+    if (idx < VANILLA_FRIEND_COUNT) {
+        return REPLACED(GetFriendData)(idx);
+    }
+
+    u32 extra = idx - VANILLA_FRIEND_COUNT;
+    if (extra >= EXTRA_FRIEND_COUNT || !SP::ExtendedFriends::s_slots[extra].occupied()) {
+        return nullptr;
+    }
+    syncExtraEntry(extra, this);
+    return s_extraEntries[extra].friendInfo;
+}
+
 u32 FriendList::GetFriendStatus(u32 idx) const {
     if (idx < VANILLA_FRIEND_COUNT) {
         return REPLACED(GetFriendStatus)(idx);
