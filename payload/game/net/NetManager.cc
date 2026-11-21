@@ -501,14 +501,12 @@ void NetManager::processRacePacket(u8 aid, u8 *packet, u32 size) {
 }
 
 void NetManager::updateAddedFriendsCallback(void *r3, void *r4, void *r5) {
-    if (!EXTENDED_FRIENDS) {
-        REPLACED(updateAddedFriendsCallback)(r3, r4, r5);
-        return;
-    }
     REPLACED(updateAddedFriendsCallback)(r3, r4, r5);
 
     // Persist extended slots whenever the roster changes. No-op until extras are occupied.
-    if (auto *save = System::SaveManager::Instance()) {
+    // (Only this part depends on EXTENDED_FRIENDS: the room manager connection below must
+    // always happen.)
+    if (auto *save = EXTENDED_FRIENDS ? System::SaveManager::Instance() : nullptr) {
         s16 license = save->currentLicenseIndex();
         if (license >= 0 && license < 4 && SP::ExtendedFriends::OccupiedCount() > 0) {
             SP::ExtendedFriends::Save(static_cast<u32>(license));
