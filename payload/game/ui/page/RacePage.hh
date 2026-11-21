@@ -28,7 +28,6 @@ protected:
 
     void REPLACED(afterCalc)();
     REPLACE void afterCalc() override;
-    void calcReplayQuit();
 
 private:
     u8 REPLACED(getControlCount)(u32 controls) const;
@@ -51,5 +50,8 @@ private:
     static RacePage *s_instance;
 };
 static_assert(sizeof(RacePage) == 0x1dc);
+
+// Watching a replay: hold + (Start on GameCube) to leave. Called every frame.
+void CalcReplayQuit();
 
 } // namespace UI

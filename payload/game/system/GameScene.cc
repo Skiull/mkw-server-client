@@ -1,5 +1,7 @@
 #include "GameScene.hh"
 
+#include "game/ui/page/RacePage.hh"
+
 #include "sp/FastMenus.hh"
 #include "sp/TestCheats.hh"
 #include "sp/net/OpenHost.hh"
@@ -15,6 +17,7 @@ void GameScene::calc() {
     SP::TestCheats::RunFrame();
     MKWServer::GameHash::Calc();
     SP::OpenHost::Calc();
+    UI::CalcReplayQuit();
     SP::FastMenus::Calc();
     REPLACED(calc)();
 }

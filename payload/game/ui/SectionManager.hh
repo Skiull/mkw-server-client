@@ -23,6 +23,11 @@ public:
 
     u8 getLocalPlayerCount() const;
 
+    // What Page::changeSection calls (PAL 0x806024b0): the next section and its animation
+    // (-1 none, 0 next, 1 prev), then start the change after delayFrames.
+    void setNextSection(SectionId id, s32 anim);
+    void startChangeSection(s32 delayFrames, s32 color);
+
     // mkw-sp calls this the GlobalContext (menu selections kept across pages).
     SectionParams *sectionParams() {
         return m_sectionParams;

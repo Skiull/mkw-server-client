@@ -180,32 +180,9 @@ static bool QuitButtonHeld() {
 void RacePage::afterCalc() {
     REPLACED(afterCalc)();
     calcHopDodgeFeedback();
-    calcReplayQuit();
 }
 
-// Watching a replay: hold + (Start on GameCube) for a second to leave. The server closes the
-// replay room once its only real player has left.
-void RacePage::calcReplayQuit() {
-    using namespace ReplayQuit;
-    if (!MKWServer::s_watchReplay) {
-        s_heldFrames = 0;
-        s_quitting = false;
-        return;
-    }
-    if (s_quitting) {
-        return;
-    }
-    s_heldFrames = QuitButtonHeld() ? s_heldFrames + 1 : 0;
-    if (s_heldFrames < 60) {
-        return;
-    }
-    s_quitting = true;
-    SP_LOG("Replay: quit by the watcher");
-    MKWServer::s_watchReplay = false;
-    MKWServer::sendLeaveRoomRequest();
-    auto players = SectionManager::Instance()->getLocalPlayerCount();
-    changeSection(players > 1 ? SectionId::WifiMulti : SectionId::WifiSingle, Anim::Prev, 0.0f);
-}
+
 
 void RacePage::calcHopDodgeFeedback() {
     using namespace HopDodge;
@@ -264,6 +241,36 @@ void RacePage::calcHopDodgeFeedback() {
     } else if (s_showTimer > 0 && --s_showTimer == 0) {
         m_ghostMessage->setVisible(false);
     }
+}
+
+// Watching a replay: hold + (Start on GameCube) for a second to leave. The server closes the
+// replay room once its only real player has left.
+void CalcReplayQuit() {
+    using namespace ReplayQuit;
+    if (!MKWServer::s_watchReplay) {
+        s_heldFrames = 0;
+        s_quitting = false;
+        return;
+    }
+    if (s_quitting) {
+        return;
+    }
+    bool held = QuitButtonHeld();
+    if (held && s_heldFrames == 0) {
+        SP_LOG("Replay: quit button down");
+    }
+    s_heldFrames = held ? s_heldFrames + 1 : 0;
+    if (s_heldFrames < 60) {
+        return;
+    }
+    s_quitting = true;
+    SP_LOG("Replay: quit by the watcher");
+    MKWServer::s_watchReplay = false;
+    MKWServer::sendLeaveRoomRequest();
+    auto *sectionManager = SectionManager::Instance();
+    auto players = sectionManager->getLocalPlayerCount();
+    sectionManager->setNextSection(players > 1 ? SectionId::WifiMulti : SectionId::WifiSingle, 1);
+    sectionManager->startChangeSection(0, 0xff);
 }
 
 } // namespace UI
