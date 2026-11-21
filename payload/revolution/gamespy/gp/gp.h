@@ -61,17 +61,14 @@ typedef struct {
     void *peerList;
     void *callbackList;
     void *lastCallback;
+    // The game's struct has more fields here than the PC SDK's (the WFC patcher puts
+    // updateproBuffer at 0x5e0, and Open Host sent through it works).
+    u8 _4fc[0x5e0 - 0x4fc];
     GPBuffer updateproBuffer;
-    GPBuffer updateuiBuffer;
-    void *transfers; // matches up to here
-    u32 nextTransferID;
-    int productID;
-    int namespaceID;
-    char loginTicket[25];
-    u32 quietModeFlags;
-    u32 kaTransmit;
 } GPIConnection;
 static_assert(offsetof(GPIConnection, cmSocket) == 0x1f0);
+static_assert(offsetof(GPIConnection, outputBuffer) == 0x210);
+static_assert(offsetof(GPIConnection, updateproBuffer) == 0x5e0);
 
 typedef GPIConnection *GPConnection;
 
