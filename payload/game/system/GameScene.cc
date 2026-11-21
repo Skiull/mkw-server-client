@@ -14,8 +14,7 @@ void GameScene::calc() {
     g_frameCount++;
     SP::TestCheats::RunFrame();
     MKWServer::GameHash::Calc();
-    // Off while checking whether sending wl:oh breaks seeing players who join a room.
-    // SP::OpenHost::Calc();
+    SP::OpenHost::Calc();
     SP::FastMenus::Calc();
     REPLACED(calc)();
 }
