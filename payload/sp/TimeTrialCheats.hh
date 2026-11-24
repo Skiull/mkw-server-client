@@ -83,6 +83,10 @@ inline bool StartingSpotChanged(u32 *spot, u32 *layout) {
 void ResetPracticeUsed();
 void MarkPracticeUsed();
 bool PracticeUsed();
+// Called when the race scene ends: the practice flag is cleared, and the run's own saves are
+// still dropped for a few seconds (DropRunSaves), but license saves after that go through.
+void EndPracticeRun();
+bool DropRunSaves();
 // Copy of the current license taken when an offline Time Trial starts. If a practice tool was
 // used, it's copied back when the race ends, so the run's best time doesn't stay in the license.
 void SnapshotLicense();

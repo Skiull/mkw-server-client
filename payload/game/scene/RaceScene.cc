@@ -9,6 +9,7 @@ namespace Scene {
 
 void RaceScene::destroySubsystems() {
     SP::RestoreLicenseIfPracticeUsed();
+    SP::EndPracticeRun();
     REPLACED(destroySubsystems)();
     Item::PowManager::ClearInstance();
     SP::SaveStateManager::DestroyInstance();

@@ -168,6 +168,9 @@ void SettingsPage::onSettingControlChange(UpDownControl *control, u32 /* localPl
         instructionText()->setMessageAll(settingEntry.valueExplanationMessageIds[0], &info);
     }
     Settings::setSetting(control->m_id >> 16, index);
+    // Saved right away, not only when leaving the page: the page can be left without going
+    // through onBack (a section change, Home menu, closing the game).
+    Settings::Save();
 }
 
 void SettingsPage::onSettingControlFront(UpDownControl *control, u32 localPlayerId) {

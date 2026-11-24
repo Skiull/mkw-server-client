@@ -35,6 +35,21 @@ bool PracticeUsed() {
     return s_practiceUsed;
 }
 
+// The run's own license/ghost save requests come in as the race ends, a moment after the race
+// scene is gone at most. After that window, saves are the player's again (menus, options).
+static OSTime s_dropSavesUntil = 0;
+
+void EndPracticeRun() {
+    if (s_practiceUsed) {
+        s_dropSavesUntil = OSGetTime() + OSSecondsToTicks(static_cast<OSTime>(10));
+    }
+    s_practiceUsed = false;
+}
+
+bool DropRunSaves() {
+    return s_practiceUsed || (s_dropSavesUntil != 0 && OSGetTime() < s_dropSavesUntil);
+}
+
 static u8 s_license[System::SaveManager::LicenseSize];
 static u8 *s_licenseSource = nullptr;
 
