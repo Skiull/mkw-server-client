@@ -64,6 +64,12 @@ static void Init() {
     }
     Console::Print(" done.\n");
 
+    // Needs the storage above. Run() is earlier (before OSInit), when no SD/USB is mounted yet,
+    // so loading there always kept the defaults.
+    Console::Print("Loading settings...");
+    ::Settings::Load();
+    Console::Print(" done.\n");
+
     Console::Print("Initializing LogFile...");
     SP::LogFile::Init();
     Console::Print(" done.\n");
@@ -100,7 +106,6 @@ static void Run() {
     for (void (**ctor)(void) = &payload_ctors_start; ctor < &payload_ctors_end; ctor++) {
         (*ctor)();
     }
-    ::Settings::Load();
     Patcher_patch(PATCHER_BINARY_DOL);
 }
 
